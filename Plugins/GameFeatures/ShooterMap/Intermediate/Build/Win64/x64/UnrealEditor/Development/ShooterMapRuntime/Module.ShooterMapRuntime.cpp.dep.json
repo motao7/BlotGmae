@@ -1,0 +1,15 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\gamefeatures\\shootermap\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\shootermapruntime\\module.shootermapruntime.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\engine\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\unrealed\\sharedpch.unrealed.cpp20.h.pch",
+        "Includes": [
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\gamefeatures\\shootermap\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\shootermapruntime\\definitions.shootermapruntime.h",
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\gamefeatures\\shootermap\\source\\shootermapruntime\\private\\shootermapruntimemodule.cpp",
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\gamefeatures\\shootermap\\source\\shootermapruntime\\public\\shootermapruntimemodule.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

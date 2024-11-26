@@ -1,0 +1,15 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\gamefeatures\\shootercore\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\shootercoreruntime\\module.shootercoreruntime.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\engine\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\gamefeatures\\shootercore\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\shootercoreruntime\\definitions.shootercoreruntime.h",
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\gamefeatures\\shootercore\\source\\shootercoreruntime\\private\\shootercoreruntimemodule.cpp",
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\gamefeatures\\shootercore\\source\\shootercoreruntime\\public\\shootercoreruntimemodule.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
