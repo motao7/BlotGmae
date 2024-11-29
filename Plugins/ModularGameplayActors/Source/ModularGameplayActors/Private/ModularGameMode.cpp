@@ -18,6 +18,13 @@ AModularGameModeBase::AModularGameModeBase(const FObjectInitializer& ObjectIniti
 	DefaultPawnClass = AModularPawn::StaticClass();
 }
 
+void AModularGameModeBase::GenericPlayerInitialization(AController* C)
+{
+	Super::GenericPlayerInitialization(C);
+
+	OnGameModePlayerInitialized.Broadcast(this,C);
+}
+
 AModularGameMode::AModularGameMode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

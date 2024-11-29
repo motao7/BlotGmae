@@ -105,22 +105,36 @@ APawn* ABlotGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* Ne
 {
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.Instigator = GetInstigator();
-	// Never save the default player pawns into a map.
-	SpawnInfo.ObjectFlags |= RF_Transient;	
+	// Never save the default player pawns into a map, ensure they don't persist across saves.
+	SpawnInfo.ObjectFlags |= RF_Transient;
 	SpawnInfo.bDeferConstruction = true;
-	if(UExperiencePawnData* PawnData=GetPawnDataFromPlayerStateOrExperience(NewPlayer))
+
+	// 获取玩家数据并验证
+	UExperiencePawnData* PawnData = GetPawnDataFromPlayerStateOrExperience(NewPlayer);
+	if (!PawnData)
 	{
-		if(PawnData->PawnClass)
-		{
-			UE_LOG(LogBlot,Error,TEXT("SpawnDefaultPawnAtTransform PawnClass is invalid"));
-			APawn* SpawnedPawn=GetWorld()->SpawnActor<APawn>(PawnData->PawnClass,SpawnTransform,SpawnInfo);
-			
-			SpawnedPawn->FinishSpawning(SpawnTransform);
-			return SpawnedPawn;
-		}
+		UE_LOG(LogBlot, Error, TEXT("Failed to retrieve PawnData for player."));
+		return nullptr;
 	}
 
-	UE_LOG(LogBlot,Error,TEXT("Fail To SpawnDefaultPawnAtTransform"));
-	return nullptr;
+	if (!PawnData->PawnClass)
+	{
+		UE_LOG(LogBlot, Error, TEXT("PawnClass is invalid for the player: %s"), *NewPlayer->GetName());
+		return nullptr;
+	}
+
+	// 生成角色
+	APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnData->PawnClass, SpawnTransform, SpawnInfo);
+	if (!SpawnedPawn)
+	{
+		UE_LOG(LogBlot, Error, TEXT("Failed to spawn pawn for player: %s"), *NewPlayer->GetName());
+		return nullptr;
+	}
+
+	// 完成角色生成
+	SpawnedPawn->FinishSpawning(SpawnTransform);
+
+	UE_LOG(LogBlot, Log, TEXT("Successfully spawned pawn for player: %s"), *NewPlayer->GetName());
+	return SpawnedPawn;
 }
 

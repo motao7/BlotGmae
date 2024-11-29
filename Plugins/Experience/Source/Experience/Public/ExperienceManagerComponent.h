@@ -35,7 +35,7 @@ public:
 	
 	//~加载Experience主流程
 	/** TryLoad软引用Experience，获得CDOExperience放入CurrentExperience，便于之后加载CDOExperience中的虚幻指针成员变量 */
-	void StartLoadExperience(const TSoftClassPtr<UExperienceDefination>& SPExperience);
+	void StartLoadExperience(const TSoftClassPtr<UExperienceDefination>& ExperienceDef);
 	/** 加载Expeirnece虚幻指针成员变量 */
 	void LoadExperienceTPtrVariable();
 	/** 激活GameFeature */
@@ -44,6 +44,7 @@ public:
 	void OnExperienceFullLoadCompleted(const UE::GameFeatures::FResult& Result, int ReaminLoadingGameFeatureNum);
 	//~加载Experience主流程
 
+	void CallOrReigister_OnExperienceLoaded_HighPriority(FOnExperienceLoaded::FDelegate&& Delegate);
 	/** 注册或执行委托，使用右值引用防止委托绑定回调函数采用Lamda这种包含闭包数据的函数，减少拷贝消耗 */
 	void CallOrReigister_OnExperienceLoaded(FOnExperienceLoaded::FDelegate&& Delegate);
 	
@@ -58,6 +59,7 @@ protected:
 	
 	bool bExperienceLoadedCompoleted=false;
 
-	/* 在Experience加载完全后Call */
+	/**在Experience加载完全后Call */
 	FOnExperienceLoaded OnExperienceLoadedDelegate;
+	FOnExperienceLoaded OnExperienceLoadedDelegate_HighPriority;
 };

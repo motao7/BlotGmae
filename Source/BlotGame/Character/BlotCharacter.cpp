@@ -15,3 +15,10 @@ ABlotCharacter::ABlotCharacter(const FObjectInitializer& ObjectInitializer)
 
 	PawnExtensionComponent=CreateDefaultSubobject<UBlotPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 }
+
+void ABlotCharacter::OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState)
+{
+	Super::OnPlayerStateChanged(NewPlayerState, OldPlayerState);
+
+	ListenForTeamChange();
+}

@@ -17,6 +17,16 @@ class BLOTGAME_API ABlotCharacter : public AModularCharacter
 
 public:
 	ABlotCharacter(const FObjectInitializer& ObjectInitializer);
+
+protected:
+	//~ Pawn
+	/** 用于在设置完PlayerState后ObserTeamColor异步节点对象聆听新的PlayerState中TeamId的改变 */
+	virtual void OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState) override;
+	//~ Pawn End
+
+	UFUNCTION(BlueprintImplementableEvent,Category="Team|AsyncAction")
+	void ListenForTeamChange();
+	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Lyra|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBlotPawnExtensionComponent> PawnExtensionComponent;

@@ -24,24 +24,36 @@ void UExperienceManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimePro
 	DOREPLIFETIME(ThisClass, CurrentExperience);
 }
 
-void UExperienceManagerComponent::StartLoadExperience(const TSoftClassPtr<UExperienceDefination>& SPExperience)
+void UExperienceManagerComponent::StartLoadExperience(const TSoftClassPtr<UExperienceDefination>& ExperienceDef)
 {
-	FPrimaryAssetId ExperienceId=UAssetManager::Get().GetPrimaryAssetIdForPath(SPExperience.ToSoftObjectPath());
-	ensureMsgf(ExperienceId.IsValid(),TEXT("Function:StartLoadExperience fail to Get GetPrimaryAssetIdForPath"));
-	
+	// 获取主资产ID
+	FPrimaryAssetId ExperienceId = UAssetManager::Get().GetPrimaryAssetIdForPath(ExperienceDef.ToSoftObjectPath());
+	ensureMsgf(ExperienceId.IsValid(), TEXT("Function: StartLoadExperience failed to GetPrimaryAssetIdForPath"));
+
+	// 获取主资产路径
 	FSoftObjectPath AssetPath = UAssetManager::Get().GetPrimaryAssetPath(ExperienceId);
-	//FSoftObjectPath中TryLoad，加载元数据(元数据类似于.h文件，而真正的运行之城类的.cpp没有加载，即成员变量都没有真正加载，
-	//需要后续在加载成员变量)
+    
+	// 尝试加载资产类
 	TSubclassOf<UExperienceDefination> AssetClass = Cast<UClass>(AssetPath.TryLoad());
-	//正常来说GetDefault就是获得一个类的CDO，即默认实例
-	//但是TSoftObjectPtr、TObjectPtr、TWeakObjectPtr 等指针类型）：这些成员变量通常不会在 CDO 加载时自动加载。它们只是指向其他资源的引用
-	//所以还是要再次加载成员变量
+	if (!AssetClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load asset class from path: %s"), *AssetPath.ToString());
+		return;
+	}
+
+	// 获取资产的默认实例（CDO）---这会加载类的基本信息，但不会加载类的成员变量,如果你有类似 TSoftObjectPtr 类型的成员变量，它们可能需要进一步加载
 	const UExperienceDefination* Experience = GetDefault<UExperienceDefination>(AssetClass);
-	check(Experience != nullptr);
+	if (!Experience)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to get default experience definition from asset class."));
+		return;
+	}
+
+	// 确保 CurrentExperience 是空的
 	check(CurrentExperience == nullptr);
 	CurrentExperience = Experience;
-	check(AssetClass);
-	
+
+	// 加载Expeirnece的其他成员变量（例如软对象指针等）
 	LoadExperienceTPtrVariable();
 }
 
@@ -146,9 +158,25 @@ void UExperienceManagerComponent::OnExperienceFullLoadCompleted(const UE::GameFe
 	}
 
 	bExperienceLoadedCompoleted=true;
+
+	OnExperienceLoadedDelegate_HighPriority.Broadcast(CurrentExperience);
+	OnExperienceLoadedDelegate_HighPriority.Clear();
 	
 	OnExperienceLoadedDelegate.Broadcast(CurrentExperience);
 	OnExperienceLoadedDelegate.Clear();
+}
+
+void UExperienceManagerComponent::CallOrReigister_OnExperienceLoaded_HighPriority(FOnExperienceLoaded::FDelegate&& Delegate)
+{
+	if(GetIsExperienceLoadedCompoleted())
+	{
+		Delegate.Execute(CurrentExperience);
+	}
+	else
+	{
+		//MoveTemp类似于Std::move:移动右值 or 将左值变为右值
+		OnExperienceLoadedDelegate_HighPriority.Add(MoveTemp(Delegate));
+	}
 }
 
 void UExperienceManagerComponent::CallOrReigister_OnExperienceLoaded(FOnExperienceLoaded::FDelegate&& Delegate)

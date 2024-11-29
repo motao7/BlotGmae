@@ -11,9 +11,9 @@
 			"Experience.cpp.obj",
 			"ExperienceActionSet.cpp.obj",
 			"ExperienceDefination.cpp.obj",
-			"ExperienceManagerComponent.cpp.obj",
 			"ExperiencePawnData.cpp.obj",
-			"ExperienceWorldSetting.cpp.obj"
+			"ExperienceWorldSetting.cpp.obj",
+			"ExperienceManagerComponent.cpp.obj"
 		]
 	}
 }

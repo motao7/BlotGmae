@@ -6,14 +6,14 @@
 			"ExperienceActionSet.gen.cpp.obj",
 			"ExperienceDefination.gen.cpp.obj",
 			"ExperienceManagerComponent.gen.cpp.obj",
+			"ExperiencePawnData.gen.cpp.obj",
 			"ExperienceWorldSetting.gen.cpp.obj",
-			"PawnData.gen.cpp.obj",
 			"Experience.cpp.obj",
 			"ExperienceActionSet.cpp.obj",
 			"ExperienceDefination.cpp.obj",
 			"ExperienceManagerComponent.cpp.obj",
-			"ExperienceWorldSetting.cpp.obj",
-			"PawnData.cpp.obj"
+			"ExperiencePawnData.cpp.obj",
+			"ExperienceWorldSetting.cpp.obj"
 		]
 	}
 }

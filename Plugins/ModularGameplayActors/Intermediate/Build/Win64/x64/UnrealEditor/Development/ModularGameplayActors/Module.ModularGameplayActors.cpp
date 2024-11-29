@@ -2,7 +2,6 @@
 #include "../../Samples/Games/Blot/Plugins/ModularGameplayActors/Intermediate/Build/Win64/UnrealEditor/Inc/ModularGameplayActors/UHT/ModularGameplayActors.init.gen.cpp"
 #include "../../Samples/Games/Blot/Plugins/ModularGameplayActors/Source/ModularGameplayActors/Private/ModularAIController.cpp"
 #include "../../Samples/Games/Blot/Plugins/ModularGameplayActors/Source/ModularGameplayActors/Private/ModularCharacter.cpp"
-#include "../../Samples/Games/Blot/Plugins/ModularGameplayActors/Source/ModularGameplayActors/Private/ModularGameMode.cpp"
 #include "../../Samples/Games/Blot/Plugins/ModularGameplayActors/Source/ModularGameplayActors/Private/ModularGameplayActorsModule.cpp"
 #include "../../Samples/Games/Blot/Plugins/ModularGameplayActors/Source/ModularGameplayActors/Private/ModularGameState.cpp"
 #include "../../Samples/Games/Blot/Plugins/ModularGameplayActors/Source/ModularGameplayActors/Private/ModularPawn.cpp"

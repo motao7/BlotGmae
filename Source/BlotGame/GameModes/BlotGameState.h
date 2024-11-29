@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ModularGameState.h"
 #include "GameFramework/GameState.h"
 #include "BlotGameState.generated.h"
 
@@ -11,7 +12,7 @@ class UExperienceManagerComponent;
  * 
  */
 UCLASS()
-class BLOTGAME_API ABlotGameState : public AGameState
+class BLOTGAME_API ABlotGameState : public AModularGameStateBase
 {
 	GENERATED_BODY()
 	

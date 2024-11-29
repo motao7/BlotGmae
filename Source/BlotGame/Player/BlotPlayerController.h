@@ -13,8 +13,12 @@ UCLASS()
 class BLOTGAME_API ABlotPlayerController : public AModularPlayerController
 {
 	GENERATED_BODY()
+
+public:
+	ABlotPlayerController(const FObjectInitializer& ObjectInitializer);
 	
-	
-	
+	//~ PlayerControoler 
+	virtual void AddCheats(bool bForce) override;
+	//~ PlayerControoler End
 	
 };
