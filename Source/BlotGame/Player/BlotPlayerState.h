@@ -8,8 +8,8 @@
 #include "TeamGenericTeamAgentInterface.h"
 #include "BlotPlayerState.generated.h"
 
+class UExperienceDefination;
 class UExperiencePawnData;
-class UPawnData;
 /**
  * 
  */
@@ -21,18 +21,20 @@ class BLOTGAME_API ABlotPlayerState : public AModularPlayerState,public FGeneric
 public:
 	ABlotPlayerState(const FObjectInitializer& ObjectInitialize);
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
-	//~Helper Function
-	//~Helper Function End
 
-	////~~Team Start
-public:
+	/** Bind Function OnExperienceLoaded */
+	virtual void PostInitializeComponents() override;
+	
+	void SetPawnData(const UExperiencePawnData* PawnData){ExperiencePawnData=PawnData;}
+	const UExperiencePawnData* GetPawnData(){return ExperiencePawnData;}
+
 	//~IGenericTeamAgentInterface Start
 	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override;
 	virtual FGenericTeamId GetGenericTeamId() const override;
 	virtual FOnTeamChangedDelegateSignature& GetTeamChangedDelegateChecked() override;
 	//~IGenericTeamAgentInterface Ebd
-protected:
+
+private:
 	UFUNCTION()
 	void OnRep_TeamId(FGenericTeamId OldMyTeamId);
 	
@@ -41,6 +43,11 @@ protected:
 
 	UPROPERTY()
 	FOnTeamChangedDelegateSignature OnTeamChangedPlayerStateDelegate; 
-	////~~Team End
-protected:
+	
+private:
+	UPROPERTY(Replicated)
+	TObjectPtr<const UExperiencePawnData> ExperiencePawnData;
+
+	void OnExperienceLoaded(const UExperienceDefination* ExperienceDefination);
+	
 };

@@ -3,14 +3,18 @@
 
 #include "Character/BlotHeroComponent.h"
 
+#include "BlotCharacter.h"
 #include "BlotGameplayTag.h"
 #include "BlotPawnExtensionComponent.h"
+#include "CommonCameraComponent.h"
+#include "CommonCameraMode.h"
+#include "ExperiencePawnData.h"
+#include "Team.h"
 #include "Components/GameFrameworkComponentManager.h"
 #include "Player/BlotPlayerController.h"
 #include "Player/BlotPlayerState.h"
 
 const FName UBlotHeroComponent::NAME_ActorFeatureName("Hero");
-
 
 bool UBlotHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) const
 {
@@ -74,7 +78,19 @@ check(Manager);
 
 void UBlotHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState)
 {
-	IGameFrameworkInitStateInterface::HandleChangeInitState(Manager, CurrentState, DesiredState);
+	if (CurrentState == BlotGameplayTags::InitState_DataAvailable && DesiredState == BlotGameplayTags::InitState_DataInitialized)
+	{
+		//Init Camera System
+		if(ABlotPlayerState* BlotPS = GetPlayerState<ABlotPlayerState>())
+		{
+			if(const UExperiencePawnData* PawnData=BlotPS->GetPawnData())
+			{
+				UCommonCameraComponent* CameraComponent=GetOwner()->FindComponentByClass<UCommonCameraComponent>();
+				check(CameraComponent);
+				CameraComponent->DetermindCameraModeOnPawnDataSetDelgate.BindUObject(this,&ThisClass::DetermindCameraModeOnPawnDataSet);
+			}
+		}
+	}
 }
 
 void UBlotHeroComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params)
@@ -93,4 +109,45 @@ void UBlotHeroComponent::CheckDefaultInitialization()
 {
 	static const TArray<FGameplayTag> StateChain = { BlotGameplayTags::InitState_Spawned, BlotGameplayTags::InitState_DataAvailable, BlotGameplayTags::InitState_DataInitialized, BlotGameplayTags::InitState_GameplayReady };
 	ContinueInitStateChain(StateChain);
+}
+
+void UBlotHeroComponent::OnRegister()
+{
+	Super::OnRegister();
+
+	RegisterInitStateFeature();
+}
+
+void UBlotHeroComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	// Listen for when the pawn extension component changes init state
+	BindOnActorInitStateChanged(UBlotPawnExtensionComponent::NAME_ActorFeatureName, FGameplayTag(), false);
+
+	// Notifies that we are done spawning, then try the rest of initialization
+	ensure(TryToChangeInitState(BlotGameplayTags::InitState_Spawned));
+	CheckDefaultInitialization();
+}
+
+void UBlotHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UnregisterInitStateFeature();
+	
+	Super::EndPlay(EndPlayReason);
+}
+
+TSubclassOf<UCommonCameraMode> UBlotHeroComponent::DetermindCameraModeOnPawnDataSet() const
+{
+	if(ABlotPlayerState* BlotPS=GetPlayerState<ABlotPlayerState>())
+	{
+		const TSubclassOf<UCommonCameraMode> CommonCameraModeClass= BlotPS->GetPawnData()->DefaultCameraMode;
+		check(CommonCameraModeClass);
+		return CommonCameraModeClass;
+	}
+	else
+	{
+		UE_LOG(LogTeam,Type::Error,TEXT("HeroComponent Only Can be Used On Blot Characer "))
+		return nullptr;
+	}
 }

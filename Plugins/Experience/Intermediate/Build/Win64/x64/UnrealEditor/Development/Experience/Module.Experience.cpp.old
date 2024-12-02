@@ -8,6 +8,4 @@
 #include "../../Samples/Games/Blot/Plugins/Experience/Source/Experience/Private/Experience.cpp"
 #include "../../Samples/Games/Blot/Plugins/Experience/Source/Experience/Private/ExperienceActionSet.cpp"
 #include "../../Samples/Games/Blot/Plugins/Experience/Source/Experience/Private/ExperienceDefination.cpp"
-#include "../../Samples/Games/Blot/Plugins/Experience/Source/Experience/Private/ExperienceManagerComponent.cpp"
-#include "../../Samples/Games/Blot/Plugins/Experience/Source/Experience/Private/ExperiencePawnData.cpp"
 #include "../../Samples/Games/Blot/Plugins/Experience/Source/Experience/Private/ExperienceWorldSetting.cpp"

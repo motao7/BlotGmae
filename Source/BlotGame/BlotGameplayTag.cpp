@@ -1,4 +1,5 @@
 #include "BlotGameplayTag.h"
+#include "Engine/EngineTypes.h"
 
 namespace BlotGameplayTags
 {

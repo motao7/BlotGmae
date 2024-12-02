@@ -33,19 +33,19 @@ bool ABlotGameMode::IsExperienceLoaded() const
 	return ExperienceComponent->GetIsExperienceLoadedCompoleted();
 }
 
-UExperiencePawnData* ABlotGameMode::GetPawnDataFromPlayerStateOrExperience(const AController* Controller) const
+const UExperiencePawnData* ABlotGameMode::GetPawnDataFromPlayerStateOrExperience(const AController* Controller) const
 {
-	// //从PlayerStata中获取PawnData
-	// if(Controller!=nullptr)
-	// {
-	// 	if(ABlotPlayerState* BlotPlayerState=Controller->GetPlayerState<ABlotPlayerState>())
-	// 	{
-	// 		if(UExperiencePawnData* PawnData=BlotPlayerState->GetPawnData())
-	// 		{
-	// 			return PawnData;
-	// 		}
-	// 	}
-	// }
+	//从PlayerStata中获取PawnData
+	if(Controller!=nullptr)
+	{
+		if(ABlotPlayerState* BlotPlayerState=Controller->GetPlayerState<ABlotPlayerState>())
+		{
+			if(const UExperiencePawnData* PawnData = BlotPlayerState->GetPawnData())
+			{
+				return PawnData;
+			}
+		}
+	}
 
 	//从Experience中获取PawnData
 	UExperienceManagerComponent* ExperienceComponent = GameState->FindComponentByClass<UExperienceManagerComponent>();
@@ -110,7 +110,7 @@ APawn* ABlotGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* Ne
 	SpawnInfo.bDeferConstruction = true;
 
 	// 获取玩家数据并验证
-	UExperiencePawnData* PawnData = GetPawnDataFromPlayerStateOrExperience(NewPlayer);
+	const UExperiencePawnData* PawnData = GetPawnDataFromPlayerStateOrExperience(NewPlayer);
 	if (!PawnData)
 	{
 		UE_LOG(LogBlot, Error, TEXT("Failed to retrieve PawnData for player."));

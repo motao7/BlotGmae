@@ -24,8 +24,6 @@ bool UBlotPawnExtensionComponent::CanChangeInitState(UGameFrameworkComponentMana
 	//PawnData有效&&该charatcer(持有该组件的Pawn)本地和服务器端都有控制器控制进入DataAvaliable状态
 	if (CurrentState == BlotGameplayTags::InitState_Spawned && DesiredState == BlotGameplayTags::InitState_DataAvailable)
 	{
-		if (!PawnData) return false;
-
 		const bool bHasAuthority = Pawn->HasAuthority();
 		const bool bIsLocallyControlled = Pawn->IsLocallyControlled();
 
@@ -75,4 +73,45 @@ void UBlotPawnExtensionComponent::CheckDefaultInitialization()
 
 	static const TArray<FGameplayTag> StateChain = { BlotGameplayTags::InitState_Spawned, BlotGameplayTags::InitState_DataAvailable, BlotGameplayTags::InitState_DataInitialized, BlotGameplayTags::InitState_GameplayReady };
 	ContinueInitStateChain(StateChain);
+}
+
+void UBlotPawnExtensionComponent::HandleOnControllerChanged()
+{
+	CheckDefaultInitialization();
+}
+
+void UBlotPawnExtensionComponent::HandleOnPlayerStateReplicated()
+{
+	CheckDefaultInitialization();
+}
+
+void UBlotPawnExtensionComponent::HandleOnSetupPlayerInputComponent()
+{
+	CheckDefaultInitialization();
+}
+
+void UBlotPawnExtensionComponent::OnRegister()
+{
+	Super::OnRegister();
+
+	RegisterInitStateFeature();
+}
+
+void UBlotPawnExtensionComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Listen for when the pawn extension component changes init state
+	BindOnActorInitStateChanged(NAME_None, FGameplayTag(), false);
+
+	// Notifies that we are done spawning, then try the rest of initialization
+	ensure(TryToChangeInitState(BlotGameplayTags::InitState_Spawned));
+	CheckDefaultInitialization();
+}
+
+void UBlotPawnExtensionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UnregisterInitStateFeature();
+	
+	Super::EndPlay(EndPlayReason);
 }

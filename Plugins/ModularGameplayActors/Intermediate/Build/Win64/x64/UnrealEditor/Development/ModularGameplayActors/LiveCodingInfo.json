@@ -5,12 +5,12 @@
 			"ModularGameplayActors.init.gen.cpp.obj",
 			"ModularAIController.cpp.obj",
 			"ModularCharacter.cpp.obj",
+			"ModularGameMode.cpp.obj",
 			"ModularGameplayActorsModule.cpp.obj",
 			"ModularGameState.cpp.obj",
 			"ModularPawn.cpp.obj",
 			"ModularPlayerController.cpp.obj",
-			"ModularPlayerState.cpp.obj",
-			"ModularGameMode.cpp.obj"
+			"ModularPlayerState.cpp.obj"
 		]
 	}
 }

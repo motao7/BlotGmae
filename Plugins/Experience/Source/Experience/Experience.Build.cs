@@ -26,7 +26,7 @@ public class Experience : ModuleRules
 			new string[]
 			{
 				"Core",
-				"ModularGameplay", "GameFeatures",
+				"ModularGameplay", "GameFeatures", "CommonCamera",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

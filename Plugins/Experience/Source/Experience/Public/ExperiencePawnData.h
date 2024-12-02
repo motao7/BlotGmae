@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CommonCameraMode.h"
 #include "Engine/DataAsset.h"
 #include "ExperiencePawnData.generated.h"
 
@@ -21,5 +22,8 @@ public:
 public:
 	UPROPERTY(EditAnywhere,Category="Pawn")
 	TSubclassOf<APawn> PawnClass;
+
+	UPROPERTY(EditAnywhere,Category="Camera")
+	TSubclassOf<UCommonCameraMode> DefaultCameraMode;
 	
 };

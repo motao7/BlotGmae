@@ -37,6 +37,8 @@
 /FUNCTIONPADMIN:6
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
 "D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\Experience\Intermediate\Build\Win64\x64\UnrealEditor\Development\Experience\Module.Experience.cpp.obj"
+"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\Experience\Intermediate\Build\Win64\x64\UnrealEditor\Development\Experience\ExperienceManagerComponent.cpp.obj"
+"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\Experience\Intermediate\Build\Win64\x64\UnrealEditor\Development\Experience\ExperiencePawnData.cpp.obj"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Default.rc2.res"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\CoreUObject\UnrealEditor-CoreUObject.lib"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Engine\UnrealEditor-Engine.lib"
@@ -45,6 +47,7 @@
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Core\UnrealEditor-Core.lib"
 "..\Plugins\Runtime\ModularGameplay\Intermediate\Build\Win64\x64\UnrealEditor\Development\ModularGameplay\UnrealEditor-ModularGameplay.lib"
 "..\Plugins\Runtime\GameFeatures\Intermediate\Build\Win64\x64\UnrealEditor\Development\GameFeatures\UnrealEditor-GameFeatures.lib"
+"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\UnrealEditor-CommonCamera.lib"
 "delayimp.lib"
 "wininet.lib"
 "rpcrt4.lib"

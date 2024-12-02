@@ -28,7 +28,7 @@ public:
 	UFUNCTION(Blueprintable,Category="BlotGameModeFuntion")
 	bool IsExperienceLoaded() const;
 	UFUNCTION(Blueprintable,Category="BlotGameModeFuntion")
-	UExperiencePawnData* GetPawnDataFromPlayerStateOrExperience(const AController* Controller) const;
+	const UExperiencePawnData* GetPawnDataFromPlayerStateOrExperience(const AController* Controller) const;
 	//~Helper Function End
 	
 	//~ GameMode Base  interface

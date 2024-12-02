@@ -3,6 +3,8 @@
 
 #include "Player/BlotPlayerState.h"
 
+#include "ExperienceManagerComponent.h"
+#include "GameFramework/GameStateBase.h"
 #include "Net/UnrealNetwork.h"
 #include "Net/Core/PushModel/PushModel.h"
 
@@ -25,6 +27,19 @@ void ABlotPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	SharedParams.bIsPushBased=true;
 
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass,MyTeamId,SharedParams);
+	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass,ExperiencePawnData,SharedParams);
+}
+
+void ABlotPlayerState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	const UWorld* World = GetWorld();
+	const AGameStateBase* GameStateBase = World->GetGameState();
+	check(GameStateBase);
+	UExperienceManagerComponent* ExperienceManagerComponent=GameStateBase->FindComponentByClass<UExperienceManagerComponent>();
+	check(ExperienceManagerComponent);
+	ExperienceManagerComponent->CallOrReigister_OnExperienceLoaded(FOnExperienceLoaded::FDelegate::CreateUObject(this,&ThisClass::OnExperienceLoaded));
 }
 
 void ABlotPlayerState::SetGenericTeamId(const FGenericTeamId& NewTeamID)
@@ -53,5 +68,12 @@ FOnTeamChangedDelegateSignature& ABlotPlayerState::GetTeamChangedDelegateChecked
 void ABlotPlayerState::OnRep_TeamId(FGenericTeamId OldMyTeamId)
 {
 	ConditionalBroadcastTeamChanged(this, OldMyTeamId, MyTeamId);
+}
+
+void ABlotPlayerState::OnExperienceLoaded(const UExperienceDefination* ExperienceDefination)
+{
+	const UExperiencePawnData* PawnData=ExperienceDefination->DefaultPawnData;
+	check(PawnData);
+	SetPawnData(PawnData);
 }
 

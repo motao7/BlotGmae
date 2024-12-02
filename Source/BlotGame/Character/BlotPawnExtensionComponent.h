@@ -28,6 +28,16 @@ public:
 	/** 状态链中用于标记Hero组件 */
 	static const FName NAME_ActorFeatureName;
 
+	/** This Function is used to call CheckDefaultInitialization() On Controller Changed */
+	void HandleOnControllerChanged();
+	/** This Function is used to call CheckDefaultInitialization() On PlayerStateReplicated */
+	void HandleOnPlayerStateReplicated();
+	/** This Function is used to call CheckDefaultInitialization() On OnSetupPlayerInputComponent */
+	void HandleOnSetupPlayerInputComponent();
+	
 protected:
-	TObjectPtr<const UExperiencePawnData> PawnData;
+	virtual void OnRegister() override;
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 };

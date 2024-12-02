@@ -1,0 +1,19 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\commoncamera\\source\\commoncamera\\private\\commoncameracomponent.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\engine\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\commoncamera\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\commoncamera\\definitions.commoncamera.h",
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\commoncamera\\source\\commoncamera\\public\\commoncameracomponent.h",
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\engine\\source\\runtime\\engine\\classes\\camera\\cameracomponent.h",
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\cameracomponent.generated.h",
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\commoncamera\\intermediate\\build\\win64\\unrealeditor\\inc\\commoncamera\\uht\\commoncameracomponent.generated.h",
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\commoncamera\\source\\commoncamera\\public\\commoncameramode.h",
+            "d:\\baidusyncdisk\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\commoncamera\\intermediate\\build\\win64\\unrealeditor\\inc\\commoncamera\\uht\\commoncameramode.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

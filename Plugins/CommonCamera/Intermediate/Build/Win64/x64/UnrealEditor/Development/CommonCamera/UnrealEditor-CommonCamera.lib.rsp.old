@@ -1,0 +1,15 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-CommonCamera.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
+"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCamera.cpp.obj"
+"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCameraComponent.cpp.obj"
+"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCamera.init.gen.cpp.obj"
+"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCameraComponent.gen.cpp.obj"
+"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Default.rc2.res"
+/OUT:"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\UnrealEditor-CommonCamera.lib"

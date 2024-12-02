@@ -44,6 +44,7 @@ public:
 	void OnExperienceFullLoadCompleted(const UE::GameFeatures::FResult& Result, int ReaminLoadingGameFeatureNum);
 	//~加载Experience主流程
 
+	//如果ExperienceLoaded直接Broadcats委托，如果没激活等激活后OnExperienceFullLoadCompleted会激活所有的绑定 
 	void CallOrReigister_OnExperienceLoaded_HighPriority(FOnExperienceLoaded::FDelegate&& Delegate);
 	/** 注册或执行委托，使用右值引用防止委托绑定回调函数采用Lamda这种包含闭包数据的函数，减少拷贝消耗 */
 	void CallOrReigister_OnExperienceLoaded(FOnExperienceLoaded::FDelegate&& Delegate);

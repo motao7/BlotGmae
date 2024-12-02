@@ -4,6 +4,9 @@
 #include "Character/BlotCharacter.h"
 
 #include "BlotPawnExtensionComponent.h"
+#include "CommonCameraComponent.h"
+#include "Player/BlotPlayerController.h"
+#include "Player/BlotPlayerState.h"
 
 
 ABlotCharacter::ABlotCharacter(const FObjectInitializer& ObjectInitializer)
@@ -14,6 +17,52 @@ ABlotCharacter::ABlotCharacter(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	PawnExtensionComponent=CreateDefaultSubobject<UBlotPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
+	CommonCameraComponent=CreateDefaultSubobject<UCommonCameraComponent>(TEXT("CommonCameraComponent"));
+}
+
+ABlotPlayerController* ABlotCharacter::GetBlotPlayerController() const
+{
+	return CastChecked<ABlotPlayerController>(GetController());
+}
+
+ABlotPlayerState* ABlotCharacter::GetBlotPlayerState() const
+{
+	return CastChecked<ABlotPlayerState>(GetPlayerState());
+}
+
+void ABlotCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	PawnExtensionComponent->HandleOnControllerChanged();
+}
+
+void ABlotCharacter::UnPossessed()
+{
+	Super::UnPossessed();
+
+	PawnExtensionComponent->HandleOnControllerChanged();
+}
+
+void ABlotCharacter::OnRep_Controller()
+{
+	Super::OnRep_Controller();
+
+	PawnExtensionComponent->HandleOnControllerChanged();
+}
+
+void ABlotCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	PawnExtensionComponent->HandleOnPlayerStateReplicated();
+}
+
+void ABlotCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PawnExtensionComponent->HandleOnSetupPlayerInputComponent();
 }
 
 void ABlotCharacter::OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState)

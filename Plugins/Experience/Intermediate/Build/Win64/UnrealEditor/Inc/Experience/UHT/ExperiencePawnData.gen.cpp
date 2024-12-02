@@ -10,6 +10,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeExperiencePawnData() {}
 
 // Begin Cross Module References
+COMMONCAMERA_API UClass* Z_Construct_UClass_UCommonCameraMode_NoRegister();
 COREUOBJECT_API UClass* Z_Construct_UClass_UClass();
 ENGINE_API UClass* Z_Construct_UClass_APawn_NoRegister();
 ENGINE_API UClass* Z_Construct_UClass_UPrimaryDataAsset();
@@ -43,8 +44,13 @@ struct Z_Construct_UClass_UExperiencePawnData_Statics
 		{ "Category", "Pawn" },
 		{ "ModuleRelativePath", "Public/ExperiencePawnData.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DefaultCameraMode_MetaData[] = {
+		{ "Category", "Camera" },
+		{ "ModuleRelativePath", "Public/ExperiencePawnData.h" },
+	};
 #endif // WITH_METADATA
 	static const UECodeGen_Private::FClassPropertyParams NewProp_PawnClass;
+	static const UECodeGen_Private::FClassPropertyParams NewProp_DefaultCameraMode;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
@@ -53,8 +59,10 @@ struct Z_Construct_UClass_UExperiencePawnData_Statics
 	static const UECodeGen_Private::FClassParams ClassParams;
 };
 const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_UExperiencePawnData_Statics::NewProp_PawnClass = { "PawnClass", nullptr, (EPropertyFlags)0x0014000000000011, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UExperiencePawnData, PawnClass), Z_Construct_UClass_UClass, Z_Construct_UClass_APawn_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_PawnClass_MetaData), NewProp_PawnClass_MetaData) };
+const UECodeGen_Private::FClassPropertyParams Z_Construct_UClass_UExperiencePawnData_Statics::NewProp_DefaultCameraMode = { "DefaultCameraMode", nullptr, (EPropertyFlags)0x0014000000000011, UECodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UExperiencePawnData, DefaultCameraMode), Z_Construct_UClass_UClass, Z_Construct_UClass_UCommonCameraMode_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DefaultCameraMode_MetaData), NewProp_DefaultCameraMode_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UExperiencePawnData_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UExperiencePawnData_Statics::NewProp_PawnClass,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UExperiencePawnData_Statics::NewProp_DefaultCameraMode,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_UExperiencePawnData_Statics::PropPointers) < 2048);
 UObject* (*const Z_Construct_UClass_UExperiencePawnData_Statics::DependentSingletons[])() = {
@@ -97,10 +105,10 @@ UExperiencePawnData::~UExperiencePawnData() {}
 struct Z_CompiledInDeferFile_FID_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperiencePawnData_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UExperiencePawnData, UExperiencePawnData::StaticClass, TEXT("UExperiencePawnData"), &Z_Registration_Info_UClass_UExperiencePawnData, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UExperiencePawnData), 3001493851U) },
+		{ Z_Construct_UClass_UExperiencePawnData, UExperiencePawnData::StaticClass, TEXT("UExperiencePawnData"), &Z_Registration_Info_UClass_UExperiencePawnData, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UExperiencePawnData), 574489073U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperiencePawnData_h_1114265383(TEXT("/Script/Experience"),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperiencePawnData_h_2148616971(TEXT("/Script/Experience"),
 	Z_CompiledInDeferFile_FID_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperiencePawnData_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperiencePawnData_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
