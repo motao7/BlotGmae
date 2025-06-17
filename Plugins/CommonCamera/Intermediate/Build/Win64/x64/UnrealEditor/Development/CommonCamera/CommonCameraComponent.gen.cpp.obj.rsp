@@ -1,11 +1,11 @@
-"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\UnrealEditor\Inc\CommonCamera\UHT\CommonCameraComponent.gen.cpp"
-/FI"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h"
-/FI"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\Definitions.CommonCamera.h"
-/Yu"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h"
-/Fp"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.pch"
-/Fo"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCameraComponent.gen.cpp.obj"
-/sourceDependencies "D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCameraComponent.gen.cpp.dep.json"
-@"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCamera.Shared.rsp"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\UnrealEditor\Inc\CommonCamera\UHT\CommonCameraComponent.gen.cpp"
+/FI"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Intermediate\Build\Win64\x64\BlotEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h"
+/FI"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\Definitions.CommonCamera.h"
+/Yu"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Intermediate\Build\Win64\x64\BlotEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h"
+/Fp"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Intermediate\Build\Win64\x64\BlotEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.pch"
+/Fo"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCameraComponent.gen.cpp.obj"
+/sourceDependencies "D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCameraComponent.gen.cpp.dep.json"
+@"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCamera.Shared.rsp"
 /Zc:inline
 /nologo
 /Oi

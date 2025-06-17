@@ -6,10 +6,10 @@
 /NAME:"UnrealEditor-CommonCamera.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
-"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCamera.cpp.obj"
-"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCameraComponent.cpp.obj"
-"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCamera.init.gen.cpp.obj"
-"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCameraComponent.gen.cpp.obj"
-"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Default.rc2.res"
-/OUT:"D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\UnrealEditor-CommonCamera.lib"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Intermediate\Build\Win64\x64\BlotEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.obj"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\Module.CommonCamera.cpp.obj"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCameraMode.cpp.obj"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCamera.init.gen.cpp.obj"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\CommonCameraMode.gen.cpp.obj"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\Default.rc2.res"
+/OUT:"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\x64\UnrealEditor\Development\CommonCamera\UnrealEditor-CommonCamera.lib"

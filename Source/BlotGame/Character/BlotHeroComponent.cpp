@@ -8,11 +8,16 @@
 #include "BlotPawnExtensionComponent.h"
 #include "CommonCameraComponent.h"
 #include "CommonCameraMode.h"
+#include "EnhancedInputSubsystems.h"
 #include "ExperiencePawnData.h"
+#include "TagInputComponent.h"
 #include "Team.h"
 #include "Components/GameFrameworkComponentManager.h"
 #include "Player/BlotPlayerController.h"
 #include "Player/BlotPlayerState.h"
+#include "TagInputConfig.h"
+#include "InputMappingContext.h"
+#include "UserSettings/EnhancedInputUserSettings.h"
 
 const FName UBlotHeroComponent::NAME_ActorFeatureName("Hero");
 
@@ -90,6 +95,16 @@ void UBlotHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* M
 				CameraComponent->DetermindCameraModeOnPawnDataSetDelgate.BindUObject(this,&ThisClass::DetermindCameraModeOnPawnDataSet);
 			}
 		}
+
+		//Init InputSystem
+		APawn* Pawn = GetPawn<APawn>();
+		if (ABlotPlayerController* LyraPC = GetController<ABlotPlayerController>())
+		{
+			if (Pawn->InputComponent != nullptr)
+			{
+				InitializePlayerInput(Pawn->InputComponent);
+			}
+		}
 	}
 }
 
@@ -137,7 +152,87 @@ void UBlotHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-TSubclassOf<UCommonCameraMode> UBlotHeroComponent::DetermindCameraModeOnPawnDataSet() const
+void UBlotHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent)
+{
+	check(PlayerInputComponent); // 关键系统失败可崩溃
+
+	const APawn* Pawn = GetPawn<APawn>();
+	if (!ensureMsgf(Pawn, TEXT("Pawn is null in SetupPlayerInputComponent")))
+	{
+		return;
+	}
+	
+	const APlayerController* PC = GetController<APlayerController>();
+	if (!ensureMsgf(PC, TEXT("PlayerController is null in SetupPlayerInputComponent")))
+	{
+		return;
+	}
+	
+	const ULocalPlayer* LP = PC->GetLocalPlayer();
+	if (!ensureMsgf(LP, TEXT("LocalPlayer is null in SetupPlayerInputComponent")))
+	{
+		return;
+	}
+	
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	if (!ensureMsgf(Subsystem, TEXT("EnhancedInputLocalPlayerSubsystem is null")))
+	{
+		return;
+	}
+	
+	Subsystem->ClearAllMappings();
+	
+	const UBlotPawnExtensionComponent* PawnExtComp = Pawn->FindComponentByClass<UBlotPawnExtensionComponent>();
+	if (!ensureMsgf(PawnExtComp, TEXT("Missing UBlotPawnExtensionComponent on pawn")))
+	{
+		return;
+	}
+	
+	const UExperiencePawnData* PawnData = GetPlayerState<ABlotPlayerState>()->GetPawnData();
+	if (!ensureMsgf(PawnData, TEXT("PawnData is null in PawnExtensionComponent")))
+	{
+		return;
+	}
+	
+	const UTagInputConfig* InputConfig = PawnData->InputConfig;
+	if (!ensureMsgf(InputConfig, TEXT("InputConfig is null in PawnData")))
+	{
+		return;
+	}
+
+	//疑问:这里应该在GFA_AddinputMapping中添加向local player
+
+	//怎么将pawn的InputComponent设置为TagInputComponent?
+	UTagInputComponent* BlotIC = Cast<UTagInputComponent>(PlayerInputComponent);
+	if (!ensureMsgf(BlotIC, TEXT("Unexpected Input Component class! Should be UTagInputComponent or subclass")))
+	{
+		return;
+	}
+	
+	const TArray<FInputMappingContextAndPriority>& MappingAndPrioritys = PawnData->InputMappingAndPrioritys;
+
+	for (const auto& MappingAndPriority : MappingAndPrioritys)
+	{
+		UInputMappingContext* Mapping = MappingAndPriority.InputMapping.LoadSynchronous();
+		if (!Mapping)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to load InputMappingContext!"));
+			continue;
+		}
+
+		FModifyContextOptions Options;
+		Options.bIgnoreAllPressedKeysUntilRelease = false;
+
+		Subsystem->AddMappingContext(Mapping, MappingAndPriority.Priority, Options);
+	}
+	
+	// 绑定输入行为到 GameplayTag（确保 Config 中存在相关标签）
+	BlotIC->BindNativeAction(InputConfig, BlotGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move, false);
+	BlotIC->BindNativeAction(InputConfig, BlotGameplayTags::InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse, false);
+	BlotIC->BindNativeAction(InputConfig, BlotGameplayTags::InputTag_Crouch, ETriggerEvent::Triggered, this, &ThisClass::Input_Crouch, false);
+}
+	
+	TSubclassOf<UCommonCameraMode> UBlotHeroComponent::DetermindCameraModeOnPawnDataSet() const
 {
 	if(ABlotPlayerState* BlotPS=GetPlayerState<ABlotPlayerState>())
 	{
@@ -149,5 +244,58 @@ TSubclassOf<UCommonCameraMode> UBlotHeroComponent::DetermindCameraModeOnPawnData
 	{
 		UE_LOG(LogTeam,Type::Error,TEXT("HeroComponent Only Can be Used On Blot Characer "))
 		return nullptr;
+	}
+}
+
+void UBlotHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
+{
+	APawn* Pawn = GetPawn<APawn>();
+
+	if (AController* Controller = Pawn ? Pawn->GetController() : nullptr)
+	{
+		const FVector2D Value = InputActionValue.Get<FVector2D>();
+		const FRotator MovementRotation(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
+
+		if (Value.X != 0.0f)
+		{
+			const FVector MovementDirection = MovementRotation.RotateVector(FVector::RightVector);
+			Pawn->AddMovementInput(MovementDirection, Value.X);
+		}
+
+		if (Value.Y != 0.0f)
+		{
+			const FVector MovementDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+			Pawn->AddMovementInput(MovementDirection, Value.Y);
+		}
+	}
+}
+
+void UBlotHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)
+{
+	APawn* Pawn = GetPawn<APawn>();
+
+	if (!Pawn)
+	{
+		return;
+	}
+	
+	const FVector2D Value = InputActionValue.Get<FVector2D>();
+
+	if (Value.X != 0.0f)
+	{
+		Pawn->AddControllerYawInput(Value.X);
+	}
+
+	if (Value.Y != 0.0f)
+	{
+		Pawn->AddControllerPitchInput(Value.Y);
+	}
+}
+
+void UBlotHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)
+{
+	if (ABlotCharacter* Character = GetPawn<ABlotCharacter>())
+	{
+		Character->ToggleCrouch();
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{04D90838-4020-B19A-9A57-3DB90672779D}",
+	"EngineAssociation": "5.4",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -12,7 +12,8 @@
 				"DeveloperSettings",
 				"Engine",
 				"ModularGameplay",
-				"CoreUObject"
+				"CoreUObject",
+				"Experience"
 			]
 		},
 		{
@@ -296,8 +297,24 @@
 			"Enabled": true
 		},
 		{
+			"Name": "TagInput",
+			"Enabled": true
+		},
+		{
 			"Name": "TEST",
 			"Enabled": false
+		},
+		{
+			"Name": "PCG",
+			"Enabled": true
+		},
+		{
+			"Name": "PCGExternalDataInterop",
+			"Enabled": true
+		},
+		{
+			"Name": "PCGGeometryScriptInterop",
+			"Enabled": true
 		}
 	]
 }

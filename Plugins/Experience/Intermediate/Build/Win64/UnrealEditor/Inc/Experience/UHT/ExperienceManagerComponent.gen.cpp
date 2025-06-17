@@ -57,7 +57,7 @@ void UExperienceManagerComponent::StaticRegisterNativesUExperienceManagerCompone
 {
 	UClass* Class = UExperienceManagerComponent::StaticClass();
 	static const FNameNativePtrPair Funcs[] = {
-		{ "OnRep_CurrentExperience", &UExperienceManagerComponent::execOnRep_CurrentExperience, ERASE_METHOD_PTR(UExperienceManagerComponent,OnRep_CurrentExperience,(),ERASE_ARGUMENT_PACK(void)) },
+		{ "OnRep_CurrentExperience", &UExperienceManagerComponent::execOnRep_CurrentExperience },
 	};
 	FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
 }
@@ -101,7 +101,7 @@ struct Z_Construct_UClass_UExperienceManagerComponent_Statics
 	};
 	static const UECodeGen_Private::FClassParams ClassParams;
 };
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UExperienceManagerComponent_Statics::NewProp_CurrentExperience = { "CurrentExperience", "OnRep_CurrentExperience", (EPropertyFlags)0x0124080100800020, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UExperienceManagerComponent, CurrentExperience), Z_Construct_UClass_UExperienceDefination_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentExperience_MetaData), NewProp_CurrentExperience_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UExperienceManagerComponent_Statics::NewProp_CurrentExperience = { "CurrentExperience", "OnRep_CurrentExperience", (EPropertyFlags)0x0124080100000020, UECodeGen_Private::EPropertyGenFlags::Object | UECodeGen_Private::EPropertyGenFlags::ObjectPtr, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(UExperienceManagerComponent, CurrentExperience), Z_Construct_UClass_UExperienceDefination_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentExperience_MetaData), NewProp_CurrentExperience_MetaData) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UExperienceManagerComponent_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UExperienceManagerComponent_Statics::NewProp_CurrentExperience,
 };
@@ -150,14 +150,14 @@ UExperienceManagerComponent::~UExperienceManagerComponent() {}
 // End Class UExperienceManagerComponent
 
 // Begin Registration
-struct Z_CompiledInDeferFile_FID_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperienceManagerComponent_h_Statics
+struct Z_CompiledInDeferFile_FID_UE5_Projects_Angelscript_5_4_2_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperienceManagerComponent_h_Statics
 {
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_UExperienceManagerComponent, UExperienceManagerComponent::StaticClass, TEXT("UExperienceManagerComponent"), &Z_Registration_Info_UClass_UExperienceManagerComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UExperienceManagerComponent), 851367911U) },
+		{ Z_Construct_UClass_UExperienceManagerComponent, UExperienceManagerComponent::StaticClass, TEXT("UExperienceManagerComponent"), &Z_Registration_Info_UClass_UExperienceManagerComponent, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UExperienceManagerComponent), 444239884U) },
 	};
 };
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperienceManagerComponent_h_4104602537(TEXT("/Script/Experience"),
-	Z_CompiledInDeferFile_FID_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperienceManagerComponent_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperienceManagerComponent_h_Statics::ClassInfo),
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_UE5_Projects_Angelscript_5_4_2_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperienceManagerComponent_h_200946624(TEXT("/Script/Experience"),
+	Z_CompiledInDeferFile_FID_UE5_Projects_Angelscript_5_4_2_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperienceManagerComponent_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_UE5_Projects_Angelscript_5_4_2_Samples_Games_Blot_Plugins_Experience_Source_Experience_Public_ExperienceManagerComponent_h_Statics::ClassInfo),
 	nullptr, 0,
 	nullptr, 0);
 // End Registration

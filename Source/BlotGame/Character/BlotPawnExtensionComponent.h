@@ -34,7 +34,7 @@ public:
 	void HandleOnPlayerStateReplicated();
 	/** This Function is used to call CheckDefaultInitialization() On OnSetupPlayerInputComponent */
 	void HandleOnSetupPlayerInputComponent();
-	
+
 protected:
 	virtual void OnRegister() override;
 	virtual void BeginPlay() override;

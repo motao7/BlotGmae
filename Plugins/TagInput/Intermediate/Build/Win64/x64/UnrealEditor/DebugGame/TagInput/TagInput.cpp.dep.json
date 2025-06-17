@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\taginput\\source\\taginput\\private\\taginput.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\intermediate\\build\\win64\\x64\\bloteditor\\debuggame\\unrealed\\sharedpch.unrealed.project.nonoptimized.valapi.cpp20.h.pch",
+        "Includes": [
+            "d:\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\taginput\\intermediate\\build\\win64\\x64\\unrealeditor\\debuggame\\taginput\\definitions.taginput.h",
+            "d:\\ue5_projects\\angelscript-5.4.2\\samples\\games\\blot\\plugins\\taginput\\source\\taginput\\public\\taginput.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

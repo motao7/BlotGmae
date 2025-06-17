@@ -3,13 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "Components/GameFrameworkInitStateInterface.h"
 #include "Components/PawnComponent.h"
 #include "BlotHeroComponent.generated.h"
 
+class UInputMappingContext;
 class ABlotCharacter;
 class UCommonCameraMode;
 class UBlotCameraMode;
+class UInputComponent;
 template <class TClass> class TSubclassOf;
 
 /**
@@ -37,7 +40,12 @@ protected:
 	virtual void OnRegister() override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
+
+	void InitializePlayerInput(UInputComponent* PlayerInputComponent);
+
 private:
 	TSubclassOf<UCommonCameraMode> DetermindCameraModeOnPawnDataSet() const;
+	void Input_Move(const FInputActionValue& InputActionValue);
+	void Input_LookMouse(const FInputActionValue& InputActionValue);
+	void Input_Crouch(const FInputActionValue& InputActionValue);
 };

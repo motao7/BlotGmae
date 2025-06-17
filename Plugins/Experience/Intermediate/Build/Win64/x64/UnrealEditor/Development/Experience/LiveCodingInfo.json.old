@@ -2,18 +2,18 @@
 	"RemapUnityFiles": 
 	{
 		"Module.Experience.cpp.obj": [
+			"Experience.cpp.obj",
+			"ExperienceActionSet.cpp.obj",
+			"ExperienceDefination.cpp.obj",
+			"ExperienceManagerComponent.cpp.obj",
+			"ExperiencePawnData.cpp.obj",
+			"ExperienceWorldSetting.cpp.obj",
 			"Experience.init.gen.cpp.obj",
 			"ExperienceActionSet.gen.cpp.obj",
 			"ExperienceDefination.gen.cpp.obj",
 			"ExperienceManagerComponent.gen.cpp.obj",
 			"ExperiencePawnData.gen.cpp.obj",
-			"ExperienceWorldSetting.gen.cpp.obj",
-			"Experience.cpp.obj",
-			"ExperienceActionSet.cpp.obj",
-			"ExperienceDefination.cpp.obj",
-			"ExperienceWorldSetting.cpp.obj",
-			"ExperienceManagerComponent.cpp.obj",
-			"ExperiencePawnData.cpp.obj"
+			"ExperienceWorldSetting.gen.cpp.obj"
 		]
 	}
 }

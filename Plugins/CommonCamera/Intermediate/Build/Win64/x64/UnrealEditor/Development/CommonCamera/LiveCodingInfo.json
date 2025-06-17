@@ -1,5 +1,13 @@
 {
 	"RemapUnityFiles": 
 	{
+		"Module.CommonCamera.cpp.obj": [
+			"CommonCamera.cpp.obj",
+			"CommonCameraComponent.cpp.obj",
+			"CommonCamera.init.gen.cpp.obj",
+			"CommonCameraComponent.gen.cpp.obj",
+			"CommonCameraMode.gen.cpp.obj",
+			"CommonCameraMode.cpp.obj"
+		]
 	}
 }

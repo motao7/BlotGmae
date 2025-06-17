@@ -71,3 +71,15 @@ void ABlotCharacter::OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerS
 
 	ListenForTeamChange();
 }
+
+void ABlotCharacter::ToggleCrouch()
+{
+	if (bIsCrouched)
+	{
+		UnCrouch();
+	}
+	else
+	{
+		Crouch();
+	}
+}

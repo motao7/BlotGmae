@@ -294,6 +294,9 @@
 /I "..\Plugins\Runtime\DataRegistry\Intermediate\Build\Win64\UnrealEditor\Inc\DataRegistry\UHT"
 /I "..\Plugins\Runtime\DataRegistry\Source"
 /I "..\Plugins\Runtime\DataRegistry\Source\DataRegistry\Public"
+/I "D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Intermediate\Build\Win64\UnrealEditor\Inc\CommonCamera\UHT"
+/I "D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Source"
+/I "D:\BaiduSyncdisk\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\CommonCamera\Source\CommonCamera\Public"
 /external:W0
 /external:I "ThirdParty\LibTiff\Source\Win64"
 /external:I "ThirdParty\LibTiff\Source"

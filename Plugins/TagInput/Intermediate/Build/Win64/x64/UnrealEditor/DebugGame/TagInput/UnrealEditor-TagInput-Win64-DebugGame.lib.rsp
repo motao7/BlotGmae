@@ -1,0 +1,17 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-TagInput-Win64-DebugGame.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Intermediate\Build\Win64\x64\BlotEditor\DebugGame\UnrealEd\SharedPCH.UnrealEd.Project.NonOptimized.ValApi.Cpp20.h.obj"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\TagInput\Intermediate\Build\Win64\x64\UnrealEditor\DebugGame\TagInput\TagInput.cpp.obj"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\TagInput\Intermediate\Build\Win64\x64\UnrealEditor\DebugGame\TagInput\TagInputComponent.cpp.obj"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\TagInput\Intermediate\Build\Win64\x64\UnrealEditor\DebugGame\TagInput\TagInputConfig.cpp.obj"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\TagInput\Intermediate\Build\Win64\x64\UnrealEditor\DebugGame\TagInput\TagInput.init.gen.cpp.obj"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\TagInput\Intermediate\Build\Win64\x64\UnrealEditor\DebugGame\TagInput\TagInputComponent.gen.cpp.obj"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\TagInput\Intermediate\Build\Win64\x64\UnrealEditor\DebugGame\TagInput\TagInputConfig.gen.cpp.obj"
+"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\TagInput\Intermediate\Build\Win64\x64\UnrealEditor\DebugGame\TagInput\Default.rc2.res"
+/OUT:"D:\UE5_Projects\Angelscript-5.4.2\Samples\Games\Blot\Plugins\TagInput\Intermediate\Build\Win64\x64\UnrealEditor\DebugGame\TagInput\UnrealEditor-TagInput-Win64-DebugGame.lib"

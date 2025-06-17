@@ -31,6 +31,8 @@ public:
 	virtual void OnRep_Controller() override;
 	virtual void OnRep_PlayerState() override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	void ToggleCrouch();
 	
 protected:
 	//~ Pawn

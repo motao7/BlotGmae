@@ -33,6 +33,14 @@
 			"Enabled": true
 		},
 		{
+			"Name": "TagInput",
+			"Enabled": true
+		},
+		{
+			"Name": "EnhancedInput",
+			"Enabled": true
+		},
+		{
 			"Name": "CommonCamera",
 			"Enabled": true
 		}

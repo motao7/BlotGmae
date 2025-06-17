@@ -5,9 +5,12 @@
 
 #include "BlotGameState.h"
 #include "BlotLogChannels.h"
+#include "BlotWorldSetting.h"
 #include "ExperienceDefination.h"
 #include "ExperienceManagerComponent.h"
 #include "ExperienceWorldSetting.h"
+#include "Character/BlotPawnExtensionComponent.h"
+#include "Engine/AssetManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Player/BlotPlayerController.h"
 #include "Player/BlotPlayerState.h"
@@ -74,6 +77,49 @@ void ABlotGameMode::OnExperienceLoaded(const UExperienceDefination* ExperienceDe
 			}
 		}
 	}
+	
+}
+
+void ABlotGameMode::TravelToStoredMap() const
+{
+	// // 2. 获取 ExperienceComponent
+	// UExperienceManagerComponent* ExperienceComponent = GameState->FindComponentByClass<UExperienceManagerComponent>();
+	// if (!ExperienceComponent)
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("Missing ExperienceManagerComponent on GameState!"));
+	// 	return;
+	// }
+	//
+	// // 3. 获取当前 Experience
+	// const UExperienceDefination* Experience = ExperienceComponent->GetCurrentExperience();
+	// if (!Experience || !Experience->MapID.IsValid())
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("Invalid Experience or MapID!"));
+	// 	return;
+	// }
+	//
+	// FSoftObjectPath MapPath = UAssetManager::Get().GetPrimaryAssetPath(Experience->MapID);
+	// if (MapPath.IsValid())
+	// {
+	// 	ServerTravelToMap(MapPath.GetAssetName());
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("Failed to resolve map path!"));
+	// }
+}
+
+void ABlotGameMode::ServerTravelToMap(const FString& MapName) const
+{
+	if (MapName.IsEmpty())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MapName is empty!"));
+		return;
+	}
+
+	// 格式化为完整地图路径（如 "/Game/Maps/MainMenu?listen"）
+	const FString FullPath = FString::Printf(TEXT("/Game/Maps/%s?listen"), *MapName);
+	GetWorld()->ServerTravel(FullPath);
 }
 
 void ABlotGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -122,13 +168,20 @@ APawn* ABlotGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* Ne
 		UE_LOG(LogBlot, Error, TEXT("PawnClass is invalid for the player: %s"), *NewPlayer->GetName());
 		return nullptr;
 	}
-
+	
 	// 生成角色
 	APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnData->PawnClass, SpawnTransform, SpawnInfo);
 	if (!SpawnedPawn)
 	{
 		UE_LOG(LogBlot, Error, TEXT("Failed to spawn pawn for player: %s"), *NewPlayer->GetName());
 		return nullptr;
+	}
+
+	UBlotPawnExtensionComponent* PawnExtCom=SpawnedPawn->FindComponentByClass<UBlotPawnExtensionComponent>();
+	if (!PawnExtCom)
+	{
+		UE_LOG(LogBlot, Error, TEXT("UBlotPawnExtensionComponent not found on Pawn %s!"), *GetNameSafe(SpawnedPawn));
+		return nullptr; 
 	}
 
 	// 完成角色生成

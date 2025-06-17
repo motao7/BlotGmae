@@ -3,6 +3,7 @@
 #include "Experience.h"
 
 #define LOCTEXT_NAMESPACE "FExperienceModule"
+DEFINE_LOG_CATEGORY(LogExperience);
 
 void FExperienceModule::StartupModule()
 {

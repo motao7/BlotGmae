@@ -68,7 +68,7 @@ public class BlotGame : ModuleRules
 				"DTLSHandlerComponent", 
 				
 				"Experience",
-				"ShooterCoreRuntime", "Team","CommonCamera"
+				"ShooterCoreRuntime", "Team","CommonCamera","TagInput"
 			}
 		);
 		

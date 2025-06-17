@@ -21,15 +21,13 @@ class BLOTGAME_API ABlotGameMode : public AModularGameModeBase
 
 public:
 	ABlotGameMode(const FObjectInitializer& ObjectInitializer);
-
-	//~Helper Function
+	
 	UFUNCTION(Blueprintable,Category="BlotGameModeFuntion")
 	AGameStateBase* GetGameState();
 	UFUNCTION(Blueprintable,Category="BlotGameModeFuntion")
 	bool IsExperienceLoaded() const;
 	UFUNCTION(Blueprintable,Category="BlotGameModeFuntion")
 	const UExperiencePawnData* GetPawnDataFromPlayerStateOrExperience(const AController* Controller) const;
-	//~Helper Function End
 	
 	//~ GameMode Base  interface
 	//HandleStartingNewPlayer_Implementation先于InitGame
@@ -45,6 +43,10 @@ public:
 	/* 调用RestartPlayer函数去生成Pawm , RestartPlayer->pawnDefaultPawnAtTransform */
 	void OnExperienceLoaded(const UExperienceDefination* ExperienceDefination);
 
-protected:
+	UFUNCTION(BlueprintCallable)
+	void TravelToStoredMap() const;
+
+private:
+	void ServerTravelToMap(const FString& MapName) const;
 
 };

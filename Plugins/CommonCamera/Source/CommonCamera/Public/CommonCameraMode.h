@@ -79,7 +79,7 @@ private:
 	//当你在使用一个指针前check了它，如果使用过程中报错，那大概率就是该指针被垃圾系统回收了，用UPORPERTY()可以让GC系统追踪其的生命周期保持与class一致?
 	//优化性能：不必要的 UPROPERTY() 会增加序列化和反射负担，尽量避免滥用。
 	//引擎中的 UObject 类型变量，如果没有 UPROPERTY() 修饰，垃圾回收系统（GC）无法识别它，可能导致其意外被回收。
-	//如果指针的尽头为UObject对象，那么该属性就应该标记为UPROPERTY()
+	//如果指针的尽头为UObject对象，那么该属性就应该标记为UPROPERTY() 
 	UPROPERTY()
 	TArray<TObjectPtr<UCommonCameraMode>> CameraModeInstances;
 	UPROPERTY()
