@@ -5,6 +5,7 @@
 
 #include "BlotGameplayTag.h"
 #include "Components/GameFrameworkComponentManager.h"
+#include "Player/BlotPlayerState.h"
 
 const FName UBlotPawnExtensionComponent::NAME_ActorFeatureName("PawnExtension");
 
@@ -24,12 +25,17 @@ bool UBlotPawnExtensionComponent::CanChangeInitState(UGameFrameworkComponentMana
 	//PawnData有效&&该charatcer(持有该组件的Pawn)本地和服务器端都有控制器控制进入DataAvaliable状态
 	if (CurrentState == BlotGameplayTags::InitState_Spawned && DesiredState == BlotGameplayTags::InitState_DataAvailable)
 	{
+		ABlotPlayerState* PS=GetPlayerState<ABlotPlayerState>();
+		if (!PS) return false;
+
+		if (!PS->GetPawnData()) return false;
+		
 		const bool bHasAuthority = Pawn->HasAuthority();
 		const bool bIsLocallyControlled = Pawn->IsLocallyControlled();
 
 		if (bHasAuthority || bIsLocallyControlled)
 		{
-			if (!GetController<AController>()) return false;
+			if (!Pawn->GetController()) return false;
 		}
 
 		return true;

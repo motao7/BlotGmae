@@ -7,6 +7,7 @@
 #include "ModularGameMode.h"
 #include "BlotGameMode.generated.h"
 
+class UVoxelGeneraionComponent;
 class UExperienceDefination;
 class UExperienceManagerComponent;
 class UExperiencePawnData;
@@ -43,8 +44,7 @@ public:
 	/* 调用RestartPlayer函数去生成Pawm , RestartPlayer->pawnDefaultPawnAtTransform */
 	void OnExperienceLoaded(const UExperienceDefination* ExperienceDefination);
 
-	UFUNCTION(BlueprintCallable)
-	void TravelToStoredMap() const;
+protected:
 
 private:
 	void ServerTravelToMap(const FString& MapName) const;

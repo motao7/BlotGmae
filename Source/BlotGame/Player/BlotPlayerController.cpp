@@ -3,7 +3,9 @@
 #include "Player/BlotPlayerController.h"
 //报错:没有将“USING_CHEAT_MANAGER”定义为预处理器宏，用“0”替换“#if/#elif”，
 //如果你在BlotCheatManager.h文件中定义了你需要在使用该宏的地方添加头文件
+#include "AbilitySystem/BlotAbilitySystemComponent.h"
 #include "BlotCheatManager.h"
+#include "BlotPlayerState.h"
 
 
 ABlotPlayerController::ABlotPlayerController(const FObjectInitializer& ObjectInitializer)
@@ -21,4 +23,16 @@ void ABlotPlayerController::AddCheats(bool bForce)
 #else //#if USING_CHEAT_MANAGER
 	Super::AddCheats(bForce);
 #endif // #else //#if USING_CHEAT_MANAGER
+}
+
+void ABlotPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
+{
+	if (const ABlotPlayerState* PS=GetPlayerState<ABlotPlayerState>())
+	{
+		if (UBlotAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent())
+		{
+			ASC->ProcessAbilityInput(DeltaTime, bGamePaused);
+		}
+	}
+	Super::PostProcessInput(DeltaTime, bGamePaused);
 }

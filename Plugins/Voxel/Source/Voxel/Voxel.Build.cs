@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class Experience : ModuleRules
+public class Voxel : ModuleRules
 {
-	public Experience(ReadOnlyTargetRules Target) : base(Target)
+	public Voxel(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -26,7 +26,6 @@ public class Experience : ModuleRules
 			new string[]
 			{
 				"Core",
-				"ModularGameplay", "GameFeatures", "CommonCamera", "TagInput","EnhancedInput","GameplayTags", "GameplayAbilities",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -38,7 +37,7 @@ public class Experience : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore", 
+				"SlateCore",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

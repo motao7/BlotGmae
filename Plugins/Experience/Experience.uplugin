@@ -41,6 +41,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "GameplayAbilities",
+			"Enabled": true
+		},
+		{
 			"Name": "CommonCamera",
 			"Enabled": true
 		}

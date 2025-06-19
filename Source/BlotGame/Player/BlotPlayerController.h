@@ -19,6 +19,7 @@ public:
 	
 	//~ PlayerControoler 
 	virtual void AddCheats(bool bForce) override;
+	virtual void PostProcessInput(float DeltaTime, bool bGamePaused) override;
 	//~ PlayerControoler End
 	
 };

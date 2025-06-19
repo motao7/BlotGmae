@@ -3,7 +3,9 @@
 
 #include "Character/BlotHeroComponent.h"
 
+#include "AbilitySystem//BlotAbilitySystemComponent.h"
 #include "BlotCharacter.h"
+#include "BlotCharacterMovementComponent.h"
 #include "BlotGameplayTag.h"
 #include "BlotPawnExtensionComponent.h"
 #include "CommonCameraComponent.h"
@@ -17,6 +19,7 @@
 #include "Player/BlotPlayerState.h"
 #include "TagInputConfig.h"
 #include "InputMappingContext.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
 
 const FName UBlotHeroComponent::NAME_ActorFeatureName("Hero");
@@ -42,7 +45,7 @@ check(Manager);
 		// If we're authority or autonomous, we need to wait for a controller with registered ownership of the player state.
 		if (Pawn->GetLocalRole() != ROLE_SimulatedProxy)
 		{
-			AController* Controller = GetController<AController>();
+			AController* Controller = Pawn->GetController();
 
 			const bool bHasControllerPairedWithPS = (Controller != nullptr) && \
 				(Controller->PlayerState != nullptr) && \
@@ -59,7 +62,7 @@ check(Manager);
 
 		if (bIsLocallyControlled && !bIsBot)
 		{
-			ABlotPlayerController* BlotPC = GetController<ABlotPlayerController>();
+			ABlotPlayerController* BlotPC = Cast<ABlotPlayerController>(Pawn->GetController());
 
 			// The input component and local player is required when locally controlled.
 			if (!Pawn->InputComponent || !BlotPC || !BlotPC->GetLocalPlayer()) return false;
@@ -85,24 +88,34 @@ void UBlotHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* M
 {
 	if (CurrentState == BlotGameplayTags::InitState_DataAvailable && DesiredState == BlotGameplayTags::InitState_DataInitialized)
 	{
-		//Init Camera System
-		if(ABlotPlayerState* BlotPS = GetPlayerState<ABlotPlayerState>())
+		APawn* Pawn = GetPawn<APawn>();
+		ABlotPlayerState* PS = GetPlayerState<ABlotPlayerState>();
+		if (!ensure(Pawn && PS))
 		{
-			if(const UExperiencePawnData* PawnData=BlotPS->GetPawnData())
-			{
-				UCommonCameraComponent* CameraComponent=GetOwner()->FindComponentByClass<UCommonCameraComponent>();
-				check(CameraComponent);
-				CameraComponent->DetermindCameraModeOnPawnDataSetDelgate.BindUObject(this,&ThisClass::DetermindCameraModeOnPawnDataSet);
-			}
+			return;
 		}
 
-		//Init InputSystem
-		APawn* Pawn = GetPawn<APawn>();
-		if (ABlotPlayerController* LyraPC = GetController<ABlotPlayerController>())
+		//TODO:后续利用PawnExtComp来初始化或重置ASC
+		if (UBlotPawnExtensionComponent* PawnExtComp =Pawn->GetComponentByClass<UBlotPawnExtensionComponent>())
+		{
+			// // The player state holds the persistent data for this player (state that persists across deaths and multiple pawns).
+			// // The ability system component and attribute sets live on the player state.
+			PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS,Pawn);
+		}
+
+		if (ABlotPlayerController* LyraPC =Cast<ABlotPlayerController>(Pawn->GetController()))
 		{
 			if (Pawn->InputComponent != nullptr)
 			{
 				InitializePlayerInput(Pawn->InputComponent);
+			}
+		}
+		
+		if (const UExperiencePawnData* PawnData = PS->GetPawnData())
+		{
+			if (UCommonCameraComponent* CameraComponent = Pawn->GetComponentByClass<UCommonCameraComponent>())
+			{
+				CameraComponent->DetermindCameraModeOnPawnDataSetDelgate.BindUObject(this, &ThisClass::DetermindCameraModeOnPawnDataSet);
 			}
 		}
 	}
@@ -162,7 +175,7 @@ void UBlotHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompo
 		return;
 	}
 	
-	const APlayerController* PC = GetController<APlayerController>();
+	const ABlotPlayerController* PC =Cast<ABlotPlayerController>(Pawn->GetController());
 	if (!ensureMsgf(PC, TEXT("PlayerController is null in SetupPlayerInputComponent")))
 	{
 		return;
@@ -225,14 +238,14 @@ void UBlotHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompo
 
 		Subsystem->AddMappingContext(Mapping, MappingAndPriority.Priority, Options);
 	}
-	
-	// 绑定输入行为到 GameplayTag（确保 Config 中存在相关标签）
-	BlotIC->BindNativeAction(InputConfig, BlotGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move, false);
-	BlotIC->BindNativeAction(InputConfig, BlotGameplayTags::InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse, false);
-	BlotIC->BindNativeAction(InputConfig, BlotGameplayTags::InputTag_Crouch, ETriggerEvent::Triggered, this, &ThisClass::Input_Crouch, false);
+
+	BlotIC->BindAbilityActions(InputConfig, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased);
+	BlotIC->BindNativeAction(InputConfig, BlotGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
+	BlotIC->BindNativeAction(InputConfig, BlotGameplayTags::InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse);
+	BlotIC->BindNativeAction(InputConfig, BlotGameplayTags::InputTag_Crouch, ETriggerEvent::Triggered, this, &ThisClass::Input_Crouch);
 }
 	
-	TSubclassOf<UCommonCameraMode> UBlotHeroComponent::DetermindCameraModeOnPawnDataSet() const
+TSubclassOf<UCommonCameraMode> UBlotHeroComponent::DetermindCameraModeOnPawnDataSet() const
 {
 	if(ABlotPlayerState* BlotPS=GetPlayerState<ABlotPlayerState>())
 	{
@@ -244,6 +257,34 @@ void UBlotHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputCompo
 	{
 		UE_LOG(LogTeam,Type::Error,TEXT("HeroComponent Only Can be Used On Blot Characer "))
 		return nullptr;
+	}
+}
+
+void UBlotHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	if (const ABlotPlayerState* BlotPS=GetPlayerState<ABlotPlayerState>())
+	{
+		if (UBlotAbilitySystemComponent* ASC = Cast<UBlotAbilitySystemComponent>(BlotPS->GetAbilitySystemComponent()))
+		{
+			ASC->AbilityInputTagPressed(InputTag);
+		}
+	}
+}
+
+void UBlotHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	const APawn* Pawn = GetPawn<APawn>();
+	if (!Pawn)
+	{
+		return;
+	}
+
+	if (const ABlotPlayerState* BlotPS=GetPlayerState<ABlotPlayerState>())
+	{
+		if (UBlotAbilitySystemComponent* ASC = Cast<UBlotAbilitySystemComponent>(BlotPS->GetAbilitySystemComponent()))
+		{
+			ASC->AbilityInputTagReleased(InputTag);
+		}
 	}
 }
 
@@ -299,3 +340,4 @@ void UBlotHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)
 		Character->ToggleCrouch();
 	}
 }
+

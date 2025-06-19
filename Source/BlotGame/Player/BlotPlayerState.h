@@ -3,13 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemComponent.h"
 #include "GenericTeamAgentInterface.h"
 #include "ModularPlayerState.h"
 #include "TeamGenericTeamAgentInterface.h"
 #include "BlotPlayerState.generated.h"
 
+class UBlotCombatAttributeSet;
+class UBlotAbilitySystemComponent;
 class UExperienceDefination;
 class UExperiencePawnData;
+
 /**
  * 
  */
@@ -19,15 +23,16 @@ class BLOTGAME_API ABlotPlayerState : public AModularPlayerState,public FGeneric
 	GENERATED_BODY()
 	
 public:
-	ABlotPlayerState(const FObjectInitializer& ObjectInitialize);
+	ABlotPlayerState(const FObjectInitializer& ObjectInitializeR);
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	/** Bind Function OnExperienceLoaded */
 	virtual void PostInitializeComponents() override;
 	
-	void SetPawnData(const UExperiencePawnData* PawnData){ExperiencePawnData=PawnData;}
+	void SetPawnData(const UExperiencePawnData* PawnData); 
 	const UExperiencePawnData* GetPawnData(){return ExperiencePawnData;}
-
+	UBlotAbilitySystemComponent* GetAbilitySystemComponent() const;
+	
 	//~IGenericTeamAgentInterface Start
 	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override;
 	virtual FGenericTeamId GetGenericTeamId() const override;
@@ -38,16 +43,20 @@ private:
 	UFUNCTION()
 	void OnRep_TeamId(FGenericTeamId OldMyTeamId);
 	
-	UPROPERTY(ReplicatedUsing=OnRep_TeamId)
+	UPROPERTY(VisibleAnywhere,ReplicatedUsing=OnRep_TeamId)
 	FGenericTeamId MyTeamId;
 
 	UPROPERTY()
 	FOnTeamChangedDelegateSignature OnTeamChangedPlayerStateDelegate; 
 	
-private:
-	UPROPERTY(Replicated)
+	UPROPERTY(VisibleAnywhere,Replicated)
 	TObjectPtr<const UExperiencePawnData> ExperiencePawnData;
 
 	void OnExperienceLoaded(const UExperienceDefination* ExperienceDefination);
-	
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UBlotAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UBlotCombatAttributeSet> CombatAttributeSet;
 };

@@ -5,12 +5,10 @@
 
 #include "BlotGameState.h"
 #include "BlotLogChannels.h"
-#include "BlotWorldSetting.h"
 #include "ExperienceDefination.h"
 #include "ExperienceManagerComponent.h"
 #include "ExperienceWorldSetting.h"
 #include "Character/BlotPawnExtensionComponent.h"
-#include "Engine/AssetManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Player/BlotPlayerController.h"
 #include "Player/BlotPlayerState.h"
@@ -78,35 +76,6 @@ void ABlotGameMode::OnExperienceLoaded(const UExperienceDefination* ExperienceDe
 		}
 	}
 	
-}
-
-void ABlotGameMode::TravelToStoredMap() const
-{
-	// // 2. 获取 ExperienceComponent
-	// UExperienceManagerComponent* ExperienceComponent = GameState->FindComponentByClass<UExperienceManagerComponent>();
-	// if (!ExperienceComponent)
-	// {
-	// 	UE_LOG(LogTemp, Error, TEXT("Missing ExperienceManagerComponent on GameState!"));
-	// 	return;
-	// }
-	//
-	// // 3. 获取当前 Experience
-	// const UExperienceDefination* Experience = ExperienceComponent->GetCurrentExperience();
-	// if (!Experience || !Experience->MapID.IsValid())
-	// {
-	// 	UE_LOG(LogTemp, Error, TEXT("Invalid Experience or MapID!"));
-	// 	return;
-	// }
-	//
-	// FSoftObjectPath MapPath = UAssetManager::Get().GetPrimaryAssetPath(Experience->MapID);
-	// if (MapPath.IsValid())
-	// {
-	// 	ServerTravelToMap(MapPath.GetAssetName());
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp, Error, TEXT("Failed to resolve map path!"));
-	// }
 }
 
 void ABlotGameMode::ServerTravelToMap(const FString& MapName) const

@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.4",
+	"EngineAssociation": "{D76A441E-4D79-A448-A1CD-459D1443D63F}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -13,7 +13,8 @@
 				"Engine",
 				"ModularGameplay",
 				"CoreUObject",
-				"Experience"
+				"Experience",
+				"GameplayAbilities"
 			]
 		},
 		{
@@ -298,6 +299,10 @@
 		},
 		{
 			"Name": "TagInput",
+			"Enabled": true
+		},
+		{
+			"Name": "Voxel",
 			"Enabled": true
 		},
 		{

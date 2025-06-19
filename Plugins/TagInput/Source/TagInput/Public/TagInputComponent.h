@@ -20,25 +20,27 @@ class TAGINPUT_API UTagInputComponent : public UEnhancedInputComponent
 	GENERATED_BODY()
 
 public:
+	void RemapJumpToKey(const UTagInputConfig* InputConfig, const FGameplayTag& InputTag,const FKey& NewKey);
+
 	template<class UserClass, typename FuncType>
-	void BindNativeAction(const UTagInputConfig* InputConfig, const FGameplayTag& InputTag, ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func, bool bLogIfNotFound);
+	void BindNativeAction(const UTagInputConfig* InputConfig, const FGameplayTag& InputTag, ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func);
 
 	template<class UserClass, typename PressedFuncType, typename ReleasedFuncType>
-	void BindAbilityActions(const UTagInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc, TArray<uint32>& BindHandles);
+	void BindAbilityActions(const UTagInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc);
 };
 
 template<class UserClass, typename FuncType>
-void UTagInputComponent::BindNativeAction(const UTagInputConfig* InputConfig, const FGameplayTag& InputTag, ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func, bool bLogIfNotFound)
+void UTagInputComponent::BindNativeAction(const UTagInputConfig* InputConfig, const FGameplayTag& InputTag, ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func)
 {
 	check(InputConfig);
-	if (const UInputAction* IA = InputConfig->FindNativeInputActionForTag(InputTag, bLogIfNotFound))
+	if (const UInputAction* IA = InputConfig->FindNativeInputActionForTag(InputTag))
 	{
 		BindAction(IA, TriggerEvent, Object, Func);
 	}
 }
 
 template<class UserClass, typename PressedFuncType, typename ReleasedFuncType>
-void UTagInputComponent::BindAbilityActions(const UTagInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc, TArray<uint32>& BindHandles)
+void UTagInputComponent::BindAbilityActions(const UTagInputConfig* InputConfig, UserClass* Object, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc)
 {
 	check(InputConfig);
 
@@ -48,13 +50,14 @@ void UTagInputComponent::BindAbilityActions(const UTagInputConfig* InputConfig, 
 		{
 			if (PressedFunc)
 			{
-				BindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Triggered, Object, PressedFunc, Action.InputTag).GetHandle());
+				BindAction(Action.InputAction, ETriggerEvent::Triggered, Object, PressedFunc, Action.InputTag);
 			}
 
 			if (ReleasedFunc)
 			{
-				BindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Completed, Object, ReleasedFunc, Action.InputTag).GetHandle());
+				BindAction(Action.InputAction, ETriggerEvent::Completed, Object, ReleasedFunc, Action.InputTag);
 			}
 		}
 	}
 }
+

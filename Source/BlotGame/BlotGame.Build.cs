@@ -10,7 +10,9 @@ public class BlotGame : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
-				"BlotGame"
+				"BlotGame",
+				"BlotGame/AbilitySystem",
+				"BlotGame/AbilitySystem/Attribute"
 			}
 		);
 		
@@ -68,7 +70,7 @@ public class BlotGame : ModuleRules
 				"DTLSHandlerComponent", 
 				
 				"Experience",
-				"ShooterCoreRuntime", "Team","CommonCamera","TagInput"
+				"ShooterCoreRuntime", "Team","CommonCamera","TagInput","Voxel",
 			}
 		);
 		

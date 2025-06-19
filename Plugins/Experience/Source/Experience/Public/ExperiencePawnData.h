@@ -8,6 +8,7 @@
 #include "Engine/DataAsset.h"
 #include "ExperiencePawnData.generated.h"
 
+class UExperienceAbilitySet;
 class UInputMappingContext;
 class UTagInputConfig;
 class AModularCharacter;
@@ -48,4 +49,9 @@ public:
 
 	UPROPERTY(EditAnywhere,Category="Input")
 	TArray<FInputMappingContextAndPriority> InputMappingAndPrioritys;
+
+	// Ability sets to grant to this pawn's ability system.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Lyra|Abilities")
+	TArray<TObjectPtr<UExperienceAbilitySet>> AbilitySets;
+
 };

@@ -4,6 +4,7 @@
 #include "CommonCameraMode.h"
 
 #include "CommonCameraComponent.h"
+#include "GameFramework/Character.h"
 
 ///////////////////////////////////////////////
 ///CameraMode
@@ -18,7 +19,7 @@ UCommonCameraMode::UCommonCameraMode(const FObjectInitializer& ObjectInitializer
 
 void UCommonCameraMode::UpdateCameraMode(float DelatTime)
 {
-	UpdateView();
+	UpdateView(DelatTime);
 	UpdateBlend(DelatTime);
 }
 
@@ -32,9 +33,12 @@ AActor* UCommonCameraMode::GetTarget() const
 	return GetCameraComponent()->GetOwner();
 }
 
-void UCommonCameraMode::UpdateView()
+void UCommonCameraMode::UpdateView(float DeltaTime)
 {
-	CameraModeView.Location=GetPivotLocation();
+	UpdateForTarget(DeltaTime);
+	UpdateCrouchOffset(DeltaTime);
+
+	CameraModeView.Location=GetPivotLocation()+CurrentCrouchOffset;
 	CameraModeView.Rotation=GetPivotRotation();
 	CameraModeView.FOV=FOV;
 }
@@ -42,6 +46,46 @@ void UCommonCameraMode::UpdateView()
 void UCommonCameraMode::UpdateBlend(float DelatTime)
 {
 	BlendWeight+=DelatTime/BlendTime;
+}
+
+void UCommonCameraMode::UpdateForTarget(float DeltaTime)
+{
+	UCommonCameraComponent* CameraCom=CastChecked<UCommonCameraComponent>(GetOuter());
+	if (const ACharacter* TargetCharacter = Cast<ACharacter>(CameraCom->GetOwner()))
+	{
+		if (TargetCharacter->bIsCrouched)
+		{
+			const ACharacter* TargetCharacterCDO = TargetCharacter->GetClass()->GetDefaultObject<ACharacter>();
+			const float CrouchedHeightAdjustment = TargetCharacterCDO->CrouchedEyeHeight - TargetCharacterCDO->BaseEyeHeight;
+
+			SetTargetCrouchOffset(FVector(0.f, 0.f, CrouchedHeightAdjustment));
+
+			return;
+		}
+	}
+
+	SetTargetCrouchOffset(FVector::ZeroVector);
+}
+
+void UCommonCameraMode::SetTargetCrouchOffset(FVector NewTargetOffset)
+{
+	CrouchOffsetBlendPct = 0.0f;
+	InitialCrouchOffset = CurrentCrouchOffset;
+	TargetCrouchOffset = NewTargetOffset;
+}
+
+void UCommonCameraMode::UpdateCrouchOffset(float DeltaTime)
+{
+	if (CrouchOffsetBlendPct < 1.0f)
+	{
+		CrouchOffsetBlendPct = FMath::Min(CrouchOffsetBlendPct + DeltaTime * CrouchOffsetBlendMultiplier, 1.0f);
+		CurrentCrouchOffset = FMath::InterpEaseInOut(InitialCrouchOffset, TargetCrouchOffset, CrouchOffsetBlendPct, 1.0f);
+	}
+	else
+	{
+		CurrentCrouchOffset = TargetCrouchOffset;
+		CrouchOffsetBlendPct = 1.0f;
+	}
 }
 
 FVector UCommonCameraMode::GetPivotLocation() const

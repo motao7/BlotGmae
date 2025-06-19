@@ -3,17 +3,27 @@
 
 #include "Player/BlotPlayerState.h"
 
+#include "BlotCombatAttributeSet.h"
+#include "BlotAbilitySystemComponent.h"
+#include "ExperienceAbilitySet.h"
 #include "ExperienceManagerComponent.h"
+#include "ExperiencePawnData.h"
 #include "GameFramework/GameStateBase.h"
 #include "Net/UnrealNetwork.h"
 #include "Net/Core/PushModel/PushModel.h"
 
 
-ABlotPlayerState::ABlotPlayerState(const FObjectInitializer& ObjectInitialize)
-	:Super(ObjectInitialize)
+ABlotPlayerState::ABlotPlayerState(const FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer)
 {
 	// AbilitySystemComponent needs to be updated at a high frequency.
 	NetUpdateFrequency = 100.0f;
+
+	AbilitySystemComponent = ObjectInitializer.CreateDefaultSubobject<UBlotAbilitySystemComponent>(this, TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
+
+	CombatAttributeSet=CreateDefaultSubobject<UBlotCombatAttributeSet>(TEXT("CombatAttributeSet"));
 	
 	MyTeamId=FGenericTeamId::NoTeam;
 }
@@ -30,16 +40,35 @@ void ABlotPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass,ExperiencePawnData,SharedParams);
 }
 
+UBlotAbilitySystemComponent* ABlotPlayerState::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
 void ABlotPlayerState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+	check(AbilitySystemComponent);
 	const UWorld* World = GetWorld();
 	const AGameStateBase* GameStateBase = World->GetGameState();
 	check(GameStateBase);
 	UExperienceManagerComponent* ExperienceManagerComponent=GameStateBase->FindComponentByClass<UExperienceManagerComponent>();
 	check(ExperienceManagerComponent);
 	ExperienceManagerComponent->CallOrReigister_OnExperienceLoaded(FOnExperienceLoaded::FDelegate::CreateUObject(this,&ThisClass::OnExperienceLoaded));
+}
+
+void ABlotPlayerState::SetPawnData(const UExperiencePawnData* PawnData)
+{
+	ExperiencePawnData=PawnData;
+
+	for (const TObjectPtr<UExperienceAbilitySet> AbilitySet : ExperiencePawnData->AbilitySets)
+	{
+		if (AbilitySet)
+		{
+			AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr);
+		}
+	}
 }
 
 void ABlotPlayerState::SetGenericTeamId(const FGenericTeamId& NewTeamID)

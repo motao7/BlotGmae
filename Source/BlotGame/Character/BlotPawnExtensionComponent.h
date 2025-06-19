@@ -28,12 +28,15 @@ public:
 	/** 状态链中用于标记Hero组件 */
 	static const FName NAME_ActorFeatureName;
 
+	
 	/** This Function is used to call CheckDefaultInitialization() On Controller Changed */
 	void HandleOnControllerChanged();
 	/** This Function is used to call CheckDefaultInitialization() On PlayerStateReplicated */
 	void HandleOnPlayerStateReplicated();
 	/** This Function is used to call CheckDefaultInitialization() On OnSetupPlayerInputComponent */
 	void HandleOnSetupPlayerInputComponent();
+	/** Should be called by the owning pawn when the input component is setup. */
+	void SetupPlayerInputComponent();
 
 protected:
 	virtual void OnRegister() override;
