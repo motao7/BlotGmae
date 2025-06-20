@@ -4,8 +4,9 @@
 #include "System/BlotGameInstance.h"
 
 #include "BlotGameplayTag.h"
+#include "CommonGameUIManagerSubsystem.h"
+#include "CommonLocalPlayer.h"
 #include "Components/GameFrameworkComponentManager.h"
-
 
 void UBlotGameInstance::Init()
 {

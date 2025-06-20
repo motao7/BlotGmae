@@ -1,0 +1,23 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "ModularPlayerController.h"
+#include "CommonPlayerController.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class COMMONUSERINTERFACE_API ACommonPlayerController : public AModularPlayerController
+{
+	GENERATED_BODY()
+
+public:
+	virtual void ReceivedPlayer() override;
+	virtual void SetPawn(APawn* InPawn) override;
+	virtual void OnPossess(APawn* APawn) override;
+	virtual void OnUnPossess() override;
+	virtual void OnRep_PlayerState() override;
+};

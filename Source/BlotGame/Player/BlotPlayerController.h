@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CommonPlayerController.h"
 #include "ModularPlayerController.h"
 #include "BlotPlayerController.generated.h"
 
@@ -10,7 +11,7 @@
  * 
  */
 UCLASS()
-class BLOTGAME_API ABlotPlayerController : public AModularPlayerController
+class BLOTGAME_API ABlotPlayerController : public ACommonPlayerController
 {
 	GENERATED_BODY()
 

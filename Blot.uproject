@@ -14,7 +14,8 @@
 				"ModularGameplay",
 				"CoreUObject",
 				"Experience",
-				"GameplayAbilities"
+				"GameplayAbilities",
+				"CommonUserInterface"
 			]
 		},
 		{
@@ -291,6 +292,14 @@
 		},
 		{
 			"Name": "Experience",
+			"Enabled": true
+		},
+		{
+			"Name": "CommonUserInterface",
+			"Enabled": true
+		},
+		{
+			"Name": "CommonCamera",
 			"Enabled": true
 		},
 		{
