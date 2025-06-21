@@ -1,17 +1,17 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "CommonUserInterface.h"
+#include "CommonGame.h"
 
 #define LOCTEXT_NAMESPACE "FCommonUserInterfaceModule"
 
 DEFINE_LOG_CATEGORY(LogCommonUserInterface);
 
-void FCommonUserInterfaceModule::StartupModule()
+void FCommonGameModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 }
 
-void FCommonUserInterfaceModule::ShutdownModule()
+void FCommonGameModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
@@ -19,4 +19,4 @@ void FCommonUserInterfaceModule::ShutdownModule()
 
 #undef LOCTEXT_NAMESPACE
 	
-IMPLEMENT_MODULE(FCommonUserInterfaceModule, CommonUserInterface)
+IMPLEMENT_MODULE(FCommonGameModule, CommonUserInterface)

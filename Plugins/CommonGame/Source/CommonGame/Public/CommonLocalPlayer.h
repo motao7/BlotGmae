@@ -12,7 +12,7 @@ class UCommonPrimaryGameLayout;
  *		And Support to GetUIRootLayout
  */
 UCLASS()
-class COMMONUSERINTERFACE_API UCommonLocalPlayer : public ULocalPlayer
+class COMMONGAME_API UCommonLocalPlayer : public ULocalPlayer
 {
 	GENERATED_BODY()
 public:

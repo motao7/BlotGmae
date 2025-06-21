@@ -12,7 +12,7 @@ class UCommonGameUIPolicy;
  *		Maintain UIPolicy and provide function to switch UIPolicy
  */
 UCLASS(config = Game)
-class COMMONUSERINTERFACE_API UCommonGameUIManagerSubsystem : public UGameInstanceSubsystem
+class COMMONGAME_API UCommonGameUIManagerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 

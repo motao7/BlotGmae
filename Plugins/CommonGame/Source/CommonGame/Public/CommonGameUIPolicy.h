@@ -37,10 +37,11 @@ public:
  *		Maintain PrimaryGameLayout by use Add/Remove/Create Layout
  */
 UCLASS(Abstract, Blueprintable, Within = CommonGameUIManagerSubsystem)
-class COMMONUSERINTERFACE_API UCommonGameUIPolicy : public UObject
+class COMMONGAME_API UCommonGameUIPolicy : public UObject
 {
 	GENERATED_BODY()
 public:
+	UCommonPrimaryGameLayout* GetRootLayout(const UCommonLocalPlayer* LocalPlayer) const;
 
 protected:
 	void AddLayoutToViewport(UCommonLocalPlayer* LocalPlayer, UCommonPrimaryGameLayout* Layout);

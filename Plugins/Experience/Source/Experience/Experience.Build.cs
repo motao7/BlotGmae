@@ -26,7 +26,7 @@ public class Experience : ModuleRules
 			new string[]
 			{
 				"Core",
-				"ModularGameplay", "GameFeatures", "CommonCamera", "TagInput","EnhancedInput","GameplayTags", "GameplayAbilities",
+				"ModularGameplay", "GameFeatures", "CommonCamera", "TagInput","EnhancedInput","GameplayTags", "GameplayAbilities", "CommonUI",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -38,7 +38,7 @@ public class Experience : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore", 
+				"SlateCore", "CommonGame", "UMG"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

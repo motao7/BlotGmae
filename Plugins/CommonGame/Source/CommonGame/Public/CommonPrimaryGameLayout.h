@@ -18,7 +18,7 @@ class UCommonActivatableWidgetContainerBase;
  *		In charge for Registration of LayerStack
  */
 UCLASS(Abstract, meta = (DisableNativeTick))
-class COMMONUSERINTERFACE_API UCommonPrimaryGameLayout : public UCommonUserWidget
+class COMMONGAME_API UCommonPrimaryGameLayout : public UCommonUserWidget
 {
 	GENERATED_BODY()
 
@@ -31,6 +31,7 @@ public:
 		return PushWidgetToLayerStack<ActivatableWidgetT>(LayerName, ActivatableWidgetClass, [](ActivatableWidgetT&) {});
 	}
 
+	/**Actually place that push widget to layer*/
 	template <typename ActivatableWidgetT = UCommonActivatableWidget>
 	ActivatableWidgetT* PushWidgetToLayerStack(FGameplayTag LayerName, UClass* ActivatableWidgetClass, TFunctionRef<void(ActivatableWidgetT&)> InitInstanceFunc)
 	{

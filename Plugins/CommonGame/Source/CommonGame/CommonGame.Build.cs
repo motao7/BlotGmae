@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class CommonUserInterface : ModuleRules
+public class CommonGame : ModuleRules
 {
-	public CommonUserInterface(ReadOnlyTargetRules Target) : base(Target)
+	public CommonGame(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -25,7 +25,8 @@ public class CommonUserInterface : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
+				"Core", "GameplayTags","CommonUI",
+				"UMG",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -40,10 +41,9 @@ public class CommonUserInterface : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"CommonUI",
-				"UMG",
 				"GameplayTags",
-				"ModularGameplayActors"
+				"ModularGameplayActors",
+				"EditorInteractiveToolsFramework"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

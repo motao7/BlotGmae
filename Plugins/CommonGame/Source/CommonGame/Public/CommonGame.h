@@ -7,7 +7,7 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCommonUserInterface, Log, All);
 
-class FCommonUserInterfaceModule : public IModuleInterface
+class FCommonGameModule : public IModuleInterface
 {
 public:
 

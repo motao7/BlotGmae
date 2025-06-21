@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class COMMONUSERINTERFACE_API ACommonPlayerController : public AModularPlayerController
+class COMMONGAME_API ACommonPlayerController : public AModularPlayerController
 {
 	GENERATED_BODY()
 

@@ -3,11 +3,17 @@
 
 #include "CommonGameUIPolicy.h"
 
+#include "CommonGame.h"
 #include "CommonLocalPlayer.h"
 #include "CommonPrimaryGameLayout.h"
-#include "CommonUserInterface.h"
 #include "Blueprint/UserWidget.h"
 
+
+UCommonPrimaryGameLayout* UCommonGameUIPolicy::GetRootLayout(const UCommonLocalPlayer* LocalPlayer) const
+{
+	const FRootViewportLayoutInfo* LayoutInfo = RootViewportLayouts.FindByKey(LocalPlayer);
+	return LayoutInfo ? LayoutInfo->RootLayout : nullptr;
+}
 
 void UCommonGameUIPolicy::AddLayoutToViewport(UCommonLocalPlayer* LocalPlayer, UCommonPrimaryGameLayout* Layout)
 {

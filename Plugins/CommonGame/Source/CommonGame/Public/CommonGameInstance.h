@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class COMMONUSERINTERFACE_API UCommonGameInstance : public UGameInstance
+class COMMONGAME_API UCommonGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 

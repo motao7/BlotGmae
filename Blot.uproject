@@ -15,7 +15,7 @@
 				"CoreUObject",
 				"Experience",
 				"GameplayAbilities",
-				"CommonUserInterface"
+				"CommonGame"
 			]
 		},
 		{
@@ -295,7 +295,7 @@
 			"Enabled": true
 		},
 		{
-			"Name": "CommonUserInterface",
+			"Name": "CommonGame",
 			"Enabled": true
 		},
 		{
