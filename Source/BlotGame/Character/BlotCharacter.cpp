@@ -52,6 +52,11 @@ ABlotPlayerState* ABlotCharacter::GetBlotPlayerState() const
 	return CastChecked<ABlotPlayerState>(GetPlayerState());
 }
 
+UAbilitySystemComponent* ABlotCharacter::GetAbilitySystemComponent() const
+{
+	return GetBlotPlayerState()->GetAbilitySystemComponent();
+}
+
 void ABlotCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystemInterface.h"
 #include "GenericTeamAgentInterface.h"
 #include "ModularPlayerState.h"
 #include "TeamGenericTeamAgentInterface.h"
@@ -18,7 +19,7 @@ class UExperiencePawnData;
  * 
  */
 UCLASS()
-class BLOTGAME_API ABlotPlayerState : public AModularPlayerState,public FGenericTeamId,public ITeamGenericTeamAgentInterface
+class BLOTGAME_API ABlotPlayerState : public AModularPlayerState,public FGenericTeamId,public ITeamGenericTeamAgentInterface,public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 	
@@ -31,7 +32,10 @@ public:
 	
 	void SetPawnData(const UExperiencePawnData* PawnData); 
 	const UExperiencePawnData* GetPawnData(){return ExperiencePawnData;}
-	UBlotAbilitySystemComponent* GetAbilitySystemComponent() const;
+
+	UFUNCTION(BlueprintCallable)
+	UBlotAbilitySystemComponent* GetBlotAbilitySystemComponent();
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 	//~IGenericTeamAgentInterface Start
 	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override;

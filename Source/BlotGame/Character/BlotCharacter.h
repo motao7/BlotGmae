@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "BlotPawnExtensionComponent.h"
 #include "ModularCharacter.h"
 #include "BlotCharacter.generated.h"
@@ -15,7 +16,7 @@ class UBlotPawnExtensionComponent;
  * 
  */
 UCLASS()
-class BLOTGAME_API ABlotCharacter : public AModularCharacter
+class BLOTGAME_API ABlotCharacter : public AModularCharacter,public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -24,6 +25,7 @@ public:
 
 	ABlotPlayerController* GetBlotPlayerController() const;
 	ABlotPlayerState* GetBlotPlayerState() const;
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	//PawnExtensionComponent updates the initialization chain when these following function called.
 	virtual void PossessedBy(AController* NewController) override;

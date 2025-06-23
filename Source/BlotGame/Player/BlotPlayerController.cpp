@@ -27,9 +27,9 @@ void ABlotPlayerController::AddCheats(bool bForce)
 
 void ABlotPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
 {
-	if (const ABlotPlayerState* PS=GetPlayerState<ABlotPlayerState>())
+	if (ABlotPlayerState* PS=GetPlayerState<ABlotPlayerState>())
 	{
-		if (UBlotAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent())
+		if (UBlotAbilitySystemComponent* ASC = PS->GetBlotAbilitySystemComponent())
 		{
 			ASC->ProcessAbilityInput(DeltaTime, bGamePaused);
 		}

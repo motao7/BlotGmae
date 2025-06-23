@@ -40,7 +40,12 @@ void ABlotPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME_WITH_PARAMS_FAST(ThisClass,ExperiencePawnData,SharedParams);
 }
 
-UBlotAbilitySystemComponent* ABlotPlayerState::GetAbilitySystemComponent() const
+UBlotAbilitySystemComponent* ABlotPlayerState::GetBlotAbilitySystemComponent()
+{
+	return Cast<UBlotAbilitySystemComponent>(AbilitySystemComponent);
+}
+
+UAbilitySystemComponent* ABlotPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
 }
