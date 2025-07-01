@@ -54,10 +54,15 @@ protected:
 
 	UPROPERTY(EditAnywhere,Category="Camera")
 	float FOV=90.f;
+	
+	UPROPERTY(EditAnywhere,Category="Camera")
+	FVector TargetLocationOffset;
+	
 	UPROPERTY(EditAnywhere,Category="Camera")
 	float BlendTime=2.f;
+	
 	// Alters the speed that a crouch offset is blended in or out
-	UPROPERTY(EditAnywhere, Category = "Third Camera")
+	UPROPERTY(EditAnywhere, Category = "Camera")
 	float CrouchOffsetBlendMultiplier = 5.0f;
 
 	/** When 0.f indicate that CameraMode just put  in stack,When 1.f indicate that CameraMode should be Remove */

@@ -8,7 +8,7 @@
 
 void UCommonEquipmentInstance::SpawnEquipmentActors(const TArray<FCommonEquipmentActorToSpawn>& ActorsToSpawn)
 {
-	if (APawn* OwningPawn = GetPawn())
+	if (APawn* OwningPawn = GetOuterPawn())
 	{
 		USceneComponent* AttachTarget = OwningPawn->GetRootComponent();
 		if (ACharacter* Char = Cast<ACharacter>(OwningPawn))
@@ -26,7 +26,17 @@ void UCommonEquipmentInstance::SpawnEquipmentActors(const TArray<FCommonEquipmen
 	}
 }
 
-APawn* UCommonEquipmentInstance::GetPawn() const
+void UCommonEquipmentInstance::OnEquipped()
+{
+	K2_OnEquipped();
+}
+
+void UCommonEquipmentInstance::OnUnequipped()
+{
+	K2_OnUnequipped();
+}
+
+APawn* UCommonEquipmentInstance::GetOuterPawn() const
 {
 	return Cast<APawn>(GetOuter());
 }

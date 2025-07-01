@@ -27,13 +27,10 @@ class EXPERIENCE_API UExperienceManagerComponent : public UGameStateComponent
 public:
 	UExperienceManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	//~Helper Function
+	
 	TObjectPtr<const UExperienceDefination> GetCurrentExperience() const{return CurrentExperience;}
 	bool GetIsExperienceLoadedCompoleted() const { return bExperienceLoadedCompoleted; }
-	//~Helper Function End
 	
-	//~加载Experience主流程
 	/** TryLoad软引用Experience，获得CDOExperience放入CurrentExperience，便于之后加载CDOExperience中的虚幻指针成员变量 */
 	void StartLoadExperience(const TSoftClassPtr<UExperienceDefination>& ExperienceDef);
 	/** 加载Expeirnece虚幻指针成员变量 */
@@ -42,7 +39,6 @@ public:
 	void OnExperienceLoadComplete();
 	/** 激活GameFeatureAction */
 	void OnExperienceFullLoadCompleted(const UE::GameFeatures::FResult& Result, int ReaminLoadingGameFeatureNum);
-	//~加载Experience主流程
 
 	//如果ExperienceLoaded直接Broadcats委托，如果没激活等激活后OnExperienceFullLoadCompleted会激活所有的绑定 
 	void CallOrReigister_OnExperienceLoaded_HighPriority(FOnExperienceLoaded::FDelegate&& Delegate);

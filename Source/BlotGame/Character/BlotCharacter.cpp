@@ -44,17 +44,22 @@ ABlotCharacter::ABlotCharacter(const FObjectInitializer& ObjectInitializer)
 
 ABlotPlayerController* ABlotCharacter::GetBlotPlayerController() const
 {
-	return CastChecked<ABlotPlayerController>(GetController());
+	//ECastCheckedType::NullAllowed,if GetController()==nullptr not invoke assert，only class diffenet invoke
+	return CastChecked<ABlotPlayerController>(GetController(),ECastCheckedType::NullAllowed);
 }
 
 ABlotPlayerState* ABlotCharacter::GetBlotPlayerState() const
 {
-	return CastChecked<ABlotPlayerState>(GetPlayerState());
+	return CastChecked<ABlotPlayerState>(GetPlayerState(),ECastCheckedType::NullAllowed);
 }
 
 UAbilitySystemComponent* ABlotCharacter::GetAbilitySystemComponent() const
 {
-	return GetBlotPlayerState()->GetAbilitySystemComponent();
+	if (ABlotPlayerState* PS=GetBlotPlayerState())
+	{
+		return PS->GetAbilitySystemComponent();
+	}
+	return nullptr;
 }
 
 void ABlotCharacter::PossessedBy(AController* NewController)

@@ -38,7 +38,7 @@ void UCommonCameraMode::UpdateView(float DeltaTime)
 	UpdateForTarget(DeltaTime);
 	UpdateCrouchOffset(DeltaTime);
 
-	CameraModeView.Location=GetPivotLocation()+CurrentCrouchOffset;
+	CameraModeView.Location=GetPivotLocation()+CurrentCrouchOffset+TargetLocationOffset;
 	CameraModeView.Rotation=GetPivotRotation();
 	CameraModeView.FOV=FOV;
 }

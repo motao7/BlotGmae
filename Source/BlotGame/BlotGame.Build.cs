@@ -70,7 +70,7 @@ public class BlotGame : ModuleRules
 				"DTLSHandlerComponent", 
 				
 				"Experience",
-				"ShooterCoreRuntime", "Team","CommonCamera","TagInput","Voxel", "CommonGame",
+				"MineRuntime", "Team","CommonCamera","TagInput","Voxel", "CommonGame",
 			}
 		);
 		

@@ -102,6 +102,15 @@ class COMMONKIT_API UCommonEquipmentManagerComponent : public UPawnComponent
 public:
 	UCommonEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
+	//~UObject interface
+	/**Not use this instead Using RegisteredSubObjectList*/
+	virtual bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
+	//~End of UObject interface
+
+	//~AActorComponent interface
+	virtual void ReadyForReplication() override;
+	//~End of AActorComponent interface
 	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	UCommonEquipmentInstance* EquipItem(TSubclassOf<UCommonEquipmentDefinition> EquipmentDefinition);

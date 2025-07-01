@@ -61,7 +61,7 @@ void UExperienceManagerComponent::LoadExperienceTPtrVariable()
 {
 	check(CurrentExperience != nullptr);
 
-	//获得要加载的AssetId
+	//获得要加载的AssetId/这些PrimaryAsset要被AssetManager扫描
 	TSet<FPrimaryAssetId> AssetList;
 	AssetList.Add(CurrentExperience->GetPrimaryAssetId());
 	for(auto& ActionSet:CurrentExperience->ActionSets)
@@ -88,7 +88,7 @@ void UExperienceManagerComponent::LoadExperienceTPtrVariable()
 	TSharedPtr<FStreamableHandle> AssetListHandle = nullptr;
 	if (AssetList.Num() > 0)
 	{
-		//ChangeBundleStateForPrimaryAssets，添加了捆绑包并异步的加载资产
+		//将所有软引用的资源（包括你配置在 Experience、ActionSet、GameFeatureAction 中的 WidgetClass、LayoutClass）加入加载列表
 		AssetListHandle = UAssetManager::Get().ChangeBundleStateForPrimaryAssets(AssetList.Array(), BundlesToLoad, {}, false, FStreamableDelegate(), FStreamableManager::AsyncLoadHighPriority);
 	}
 

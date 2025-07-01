@@ -13,8 +13,15 @@ UCLASS()
 class COMMONKIT_API UCommonWeaponInstance : public UCommonEquipmentInstance
 {
 	GENERATED_BODY()
-	
-	
-	
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Animation)
+	TSubclassOf<UAnimInstance> AnimLayer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Animation)
+	UAnimMontage* EquipMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Animation)
+	UAnimMontage* UnEquipMontage;
 	
 };

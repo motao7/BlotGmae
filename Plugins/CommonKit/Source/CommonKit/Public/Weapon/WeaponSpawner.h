@@ -18,7 +18,10 @@ class COMMONKIT_API AWeaponSpawner : public AActor
 public:
 	AWeaponSpawner();
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
-	
+
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+	/**The classic design service end handles the collision, while the client end only synchronizes the effect.*/
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult);
 
@@ -33,10 +36,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonKit|WeaponPickup")
 	TObjectPtr<UCapsuleComponent> CollisionVolume;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonKit|WeaponPickup")
+	TObjectPtr<UStaticMeshComponent> PadMesh;
+
 	UPROPERTY(BlueprintReadOnly, Category = "CommonKit|WeaponPickup")
 	TObjectPtr<UStaticMeshComponent> WeaponMesh;
 
 protected:
+	UFUNCTION(BlueprintNativeEvent, Category = "CommonKit|WeaponPickup")
+	void PlayPickupEffects();
+	
 	UFUNCTION()
 	void OnRep_WeaponAvailability();
 	

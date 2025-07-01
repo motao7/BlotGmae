@@ -4,6 +4,7 @@
 #include "CommonExtensionLibrary.h"
 
 #include "CommonActivatableWidget.h"
+#include "CommonGame.h"
 #include "CommonGameUIManagerSubsystem.h"
 #include "CommonGameUIPolicy.h"
 #include "CommonLocalPlayer.h"
@@ -17,16 +18,39 @@ UCommonActivatableWidget* UCommonExtensionLibrary::PushContentToLayer_ForPlayer(
 		return nullptr;
 	}
 
-	if (UCommonGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UCommonGameUIManagerSubsystem>())
+	if (!LocalPlayer)
 	{
-		if (UCommonGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
-		{
-			if (UCommonPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
-			{
-				return RootLayout->PushWidgetToLayerStack(LayerName, WidgetClass);
-			}
-		}
+		UE_LOG(LogCommonUserInterface, Warning, TEXT("LocalPlayer is null."));
+		return nullptr;
 	}
 
-	return nullptr;
+	UCommonGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UCommonGameUIManagerSubsystem>();
+	if (!UIManager)
+	{
+		UE_LOG(LogCommonUserInterface, Warning, TEXT("Failed to get CommonGameUIManagerSubsystem from GameInstance."));
+		return nullptr;
+	}
+
+	UCommonGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy();
+	if (!Policy)
+	{
+		UE_LOG(LogCommonUserInterface, Warning, TEXT("Failed to get current UI policy from UI manager."));
+		return nullptr;
+	}
+
+	const UCommonLocalPlayer* CommonLocalPlayer = Cast<UCommonLocalPlayer>(LocalPlayer);
+	if (!CommonLocalPlayer)
+	{
+		UE_LOG(LogCommonUserInterface, Warning, TEXT("LocalPlayer is not a UCommonLocalPlayer."));
+		return nullptr;
+	}
+
+	UCommonPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CommonLocalPlayer);
+	if (!RootLayout)
+	{
+		UE_LOG(LogCommonUserInterface, Warning, TEXT("Failed to get RootLayout from UI policy."));
+		return nullptr;
+	}
+	
+	return RootLayout->PushWidgetToLayerStack(LayerName, WidgetClass);
 }

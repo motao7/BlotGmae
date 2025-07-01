@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
 #include "ExperienceAbilitySet.h"
+#include "Engine/ActorChannel.h"
 #include "Equipment/CommonEquipmentDefinition.h"
 #include "Equipment/CommonEquipmentInstance.h"
 #include "Net/UnrealNetwork.h"
@@ -13,10 +14,26 @@
 
 void FCommonEquipmentList::PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize)
 {
+	for (int32 Index : RemovedIndices)
+	{
+		const FCommonAppliedEquipmentEntry& Entry = Entries[Index];
+		if (Entry.Instance != nullptr)
+		{
+			Entry.Instance->OnUnequipped();
+		}
+	}
 }
 
 void FCommonEquipmentList::PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize)
 {
+	for (int32 Index : AddedIndices)
+	{
+		const FCommonAppliedEquipmentEntry& Entry = Entries[Index];
+		if (Entry.Instance != nullptr)
+		{
+			Entry.Instance->OnEquipped();
+		}
+	}
 }
 
 void FCommonEquipmentList::PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize)
@@ -90,13 +107,14 @@ void FCommonEquipmentList::RemoveEntry(UCommonEquipmentInstance* Instance)
 		}
 }
 
-//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 UCommonEquipmentManagerComponent::UCommonEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer), EquipmentList(this)
 {
 	SetIsReplicatedByDefault(true);
 	bWantsInitializeComponent = true;
+	bReplicateUsingRegisteredSubObjectList=true;
 }
 
 void UCommonEquipmentManagerComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -104,6 +122,24 @@ void UCommonEquipmentManagerComponent::GetLifetimeReplicatedProps(TArray<class F
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass,EquipmentList);
+}
+
+bool UCommonEquipmentManagerComponent::ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch, FReplicationFlags* RepFlags)
+{
+	// bool WroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+	//
+	// for (FCommonAppliedEquipmentEntry& Entry : EquipmentList.Entries)
+	// {
+	// 	UCommonEquipmentInstance* Instance = Entry.Instance;
+	//
+	// 	if (IsValid(Instance))
+	// 	{
+	// 		// WroteSomething |= Channel->ReplicateSubobject(Instance, *Bunch, *RepFlags);
+	// 	}
+	// }
+	//
+	// return WroteSomething;
+	return Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
 }
 
 UCommonEquipmentInstance* UCommonEquipmentManagerComponent::EquipItem(TSubclassOf<UCommonEquipmentDefinition> EquipmentDefinition)
@@ -114,8 +150,10 @@ UCommonEquipmentInstance* UCommonEquipmentManagerComponent::EquipItem(TSubclassO
 		Result = EquipmentList.AddEntry(EquipmentDefinition);
 		if (Result != nullptr)
 		{
+			Result->OnEquipped();
 			if (IsUsingRegisteredSubObjectList() && IsReadyForReplication())
 			{
+				//UObjectPtr not automatically Replicated like AActorPtr 
 				AddReplicatedSubObject(Result);
 			}
 		}
@@ -131,6 +169,27 @@ void UCommonEquipmentManagerComponent::UnequipItem(UCommonEquipmentInstance* Ite
 		{
 			RemoveReplicatedSubObject(ItemInstance);
 		}
+
+		ItemInstance->OnUnequipped();
 		EquipmentList.RemoveEntry(ItemInstance);
+	}
+}
+
+void UCommonEquipmentManagerComponent::ReadyForReplication()
+{
+	Super::ReadyForReplication();
+
+	// Register existing LyraEquipmentInstances
+	if (IsUsingRegisteredSubObjectList())
+	{
+		for (const FCommonAppliedEquipmentEntry& Entry : EquipmentList.Entries)
+		{
+			UCommonEquipmentInstance* Instance = Entry.Instance;
+
+			if (IsValid(Instance))
+			{
+				AddReplicatedSubObject(Instance);
+			}
+		}
 	}
 }

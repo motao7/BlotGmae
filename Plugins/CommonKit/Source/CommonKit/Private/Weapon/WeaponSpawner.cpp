@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Equipment/CommonPickUpDefination.h"
 #include "Inventory/CommonInventoryItemDefinition.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -20,6 +21,9 @@ AWeaponSpawner::AWeaponSpawner()
 	CollisionVolume->InitCapsuleSize(80.f, 80.f);
 	CollisionVolume->OnComponentBeginOverlap.AddDynamic(this, &AWeaponSpawner::OnOverlapBegin);
 
+	PadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PadMesh"));
+	PadMesh->SetupAttachment(RootComponent);
+
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
 	WeaponMesh->SetupAttachment(RootComponent);
 
@@ -31,6 +35,16 @@ void AWeaponSpawner::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>&
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AWeaponSpawner, bIsWeaponAvailable);
+}
+
+void AWeaponSpawner::OnConstruction(const FTransform& Transform)
+{
+	if (WeaponPickUpDefinition != nullptr && WeaponPickUpDefinition->DisplayMesh != nullptr)
+	{
+		WeaponMesh->SetStaticMesh(WeaponPickUpDefinition->DisplayMesh);
+		WeaponMesh->SetRelativeLocation(WeaponPickUpDefinition->WeaponMeshOffset);
+		WeaponMesh->SetRelativeScale3D(WeaponPickUpDefinition->WeaponMeshScale);
+	}	
 }
 
 void AWeaponSpawner::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
@@ -47,6 +61,18 @@ void AWeaponSpawner::SetWeaponPickupVisibility(bool bShouldBeVisible)
 	WeaponMesh->SetVisibility(bShouldBeVisible, true);
 }
 
+void AWeaponSpawner::PlayPickupEffects_Implementation()
+{
+	if (WeaponPickUpDefinition != nullptr)
+	{
+		USoundBase* PickupSound = WeaponPickUpDefinition->PickedUpSound;
+		if (PickupSound != nullptr)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
+		}
+	}
+}
+
 void AWeaponSpawner::OnRep_WeaponAvailability()
 {
 	if (bIsWeaponAvailable)
@@ -56,6 +82,7 @@ void AWeaponSpawner::OnRep_WeaponAvailability()
 	else
 	{
 		SetWeaponPickupVisibility(false);
+		PlayPickupEffects();
 	}
 }
 
@@ -72,7 +99,9 @@ void AWeaponSpawner::AttemptPickUpWeapon_Implementation(APawn* Pawn)
 				//Weapon picked up by pawn
 				bIsWeaponAvailable = false;
 				SetWeaponPickupVisibility(false);
+				PlayPickupEffects();
 			}
 		}		
 	}
 }
+

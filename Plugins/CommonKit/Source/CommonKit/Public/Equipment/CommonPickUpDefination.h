@@ -23,6 +23,11 @@ public:
 	//Visual representation of the pickup
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonKit|Pickup|Mesh")
 	TObjectPtr<UStaticMesh> DisplayMesh;
+
+	//Sound to play when picked up
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CommonKit|Pickup")
+	TObjectPtr<USoundBase> PickedUpSound;
+
 };
 
 UCLASS(Blueprintable, BlueprintType, Const)

@@ -56,11 +56,17 @@ void ABlotPlayerState::PostInitializeComponents()
 
 	check(AbilitySystemComponent);
 	const UWorld* World = GetWorld();
-	const AGameStateBase* GameStateBase = World->GetGameState();
-	check(GameStateBase);
-	UExperienceManagerComponent* ExperienceManagerComponent=GameStateBase->FindComponentByClass<UExperienceManagerComponent>();
-	check(ExperienceManagerComponent);
-	ExperienceManagerComponent->CallOrReigister_OnExperienceLoaded(FOnExperienceLoaded::FDelegate::CreateUObject(this,&ThisClass::OnExperienceLoaded));
+	
+	//Client only need get PawnData，so only server bind OnExperienceLoaded,client only Replicated PawnData
+	//Another reason World->GetNetMode() != NM_Client is GameState is Replicated to client,so in this time client may be not get GameState
+	if (World && World->IsGameWorld() && World->GetNetMode() != NM_Client)
+	{
+		AGameStateBase* GameState = GetWorld()->GetGameState();
+		check(GameState);
+		UExperienceManagerComponent* ExperienceComponent = GameState->FindComponentByClass<UExperienceManagerComponent>();
+		check(ExperienceComponent);
+		ExperienceComponent->CallOrReigister_OnExperienceLoaded(FOnExperienceLoaded::FDelegate::CreateUObject(this, &ThisClass::OnExperienceLoaded));
+	}
 }
 
 void ABlotPlayerState::SetPawnData(const UExperiencePawnData* PawnData)

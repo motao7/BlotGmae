@@ -59,7 +59,8 @@ void ABlotGameMode::LoadExperience() const
 	UExperienceManagerComponent* ExperienceComponent = GameState->FindComponentByClass<UExperienceManagerComponent>();
 	check(ExperienceComponent);
 	AExperienceWorldSetting* ExperienceWorldSetting=Cast<AExperienceWorldSetting>(GetWorldSettings());
-	ExperienceComponent->StartLoadExperience(ExperienceWorldSetting->GetDefaultExperience());
+	TSoftClassPtr<UExperienceDefination> Experience=ExperienceWorldSetting->GetDefaultExperience();
+	ExperienceComponent->StartLoadExperience(Experience);
 }
 
 void ABlotGameMode::OnExperienceLoaded(const UExperienceDefination* ExperienceDefination)
