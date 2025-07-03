@@ -2,13 +2,64 @@
 #include "BlotAbilitySystemComponent.h"
 
 #include "BlotGameplayTag.h"
+#include "ExperienceAbilitySet.h"
 #include "ExperienceGameplayAbility.h"
+#include "ExperiencePawnData.h"
+#include "Ability/BlotGameplayAbility.h"
+#include "Character/BlotCharacter.h"
+#include "Player/BlotPlayerState.h"
 
 UBlotAbilitySystemComponent::UBlotAbilitySystemComponent()
 {
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();
 	InputHeldSpecHandles.Reset();
+}
+
+void UBlotAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor)
+{
+	FGameplayAbilityActorInfo* ActorInfo = AbilityActorInfo.Get();
+	check(ActorInfo);
+	check(InOwnerActor);
+
+	const bool bHasNewPawnAvatar = Cast<APawn>(InAvatarActor) && (InAvatarActor != ActorInfo->AvatarActor);
+
+	Super::InitAbilityActorInfo(InOwnerActor, InAvatarActor);
+
+	if (bHasNewPawnAvatar)
+	{
+		if (ABlotPlayerState*PS=Cast<ABlotPlayerState>(InOwnerActor))
+		{
+			if (PS->GetLocalRole()== ROLE_Authority)
+			{
+				const UExperiencePawnData* PawnData = PS->GetPawnData();
+				check(PawnData);
+				for (const TObjectPtr<UExperienceAbilitySet> AbilitySet : PawnData->AbilitySets)
+				{
+					if (AbilitySet)
+					{
+						AbilitySet->GiveToAbilitySystem(this, nullptr);
+					}
+				}
+			}
+		}
+
+		//Due to HeroComponent Initilize Authroity first,in time Authority GiveAbility then replicaed to client,client not yet call InitAbilityActorInfo
+		//So need Call TryActivateAbilitiesOnSpawn again
+		TryActivateAbilitiesOnSpawn();
+	}
+}
+
+void UBlotAbilitySystemComponent::TryActivateAbilitiesOnSpawn()
+{
+	ABILITYLIST_SCOPE_LOCK();
+	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
+	{
+		if (const UBlotGameplayAbility* BlotAbilityCDO = Cast<UBlotGameplayAbility>(AbilitySpec.Ability))
+		{
+			BlotAbilityCDO->TryActivateAbilityOnSpawn(AbilityActorInfo.Get(), AbilitySpec);
+		}
+	}
 }
 
 void UBlotAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
@@ -90,9 +141,9 @@ void UBlotAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGam
 				}
 				else
 				{
-					const UExperienceGameplayAbility* LyraAbilityCDO = Cast<UExperienceGameplayAbility>(AbilitySpec->Ability);
+					const UExperienceGameplayAbility* BlotAbilityCDO = Cast<UExperienceGameplayAbility>(AbilitySpec->Ability);
 
-					if (LyraAbilityCDO && LyraAbilityCDO->GetActivationPolicy() == EExperienceAbilityActivationPolicy::OnInputTriggered)
+					if (BlotAbilityCDO && BlotAbilityCDO->GetActivationPolicy() == EExperienceAbilityActivationPolicy::OnInputTriggered)
 					{
 						AbilitiesToActivate.AddUnique(AbilitySpec->Handle);
 					}

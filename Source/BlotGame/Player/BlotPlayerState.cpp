@@ -53,10 +53,8 @@ UAbilitySystemComponent* ABlotPlayerState::GetAbilitySystemComponent() const
 void ABlotPlayerState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	check(AbilitySystemComponent);
-	const UWorld* World = GetWorld();
 	
+	const UWorld* World = GetWorld();
 	//Client only need get PawnData，so only server bind OnExperienceLoaded,client only Replicated PawnData
 	//Another reason World->GetNetMode() != NM_Client is GameState is Replicated to client,so in this time client may be not get GameState
 	if (World && World->IsGameWorld() && World->GetNetMode() != NM_Client)
@@ -71,15 +69,13 @@ void ABlotPlayerState::PostInitializeComponents()
 
 void ABlotPlayerState::SetPawnData(const UExperiencePawnData* PawnData)
 {
-	ExperiencePawnData=PawnData;
-
-	for (const TObjectPtr<UExperienceAbilitySet> AbilitySet : ExperiencePawnData->AbilitySets)
+	//Ability/Effect/Attribute Server use ASC FastArray to make sure client synchronization information
+	if (GetLocalRole() != ROLE_Authority)
 	{
-		if (AbilitySet)
-		{
-			AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr);
-		}
+		return;
 	}
+	
+	ExperiencePawnData=PawnData;
 }
 
 void ABlotPlayerState::SetGenericTeamId(const FGenericTeamId& NewTeamID)

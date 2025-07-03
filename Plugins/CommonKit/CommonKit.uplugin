@@ -32,6 +32,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "GameplayMessageRouter",
+			"Enabled": true
+		},
+		{
 			"Name": "Experience",
 			"Enabled": true
 		}

@@ -88,6 +88,7 @@ UCommonInventoryManageComponent::UCommonInventoryManageComponent(const FObjectIn
 	: Super(ObjectInitializer), InventoryList(this)
 {
 	SetIsReplicatedByDefault(true);
+	bReplicateUsingRegisteredSubObjectList = true;
 }
 
 void UCommonInventoryManageComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const

@@ -10,10 +10,36 @@
 class UCommonEquipmentInstance;
 class UCommonInventoryItemInstance;
 
+USTRUCT(BlueprintType)
+struct FCommonQuickBarSlotsChangedMessage
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category=Inventory)
+	TObjectPtr<AActor> Owner = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Category = Inventory)
+	TArray<TObjectPtr<UCommonInventoryItemInstance>> Slots;
+};
+
+
+USTRUCT(BlueprintType)
+struct FCommonQuickBarActiveIndexChangedMessage
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category=Inventory)
+	TObjectPtr<AActor> Owner = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Category=Inventory)
+	int32 ActiveIndex = 0;
+};
+
+
 /**
  *		Manage (QuickBar)Slot so that InventoryItemInstance can insert in correct slot
  */
-UCLASS(Blueprintable)
+UCLASS(Blueprintable,Config=Game)
 class COMMONKIT_API UCommonQuickBarComponent : public UControllerComponent
 {
 	GENERATED_BODY()
@@ -22,12 +48,22 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	virtual void BeginPlay() override;
-	
+
+	/**Only Slot is Default or empty can add*/
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	void AddItemToSlot(int32 SlotIndex, UCommonInventoryItemInstance* Item);
 	
-	UFUNCTION(Server, Reliable, BlueprintCallable, Category="Lyra")
-	void SetActiveSlotIndex(int32 NewIndex);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void SetActiveSlotIndex(int32 Index);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure=false)
+	int32 GetActiveSlotIndex() const { return ActiveSlotIndex; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure = false)
+	UCommonInventoryItemInstance* GetActiveSlotItem() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure=false)
+	int32 GetNextFreeItemSlot() const;
 
 protected:
 	void UnequipItemInSlot();
@@ -35,21 +71,23 @@ protected:
 
 	UFUNCTION()
 	void OnRep_Slots();
+	
 	UFUNCTION()
 	void OnRep_ActiveSlotIndex();
 	
 	UCommonEquipmentManagerComponent* FindEquipmentManager() const;
 
-	UPROPERTY()
-	int32 NumSlots = 3;
+	UPROPERTY(BlueprintReadOnly)
+	int32 NumSlots = 9;
 
 private:
 	UPROPERTY(ReplicatedUsing=OnRep_Slots)
 	TArray<TObjectPtr<UCommonInventoryItemInstance>> Slots;
-
+	
 	UPROPERTY(ReplicatedUsing=OnRep_ActiveSlotIndex)
 	int32 ActiveSlotIndex = -1;
 
 	UPROPERTY()
 	TObjectPtr<UCommonEquipmentInstance> EquippedItem;
+	
 };

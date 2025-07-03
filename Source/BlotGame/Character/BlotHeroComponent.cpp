@@ -100,22 +100,23 @@ void UBlotHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* M
 		{
 			// // The player state holds the persistent data for this player (state that persists across deaths and multiple pawns).
 			// // The ability system component and attribute sets live on the player state.
+			//TODO:InitialAbilitySystem所有ASC相关的初始化都在这里完成
 			PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS,Pawn);
 		}
-
+		
 		if (ABlotPlayerController* LyraPC =Cast<ABlotPlayerController>(Pawn->GetController()))
 		{
 			if (Pawn->InputComponent != nullptr)
 			{
 				InitializePlayerInput(Pawn->InputComponent);
 			}
-		}
-		
-		if (const UExperiencePawnData* PawnData = PS->GetPawnData())
-		{
-			if (UCommonCameraComponent* CameraComponent = Pawn->GetComponentByClass<UCommonCameraComponent>())
+
+			if (const UExperiencePawnData* PawnData = PS->GetPawnData())
 			{
-				CameraComponent->DetermindCameraModeOnPawnDataSetDelgate.BindUObject(this, &ThisClass::DetermindCameraModeOnPawnDataSet);
+				if (UCommonCameraComponent* CameraComponent = Pawn->GetComponentByClass<UCommonCameraComponent>())
+				{
+					CameraComponent->DetermindCameraModeOnPawnDataSetDelgate.BindUObject(this, &ThisClass::DetermindCameraModeOnPawnDataSet);
+				}
 			}
 		}
 	}

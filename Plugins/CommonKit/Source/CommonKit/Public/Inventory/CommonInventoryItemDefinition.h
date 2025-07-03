@@ -14,12 +14,15 @@ class COMMONKIT_API UCommonInventoryItemDefinition : public UObject
 	GENERATED_BODY()
 	
 public:
-	const UCommonInventoryItemFragment* FindFragmentByClass(TSubclassOf<UCommonInventoryItemFragment> FragmentClass) const;
+	UFUNCTION(BlueprintCallable, Category="Inventory",meta=(DeterminesOutputType=FragmentClass))
+	UCommonInventoryItemFragment* FindFragmentByClass(TSubclassOf<UCommonInventoryItemFragment> FragmentClass) const;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Display)
 	FText DisplayName;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Display, Instanced)
 	TArray<TObjectPtr<UCommonInventoryItemFragment>> Fragments;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Display)
+	bool IsDefaultItem=false;
 };

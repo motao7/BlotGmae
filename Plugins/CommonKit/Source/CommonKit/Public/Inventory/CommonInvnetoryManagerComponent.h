@@ -93,7 +93,7 @@ struct TStructOpsTypeTraits<FCommonInventoryList> : public TStructOpsTypeTraitsB
  *		Maintain InventoryList.
  *		Manage InventoryItemInstance support Add/Remove Item.....
  */
-UCLASS(BlueprintType )
+UCLASS(BlueprintType,Config=Game)
 class COMMONKIT_API UCommonInventoryManageComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -101,7 +101,7 @@ class COMMONKIT_API UCommonInventoryManageComponent : public UActorComponent
 public:
 	UCommonInventoryManageComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
-
+	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Inventory)
 	UCommonInventoryItemInstance* AddItemByDefinition(TSubclassOf<UCommonInventoryItemDefinition> ItemDef, int32 StackCount = 1);
 

@@ -17,6 +17,9 @@ class BLOTGAME_API UBlotAbilitySystemComponent : public UAbilitySystemComponent
 public:
 	UBlotAbilitySystemComponent();
 	
+	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
+	void TryActivateAbilitiesOnSpawn();
+
 	void AbilityInputTagPressed(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);

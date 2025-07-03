@@ -40,7 +40,7 @@ public class CommonKit : ModuleRules
 				"Slate",
 				"SlateCore",
 				
-				"GameplayAbilities", 
+				"GameplayAbilities", "GameplayMessageRuntime", "GameplayTags",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

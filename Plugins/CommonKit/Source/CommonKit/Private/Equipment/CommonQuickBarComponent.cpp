@@ -4,12 +4,17 @@
 #include "Equipment/CommonQuickBarComponent.h"
 
 #include "Equipment/CommonEquipmentDefinition.h"
-#include "Equipment/CommonEquipmentInstance.h"
 #include "Equipment/CommonEquipmentManagerComponent.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Inventory/CIF_EquippableItem.h"
 #include "Inventory/CommonInventoryItemInstance.h"
+#include "NativeGameplayTags.h"
+#include "Inventory/CommonInventoryItemDefinition.h"
+#include "Inventory/CommonInvnetoryManagerComponent.h"
 #include "Net/UnrealNetwork.h"
 
+UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_Common_QuickBar_Message_SlotsChanged, "Common.QuickBar.Message.SlotsChanged");
+UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_Common_QuickBar_Message_ActiveIndexChanged, "Common.QuickBar.Message.ActiveIndexChanged");
 
 UCommonQuickBarComponent::UCommonQuickBarComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -38,11 +43,33 @@ void UCommonQuickBarComponent::AddItemToSlot(int32 SlotIndex, UCommonInventoryIt
 {
 	if (Slots.IsValidIndex(SlotIndex) && (Item != nullptr))
 	{
-		if (Slots[SlotIndex] == nullptr)
+		if (Slots[SlotIndex]==nullptr||Slots[SlotIndex]->IsDefaultItem())
 		{
 			Slots[SlotIndex] = Item;
+			//Only server excute AddItemToSlot,Call OnRep_Slots() is for the player in listen server
+			OnRep_Slots();
 		}
 	}
+}
+
+UCommonInventoryItemInstance* UCommonQuickBarComponent::GetActiveSlotItem() const
+{
+	return Slots.IsValidIndex(ActiveSlotIndex) ? Slots[ActiveSlotIndex] : nullptr;
+}
+
+int32 UCommonQuickBarComponent::GetNextFreeItemSlot() const
+{
+	int32 SlotIndex = 0;
+	for (const TObjectPtr<UCommonInventoryItemInstance>& ItemPtr : Slots)
+	{
+		if (ItemPtr==nullptr||ItemPtr->IsDefaultItem())
+		{
+			return SlotIndex;
+		}
+		++SlotIndex;	
+	}
+
+	return INDEX_NONE;
 }
 
 void UCommonQuickBarComponent::UnequipItemInSlot()
@@ -84,10 +111,22 @@ void UCommonQuickBarComponent::EquipItemInSlot()
 
 void UCommonQuickBarComponent::OnRep_Slots()
 {
+	FCommonQuickBarSlotsChangedMessage Message;
+	Message.Owner = GetOwner();
+	Message.Slots = Slots;
+
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(this);
+	MessageSystem.BroadcastMessage(TAG_Common_QuickBar_Message_SlotsChanged, Message);
 }
 
 void UCommonQuickBarComponent::OnRep_ActiveSlotIndex()
 {
+	FCommonQuickBarActiveIndexChangedMessage Message;
+	Message.Owner = GetOwner();
+	Message.ActiveIndex = ActiveSlotIndex;
+
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(this);
+	MessageSystem.BroadcastMessage(TAG_Common_QuickBar_Message_ActiveIndexChanged, Message);
 }
 
 UCommonEquipmentManagerComponent* UCommonQuickBarComponent::FindEquipmentManager() const
@@ -102,14 +141,16 @@ UCommonEquipmentManagerComponent* UCommonQuickBarComponent::FindEquipmentManager
 	return nullptr;
 }
 
-void UCommonQuickBarComponent::SetActiveSlotIndex_Implementation(int32 NewIndex)
+void UCommonQuickBarComponent::SetActiveSlotIndex_Implementation(int32 Index)
 {
-	if (Slots.IsValidIndex(NewIndex) && (ActiveSlotIndex != NewIndex))
+	if (Slots.IsValidIndex(Index))
 	{
 		UnequipItemInSlot();
 
-		ActiveSlotIndex = NewIndex;
+		ActiveSlotIndex = Index;
 
 		EquipItemInSlot();
+
+		OnRep_ActiveSlotIndex();
 	}
 }

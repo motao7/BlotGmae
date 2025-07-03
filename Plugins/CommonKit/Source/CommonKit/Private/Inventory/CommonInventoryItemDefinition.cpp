@@ -6,7 +6,7 @@
 #include "Inventory/CommonInventoryItemFragment.h"
 
 
-const UCommonInventoryItemFragment* UCommonInventoryItemDefinition::FindFragmentByClass(TSubclassOf<UCommonInventoryItemFragment> FragmentClass) const
+UCommonInventoryItemFragment* UCommonInventoryItemDefinition::FindFragmentByClass(TSubclassOf<UCommonInventoryItemFragment> FragmentClass) const
 {
 	if (FragmentClass != nullptr)
 	{

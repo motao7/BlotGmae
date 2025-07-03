@@ -12,7 +12,7 @@ public class BlotGame : ModuleRules
 			new string[] {
 				"BlotGame",
 				"BlotGame/AbilitySystem",
-				"BlotGame/AbilitySystem/Attribute"
+				"BlotGame/AbilitySystem/Attribute",
 			}
 		);
 		
@@ -71,6 +71,7 @@ public class BlotGame : ModuleRules
 				
 				"Experience",
 				"MineRuntime", "Team","CommonCamera","TagInput","Voxel", "CommonGame",
+				"GameplayMessageNodes"
 			}
 		);
 		
