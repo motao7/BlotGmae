@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "ExperienceAbilitySet.h"
 #include "Components/PawnComponent.h"
 #include "Net/Serialization/FastArraySerializer.h"
 #include "CommonEquipmentManagerComponent.generated.h"
 
+struct FExperienceAbilitySet_GrantedHandles;
 struct FCommonEquipmentList;
 class UCommonEquipmentManagerComponent;
 class UCommonEquipmentDefinition;
@@ -33,9 +35,9 @@ private:
 	UPROPERTY()
 	TObjectPtr<UCommonEquipmentInstance> Instance = nullptr;
 
-	// // Authority-only list of granted handles
-	// UPROPERTY(NotReplicated)
-	// FCommonAbilitySet_GrantedHandles GrantedHandles;
+	// Authority-only list of granted handles
+	UPROPERTY(NotReplicated)
+	FExperienceAbilitySet_GrantedHandles GrantedHandles;
 };
 
 /** List of applied equipment */
@@ -117,6 +119,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	void UnequipItem(UCommonEquipmentInstance* ItemInstance);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	TArray<UCommonEquipmentInstance*> GetEquipmentInstancesOfType(TSubclassOf<UCommonEquipmentInstance> InstanceType) const;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	UCommonEquipmentInstance* GetFirstInstanceOfType(TSubclassOf<UCommonEquipmentInstance> InstanceType);
 
 private:
 	UPROPERTY(Replicated)

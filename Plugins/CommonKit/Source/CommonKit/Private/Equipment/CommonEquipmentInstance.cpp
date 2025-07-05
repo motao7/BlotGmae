@@ -5,6 +5,15 @@
 
 #include "Equipment/CommonEquipmentDefinition.h"
 #include "GameFramework/Character.h"
+#include "Net/UnrealNetwork.h"
+
+void UCommonEquipmentInstance::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	UObject::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, Instigator);
+	DOREPLIFETIME(ThisClass, SpawnedActors);
+}
 
 void UCommonEquipmentInstance::SpawnEquipmentActors(const TArray<FCommonEquipmentActorToSpawn>& ActorsToSpawn)
 {
@@ -20,8 +29,9 @@ void UCommonEquipmentInstance::SpawnEquipmentActors(const TArray<FCommonEquipmen
 		{
 			AActor* NewActor = GetWorld()->SpawnActorDeferred<AActor>(SpawnInfo.ActorToSpawn, FTransform::Identity, OwningPawn);
 			NewActor->FinishSpawning(FTransform::Identity, /*bIsDefaultTransform=*/ true);
-			NewActor->SetActorRelativeTransform(SpawnInfo.AttachTransform);
 			NewActor->AttachToComponent(AttachTarget, FAttachmentTransformRules::KeepRelativeTransform, SpawnInfo.AttachSocket);
+			NewActor->SetActorRelativeTransform(SpawnInfo.AttachTransform);
+			SpawnedActors.Add(NewActor);
 		}
 	}
 }
@@ -39,4 +49,15 @@ void UCommonEquipmentInstance::OnUnequipped()
 APawn* UCommonEquipmentInstance::GetOuterPawn() const
 {
 	return Cast<APawn>(GetOuter());
+}
+
+void UCommonEquipmentInstance::DestroyEquipmentActors()
+{
+	for (AActor* Actor : SpawnedActors)
+	{
+		if (Actor)
+		{
+			Actor->Destroy();
+		}
+	}
 }

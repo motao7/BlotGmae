@@ -44,14 +44,3 @@ const UCommonInventoryItemFragment* UCommonInventoryItemInstance::FindFragmentBy
 
 	return nullptr;
 }
-
-void UCommonEquipmentInstance::DestroyEquipmentActors()
-{
-	// for (AActor* Actor : SpawnedActors)
-	// {
-	// 	if (Actor)
-	// 	{
-	// 		Actor->Destroy();
-	// 	}
-	// }
-}

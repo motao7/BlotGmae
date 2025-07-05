@@ -4,7 +4,66 @@
 #include "Experience.h"
 #include "ExperienceGameplayAbility.h"
 
-void UExperienceAbilitySet::GiveToAbilitySystem(UAbilitySystemComponent* ASC, UObject* SourceObject) const
+void FExperienceAbilitySet_GrantedHandles::AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)
+{
+	if (Handle.IsValid())
+	{
+		AbilitySpecHandles.Add(Handle);
+	}
+}
+
+void FExperienceAbilitySet_GrantedHandles::AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle)
+{
+	if (Handle.IsValid())
+	{
+		GameplayEffectHandles.Add(Handle);
+	}
+}
+
+void FExperienceAbilitySet_GrantedHandles::AddAttributeSet(UAttributeSet* Set)
+{
+	GrantedAttributeSets.Add(Set);
+}
+
+void FExperienceAbilitySet_GrantedHandles::TakeFromAbilitySystem(UAbilitySystemComponent* ExperienceASC)
+{
+	check(ExperienceASC);
+
+	if (!ExperienceASC->IsOwnerActorAuthoritative())
+	{
+		// Must be authoritative to give or take ability sets.
+		return;
+	}
+
+	for (const FGameplayAbilitySpecHandle& Handle : AbilitySpecHandles)
+	{
+		if (Handle.IsValid())
+		{
+			ExperienceASC->ClearAbility(Handle);
+		}
+	}
+
+	for (const FActiveGameplayEffectHandle& Handle : GameplayEffectHandles)
+	{
+		if (Handle.IsValid())
+		{
+			ExperienceASC->RemoveActiveGameplayEffect(Handle);
+		}
+	}
+
+	for (UAttributeSet* Set : GrantedAttributeSets)
+	{
+		ExperienceASC->RemoveSpawnedAttribute(Set);
+	}
+
+	AbilitySpecHandles.Reset();
+	GameplayEffectHandles.Reset();
+	GrantedAttributeSets.Reset();
+}
+
+/////////////////////////////////////////////////////////////////////
+
+void UExperienceAbilitySet::GiveToAbilitySystem(UAbilitySystemComponent* ASC, FExperienceAbilitySet_GrantedHandles* OutGrantedHandles ,UObject* SourceObject) const
 {
 	check(ASC);
 
@@ -17,7 +76,7 @@ void UExperienceAbilitySet::GiveToAbilitySystem(UAbilitySystemComponent* ASC, UO
 	// Grant the gameplay abilities.
 	for (int32 AbilityIndex = 0; AbilityIndex < GrantedGameplayAbilities.Num(); ++AbilityIndex)
 	{
-		const FLyraAbilitySet_GameplayAbility& AbilityToGrant = GrantedGameplayAbilities[AbilityIndex];
+		const FExperienceAbilitySet_GameplayAbility& AbilityToGrant = GrantedGameplayAbilities[AbilityIndex];
 
 		if (!IsValid(AbilityToGrant.Ability))
 		{
@@ -32,5 +91,10 @@ void UExperienceAbilitySet::GiveToAbilitySystem(UAbilitySystemComponent* ASC, UO
 		AbilitySpec.DynamicAbilityTags.AddTag(AbilityToGrant.InputTag);
 
 		const FGameplayAbilitySpecHandle AbilitySpecHandle = ASC->GiveAbility(AbilitySpec);
+
+		if (OutGrantedHandles)
+		{
+			OutGrantedHandles->AddAbilitySpecHandle(AbilitySpecHandle);
+		}
 	}
 }

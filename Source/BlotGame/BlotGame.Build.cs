@@ -43,7 +43,7 @@ public class BlotGame : ModuleRules
 				"ControlFlows",
 				"PropertyPath",
 				
-				"ModularGameplayActors"
+				"ModularGameplayActors",
 			}
 		);
 		
@@ -71,7 +71,7 @@ public class BlotGame : ModuleRules
 				
 				"Experience",
 				"MineRuntime", "Team","CommonCamera","TagInput","Voxel", "CommonGame",
-				"GameplayMessageNodes"
+				"GameplayMessageNodes","CommonKit"
 			}
 		);
 		

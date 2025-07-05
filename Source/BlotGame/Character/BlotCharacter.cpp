@@ -6,9 +6,12 @@
 #include "BlotCharacterMovementComponent.h"
 #include "BlotPawnExtensionComponent.h"
 #include "CommonCameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Player/BlotPlayerController.h"
 #include "Player/BlotPlayerState.h"
 
+static FName NAME_BlotCharacterCollisionProfile_Capsule(TEXT("BlotPawnCapsule"));
+static FName NAME_BlotCharacterCollisionProfile_Mesh(TEXT("BlotPawnMesh"));
 
 ABlotCharacter::ABlotCharacter(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer.SetDefaultSubobjectClass<UBlotCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -16,6 +19,16 @@ ABlotCharacter::ABlotCharacter(const FObjectInitializer& ObjectInitializer)
 	// Character不执行tick事件(网络开销，运算开销的问题)
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
+
+	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	check(CapsuleComp);
+	CapsuleComp->InitCapsuleSize(40.0f, 90.0f);
+	CapsuleComp->SetCollisionProfileName(NAME_BlotCharacterCollisionProfile_Capsule);
+
+	USkeletalMeshComponent* MeshComp = GetMesh();
+	check(MeshComp);
+	MeshComp->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));  // Rotate mesh to be X forward since it is exported as Y forward.
+	MeshComp->SetCollisionProfileName(NAME_BlotCharacterCollisionProfile_Mesh);
 
 	PawnExtensionComponent=CreateDefaultSubobject<UBlotPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 	CommonCameraComponent=CreateDefaultSubobject<UCommonCameraComponent>(TEXT("CommonCameraComponent"));

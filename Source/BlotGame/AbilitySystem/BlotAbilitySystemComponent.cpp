@@ -38,7 +38,7 @@ void UBlotAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AAc
 				{
 					if (AbilitySet)
 					{
-						AbilitySet->GiveToAbilitySystem(this, nullptr);
+						AbilitySet->GiveToAbilitySystem(this,nullptr, nullptr);
 					}
 				}
 			}

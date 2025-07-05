@@ -27,6 +27,7 @@ public:
 
 /**
  *		Non-mutable data asset that contains input configuration properties.
+ *		InputConfig only connect IA and Tag,only when ASC has corresponding then can actully active
  */
 UCLASS(BlueprintType, Const)
 class TAGINPUT_API UTagInputConfig : public UDataAsset

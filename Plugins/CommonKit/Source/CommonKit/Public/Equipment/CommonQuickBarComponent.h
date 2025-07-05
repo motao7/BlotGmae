@@ -37,7 +37,8 @@ struct FCommonQuickBarActiveIndexChangedMessage
 
 
 /**
- *		Manage (QuickBar)Slot so that InventoryItemInstance can insert in correct slot
+ *		Manage (QuickBar)Slot so that InventoryItemInstance can insert in correct slot.
+ *		Connect InventorySystem and EquipmentSyatem by QuickBar.
  */
 UCLASS(Blueprintable,Config=Game)
 class COMMONKIT_API UCommonQuickBarComponent : public UControllerComponent

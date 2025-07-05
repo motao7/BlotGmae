@@ -72,7 +72,8 @@ UCommonEquipmentInstance* FCommonEquipmentList::AddEntry(TSubclassOf<UCommonEqui
 	{
 		for (const TObjectPtr<const UExperienceAbilitySet>& AbilitySet : EquipmentCDO->AbilitySetsToGrant)
 		{
-			AbilitySet->GiveToAbilitySystem(ASC, Result);
+			//Add EquipmentInstance as SourceObject for Ability
+			AbilitySet->GiveToAbilitySystem(ASC,/*inout*/ &NewEntry.GrantedHandles,Result);
 		}
 	}
 	else
@@ -91,21 +92,21 @@ void FCommonEquipmentList::RemoveEntry(UCommonEquipmentInstance* Instance)
 {
 	for (auto EntryIt = Entries.CreateIterator(); EntryIt; ++EntryIt)
 	{
-		//TODO:Remove Ability through  Entry.GrantedHandles
 		FCommonAppliedEquipmentEntry& Entry = *EntryIt;
 		if (Entry.Instance == Instance)
-		// {
-		// 	if (ULyraAbilitySystemComponent* ASC = GetAbilitySystemComponent())
-		// 	{
-		// 		Entry.GrantedHandles.TakeFromAbilitySystem(ASC);
-		// 	}
-
-			Instance->DestroyEquipmentActors();
-		
-			EntryIt.RemoveCurrent();
-			MarkArrayDirty();
+		{
+			if (UAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+			{
+				Entry.GrantedHandles.TakeFromAbilitySystem(ASC);
+			}
 		}
+		Instance->DestroyEquipmentActors();
+		
+		EntryIt.RemoveCurrent();
+		MarkArrayDirty();
+	}
 }
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -179,7 +180,7 @@ void UCommonEquipmentManagerComponent::ReadyForReplication()
 {
 	Super::ReadyForReplication();
 
-	// Register existing LyraEquipmentInstances
+	// Register existing CommonEquipmentInstances
 	if (IsUsingRegisteredSubObjectList())
 	{
 		for (const FCommonAppliedEquipmentEntry& Entry : EquipmentList.Entries)
@@ -192,4 +193,36 @@ void UCommonEquipmentManagerComponent::ReadyForReplication()
 			}
 		}
 	}
+}
+
+TArray<UCommonEquipmentInstance*> UCommonEquipmentManagerComponent::GetEquipmentInstancesOfType(TSubclassOf<UCommonEquipmentInstance> InstanceType) const
+{
+	TArray<UCommonEquipmentInstance*> Results;
+	for (const FCommonAppliedEquipmentEntry& Entry : EquipmentList.Entries)
+	{
+		if (UCommonEquipmentInstance* Instance = Entry.Instance)
+		{
+			if (Instance->IsA(InstanceType))
+			{
+				Results.Add(Instance);
+			}
+		}
+	}
+	return Results;
+}
+
+UCommonEquipmentInstance* UCommonEquipmentManagerComponent::GetFirstInstanceOfType(TSubclassOf<UCommonEquipmentInstance> InstanceType)
+{
+	for (FCommonAppliedEquipmentEntry& Entry : EquipmentList.Entries)
+	{
+		if (UCommonEquipmentInstance* Instance = Entry.Instance)
+		{
+			if (Instance->IsA(InstanceType))
+			{
+				return Instance;
+			}
+		}
+	}
+
+	return nullptr;
 }

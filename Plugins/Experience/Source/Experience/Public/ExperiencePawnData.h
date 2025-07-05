@@ -51,7 +51,6 @@ public:
 	TArray<FInputMappingContextAndPriority> InputMappingAndPrioritys;
 
 	// Ability sets to grant to this pawn's ability system.
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Lyra|Abilities")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities")
 	TArray<TObjectPtr<UExperienceAbilitySet>> AbilitySets;
-
 };
