@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
+#include "BlotAbilitySystemComponent.h"
 #include "BlotAttributeSet.generated.h"
 
 /**
  * This macro defines a set of helper functions for accessing and initializing attributes.
  *
  * The following example of the macro:
- *		ATTRIBUTE_ACCESSORS(ULyraHealthSet, Health)
+ *		ATTRIBUTE_ACCESSORS(UBlotHealthAttributeSet, Health)
  * will create the following functions:
  *		static FGameplayAttribute GetHealthAttribute();
  *		float GetHealth() const;
@@ -24,6 +25,18 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+/** 
+ * Delegate used to broadcast attribute events, some of these parameters may be null on clients: 
+ * @param EffectInstigator	The original instigating actor for this event
+ * @param EffectCauser		The physical actor that caused the change
+ * @param EffectSpec		The full effect spec for this change
+ * @param EffectMagnitude	The raw magnitude, this is before clamping
+ * @param OldValue			The value of the attribute before it was changed
+ * @param NewValue			The value after it was changed
+*/
+DECLARE_MULTICAST_DELEGATE_SixParams(FBlotAttributeEvent, AActor* /*EffectInstigator*/, AActor* /*EffectCauser*/, const FGameplayEffectSpec* /*EffectSpec*/, float /*EffectMagnitude*/, float /*OldValue*/, float /*NewValue*/);
+
+
 /**
  * 
  */
@@ -31,8 +44,11 @@ UCLASS()
 class BLOTGAME_API UBlotAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
-	
-	
-	
+
+public:
+	UBlotAbilitySystemComponent* GetBlotAbilitySystemComponent() const
+	{
+		return Cast<UBlotAbilitySystemComponent>(GetOwningAbilitySystemComponent());
+	}
 	
 };

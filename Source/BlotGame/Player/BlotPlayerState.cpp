@@ -5,6 +5,7 @@
 
 #include "BlotCombatAttributeSet.h"
 #include "BlotAbilitySystemComponent.h"
+#include "BlotHealthAttributeSet.h"
 #include "ExperienceAbilitySet.h"
 #include "ExperienceManagerComponent.h"
 #include "ExperiencePawnData.h"
@@ -24,6 +25,7 @@ ABlotPlayerState::ABlotPlayerState(const FObjectInitializer& ObjectInitializer)
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
 	CombatAttributeSet=CreateDefaultSubobject<UBlotCombatAttributeSet>(TEXT("CombatAttributeSet"));
+	HealthAttributeSet=CreateDefaultSubobject<UBlotHealthAttributeSet>(TEXT("HealthAttributeSet"));
 	
 	MyTeamId=FGenericTeamId::NoTeam;
 }

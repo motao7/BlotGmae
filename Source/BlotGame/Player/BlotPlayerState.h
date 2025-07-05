@@ -63,4 +63,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UBlotCombatAttributeSet> CombatAttributeSet;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<const class UBlotHealthAttributeSet> HealthAttributeSet;
 };

@@ -94,14 +94,13 @@ void UBlotHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* M
 		{
 			return;
 		}
-
-		//TODO:后续利用PawnExtComp来初始化或重置ASC
+		
 		if (UBlotPawnExtensionComponent* PawnExtComp =Pawn->GetComponentByClass<UBlotPawnExtensionComponent>())
 		{
 			// // The player state holds the persistent data for this player (state that persists across deaths and multiple pawns).
 			// // The ability system component and attribute sets live on the player state.
 			//TODO:InitialAbilitySystem所有ASC相关的初始化都在这里完成
-			PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS,Pawn);
+			PawnExtComp->InitializeAbilitySystem(PS->GetBlotAbilitySystemComponent(),PS);
 		}
 		
 		if (ABlotPlayerController* LyraPC =Cast<ABlotPlayerController>(Pawn->GetController()))

@@ -7,6 +7,7 @@
 #include "Components/PawnComponent.h"
 #include "BlotPawnExtensionComponent.generated.h"
 
+class UBlotAbilitySystemComponent;
 class UExperiencePawnData;
 /**
  *		用于协调其他接入IGameFrameworkInitStateInterface接口的组件的初始化的进行
@@ -25,10 +26,9 @@ public:
 	virtual void CheckDefaultInitialization() override;
 	//~ End IGameFrameworkInitStateInterface interface
 
-	/** 状态链中用于标记Hero组件 */
-	static const FName NAME_ActorFeatureName;
+	/** Should be called by the owning pawn to become the avatar of the ability system. */
+	void InitializeAbilitySystem(UBlotAbilitySystemComponent* InASC, AActor* InOwnerActor);
 
-	
 	/** This Function is used to call CheckDefaultInitialization() On Controller Changed */
 	void HandleOnControllerChanged();
 	/** This Function is used to call CheckDefaultInitialization() On PlayerStateReplicated */
@@ -38,9 +38,22 @@ public:
 	/** Should be called by the owning pawn when the input component is setup. */
 	void SetupPlayerInputComponent();
 
+	/** Register with the OnAbilitySystemInitialized delegate and broadcast if our pawn has been registered with the ability system component */
+	void OnAbilitySystemInitialized_RegisterAndCall(FSimpleMulticastDelegate::FDelegate Delegate);
+	
+	/** 状态链中用于标记Hero组件 */
+	static const FName NAME_ActorFeatureName;
+	
 protected:
 	virtual void OnRegister() override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
+
+	/** Delegate fired when our pawn becomes the ability system's avatar actor */
+	FSimpleMulticastDelegate OnAbilitySystemInitialized;
+
+	/** Pointer to the ability system component that is cached for convenience. */
+	UPROPERTY(Transient)
+	TObjectPtr<UBlotAbilitySystemComponent> AbilitySystemComponent;
+
 };

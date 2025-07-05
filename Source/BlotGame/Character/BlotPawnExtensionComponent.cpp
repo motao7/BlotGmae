@@ -3,6 +3,7 @@
 
 #include "Character/BlotPawnExtensionComponent.h"
 
+#include "BlotAbilitySystemComponent.h"
 #include "BlotGameplayTag.h"
 #include "Components/GameFrameworkComponentManager.h"
 #include "Player/BlotPlayerState.h"
@@ -81,6 +82,25 @@ void UBlotPawnExtensionComponent::CheckDefaultInitialization()
 	ContinueInitStateChain(StateChain);
 }
 
+void UBlotPawnExtensionComponent::InitializeAbilitySystem(UBlotAbilitySystemComponent* InASC, AActor* InOwnerActor)
+{
+	check(InASC);
+	check(InOwnerActor);
+
+	if (AbilitySystemComponent == InASC)
+	{
+		// The ability system component hasn't changed.
+		return;
+	}
+
+	APawn* Pawn = GetPawnChecked<APawn>();
+	
+	AbilitySystemComponent = InASC;
+	AbilitySystemComponent->InitAbilityActorInfo(InOwnerActor, Pawn);
+
+	OnAbilitySystemInitialized.Broadcast();
+}
+
 void UBlotPawnExtensionComponent::HandleOnControllerChanged()
 {
 	CheckDefaultInitialization();
@@ -94,6 +114,23 @@ void UBlotPawnExtensionComponent::HandleOnPlayerStateReplicated()
 void UBlotPawnExtensionComponent::HandleOnSetupPlayerInputComponent()
 {
 	CheckDefaultInitialization();
+}
+
+void UBlotPawnExtensionComponent::SetupPlayerInputComponent()
+{
+}
+
+void UBlotPawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall(FSimpleMulticastDelegate::FDelegate Delegate)
+{
+	if (!OnAbilitySystemInitialized.IsBoundToObject(Delegate.GetUObject()))
+	{
+		OnAbilitySystemInitialized.Add(Delegate);
+	}
+
+	if (AbilitySystemComponent)
+	{
+		Delegate.Execute();
+	}
 }
 
 void UBlotPawnExtensionComponent::OnRegister()

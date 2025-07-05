@@ -71,7 +71,7 @@ public class BlotGame : ModuleRules
 				
 				"Experience",
 				"MineRuntime", "Team","CommonCamera","TagInput","Voxel", "CommonGame",
-				"GameplayMessageNodes","CommonKit"
+				"GameplayMessageNodes","CommonKit", "GameplayMessageRuntime"
 			}
 		);
 		

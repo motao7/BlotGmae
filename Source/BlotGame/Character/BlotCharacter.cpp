@@ -3,7 +3,9 @@
 
 #include "Character/BlotCharacter.h"
 
+#include "BlotAbilitySystemComponent.h"
 #include "BlotCharacterMovementComponent.h"
+#include "BlotHealthComponent.h"
 #include "BlotPawnExtensionComponent.h"
 #include "CommonCameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -31,10 +33,15 @@ ABlotCharacter::ABlotCharacter(const FObjectInitializer& ObjectInitializer)
 	MeshComp->SetCollisionProfileName(NAME_BlotCharacterCollisionProfile_Mesh);
 
 	PawnExtensionComponent=CreateDefaultSubobject<UBlotPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
+	PawnExtensionComponent->OnAbilitySystemInitialized_RegisterAndCall(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnAbilitySystemInitialized));
+
 	CommonCameraComponent=CreateDefaultSubobject<UCommonCameraComponent>(TEXT("CommonCameraComponent"));
+
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
+
+	HealthComponent = CreateDefaultSubobject<UBlotHealthComponent>(TEXT("HealthComponent"));
 
 	UBlotCharacterMovementComponent* MoveComp = CastChecked<UBlotCharacterMovementComponent>(GetCharacterMovement());
 	MoveComp->GravityScale = 1.0f;
@@ -129,4 +136,12 @@ void ABlotCharacter::ToggleCrouch()
 	{
 		Crouch();
 	}
+}
+
+void ABlotCharacter::OnAbilitySystemInitialized()
+{
+	UBlotAbilitySystemComponent* BlotASC = Cast<UBlotAbilitySystemComponent>(GetAbilitySystemComponent());
+	check(BlotASC);
+
+	HealthComponent->InitializeWithAbilitySystem(BlotASC);
 }
