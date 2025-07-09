@@ -14,6 +14,27 @@ void UCommonInventoryItemInstance::GetLifetimeReplicatedProps(TArray<class FLife
 {
 	UObject::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ThisClass, ItemDef);
+	DOREPLIFETIME(ThisClass, StatTags);
+}
+
+void UCommonInventoryItemInstance::AddStatTagStack(FGameplayTag Tag, int32 StackCount)
+{
+	StatTags.AddStack(Tag, StackCount);
+}
+
+void UCommonInventoryItemInstance::RemoveStatTagStack(FGameplayTag Tag, int32 StackCount)
+{
+	StatTags.RemoveStack(Tag, StackCount);
+}
+
+int32 UCommonInventoryItemInstance::GetStatTagStackCount(FGameplayTag Tag) const
+{
+	return StatTags.GetStackCount(Tag);
+}
+
+bool UCommonInventoryItemInstance::HasStatTag(FGameplayTag Tag) const
+{
+	return StatTags.ContainsTag(Tag);
 }
 
 bool UCommonInventoryItemInstance::IsDefaultItem()

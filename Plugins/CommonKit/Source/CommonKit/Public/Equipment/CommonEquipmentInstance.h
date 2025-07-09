@@ -20,7 +20,8 @@ public:
 	//~UObject interface
 	virtual bool IsSupportedForNetworking() const override { return true; }
 	//~End of UObject interface
-	
+
+	/**Normally is InvenrtoryInstance*/
 	UFUNCTION(BlueprintPure, Category=Equipment)
 	UObject* GetInstigator() const { return Instigator; }
 

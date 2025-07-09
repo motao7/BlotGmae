@@ -44,6 +44,16 @@ void UBlotCombatAttributeSet::PostGameplayEffectExecute(const struct FGameplayEf
 	}
 }
 
+void UBlotCombatAttributeSet::OnRep_BaseDamage(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBlotCombatAttributeSet, BaseDamage, OldValue);
+}
+
+void UBlotCombatAttributeSet::OnRep_BaseHeal(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBlotCombatAttributeSet, BaseHeal, OldValue);
+}
+
 void UBlotCombatAttributeSet::OnRep_MaxWalkSpeed(const FGameplayAttributeData& OldValue)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBlotCombatAttributeSet, MaxWalkSpeed, OldValue);

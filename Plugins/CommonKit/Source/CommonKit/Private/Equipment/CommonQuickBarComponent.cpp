@@ -9,6 +9,7 @@
 #include "Inventory/CIF_EquippableItem.h"
 #include "Inventory/CommonInventoryItemInstance.h"
 #include "NativeGameplayTags.h"
+#include "Equipment/CommonEquipmentInstance.h"
 #include "Inventory/CommonInventoryItemDefinition.h"
 #include "Inventory/CommonInvnetoryManagerComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -28,6 +29,7 @@ void UCommonQuickBarComponent::GetLifetimeReplicatedProps(TArray<class FLifetime
 
 	DOREPLIFETIME(ThisClass, Slots);
 	DOREPLIFETIME(ThisClass, ActiveSlotIndex);
+	DOREPLIFETIME(ThisClass, EquippedInstance);
 }
 
 void UCommonQuickBarComponent::BeginPlay()
@@ -72,14 +74,19 @@ int32 UCommonQuickBarComponent::GetNextFreeItemSlot() const
 	return INDEX_NONE;
 }
 
+const UCommonEquipmentInstance* UCommonQuickBarComponent::GetEquippedInstance() const
+{
+	return EquippedInstance;
+}
+
 void UCommonQuickBarComponent::UnequipItemInSlot()
 {
 	if (UCommonEquipmentManagerComponent* EquipmentManager = FindEquipmentManager())
 	{
-		if (EquippedItem != nullptr)
+		if (EquippedInstance != nullptr)
 		{
-			EquipmentManager->UnequipItem(EquippedItem);
-			EquippedItem = nullptr;
+			EquipmentManager->UnequipItem(EquippedInstance);
+			EquippedInstance = nullptr;
 		}
 	}
 }
@@ -87,7 +94,7 @@ void UCommonQuickBarComponent::UnequipItemInSlot()
 void UCommonQuickBarComponent::EquipItemInSlot()
 {
 	check(Slots.IsValidIndex(ActiveSlotIndex));
-	check(EquippedItem == nullptr);
+	check(EquippedInstance == nullptr);
 
 	if (UCommonInventoryItemInstance* SlotItem = Slots[ActiveSlotIndex])
 	{
@@ -98,11 +105,11 @@ void UCommonQuickBarComponent::EquipItemInSlot()
 			{
 				if (UCommonEquipmentManagerComponent* EquipmentManager = FindEquipmentManager())
 				{
-					EquippedItem = EquipmentManager->EquipItem(EquipDef);
-					// if (EquippedItem != nullptr)
-					// {
-					// 	EquippedItem->SetInstigator(SlotItem);
-					// }
+					EquippedInstance = EquipmentManager->EquipItem(EquipDef);
+					if (EquippedInstance != nullptr)
+					{
+						EquippedInstance->SetInstigator(SlotItem);
+					}
 				}
 			}
 		}
@@ -148,9 +155,10 @@ void UCommonQuickBarComponent::SetActiveSlotIndex_Implementation(int32 Index)
 		UnequipItemInSlot();
 
 		ActiveSlotIndex = Index;
-
+		
 		EquipItemInSlot();
 
 		OnRep_ActiveSlotIndex();
+		
 	}
 }

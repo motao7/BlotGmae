@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagStack.h"
 #include "UObject/NoExportTypes.h"
 #include "CommonInventoryItemInstance.generated.h"
 
@@ -23,10 +24,17 @@ public:
 	virtual bool IsSupportedForNetworking() const override { return true; }
 	//~End of UObject interface
 	
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Inventory)
+	void AddStatTagStack(FGameplayTag Tag, int32 StackCount);
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category= Inventory)
+	void RemoveStatTagStack(FGameplayTag Tag, int32 StackCount);
+	UFUNCTION(BlueprintCallable, Category=Inventory)
+	int32 GetStatTagStackCount(FGameplayTag Tag) const;
+	UFUNCTION(BlueprintCallable, Category=Inventory)
+	bool HasStatTag(FGameplayTag Tag) const;
+
 	TSubclassOf<UCommonInventoryItemDefinition> GetItemDef() const{return ItemDef;}
-
 	void SetItemDef(TSubclassOf<UCommonInventoryItemDefinition> InDef){ItemDef = InDef;}
-
 	bool IsDefaultItem();
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(DeterminesOutputType=FragmentClass))
@@ -39,6 +47,10 @@ public:
 	}
 	
 private:
+	/***/
+	UPROPERTY(Replicated)
+	FGameplayTagStackContainer StatTags;
+
 	UPROPERTY(Replicated)
 	TSubclassOf<UCommonInventoryItemDefinition> ItemDef;
 };

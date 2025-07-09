@@ -66,6 +66,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure=false)
 	int32 GetNextFreeItemSlot() const;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure=true)
+	const UCommonEquipmentInstance* GetEquippedInstance() const;
+
 protected:
 	void UnequipItemInSlot();
 	void EquipItemInSlot();
@@ -88,7 +91,7 @@ private:
 	UPROPERTY(ReplicatedUsing=OnRep_ActiveSlotIndex)
 	int32 ActiveSlotIndex = -1;
 
-	UPROPERTY()
-	TObjectPtr<UCommonEquipmentInstance> EquippedItem;
+	UPROPERTY(Replicated)
+	TObjectPtr<UCommonEquipmentInstance> EquippedInstance;
 	
 };

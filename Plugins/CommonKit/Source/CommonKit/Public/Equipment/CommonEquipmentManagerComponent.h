@@ -126,6 +126,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UCommonEquipmentInstance* GetFirstInstanceOfType(TSubclassOf<UCommonEquipmentInstance> InstanceType);
 
+	template<typename  T>
+	T* GetFirstInstanceOfType()
+	{
+		return static_cast<T*>(GetFirstInstanceOfType(T::StaticClass()));
+	}
 private:
 	UPROPERTY(Replicated)
 	FCommonEquipmentList EquipmentList;

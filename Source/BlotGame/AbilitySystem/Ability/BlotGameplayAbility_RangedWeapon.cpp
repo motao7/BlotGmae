@@ -8,17 +8,18 @@
 #include "BlotLogChannels.h"
 #include "Physics/BlotCollisionChannel.h"
 #include "Weapon/CommonRangedWeaponInstance.h"
+#include "Weapon/CommonWeaponStateComponent.h"
 
 namespace BlotConsoleVariables
 {
-	static float DrawBulletTracesDuration = 0.0f;
+	static float DrawBulletTracesDuration = 0.f;
 	static FAutoConsoleVariableRef CVarDrawBulletTraceDuraton(
 		TEXT("Blot.Weapon.DrawBulletTraceDuration"),
 		DrawBulletTracesDuration,
 		TEXT("Should we do debug drawing for bullet traces (if above zero, sets how long (in seconds))"),
 		ECVF_Default);
 
-	static float DrawBulletHitDuration = 0.0f;
+	static float DrawBulletHitDuration = 0.f;
 	static FAutoConsoleVariableRef CVarDrawBulletHits(
 		TEXT("Blot.Weapon.DrawBulletHitDuration"),
 		DrawBulletHitDuration,
@@ -31,6 +32,37 @@ namespace BlotConsoleVariables
 		DrawBulletHitRadius,
 		TEXT("When bullet hit debug drawing is enabled (see DrawBulletHitDuration), how big should the hit radius be? (in uu)"),
 		ECVF_Default);
+}
+
+void UBlotGameplayAbility_RangedWeapon::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+{
+	// Bind target data callback
+	UAbilitySystemComponent* MyAbilityComponent = CurrentActorInfo->AbilitySystemComponent.Get();
+	check(MyAbilityComponent);
+
+	OnTargetDataReadyCallbackDelegateHandle = MyAbilityComponent->AbilityTargetDataSetDelegate(CurrentSpecHandle, CurrentActivationInfo.GetActivationPredictionKey()).AddUObject(this, &ThisClass::OnTargetDataReadyCallback);
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+}
+
+void UBlotGameplayAbility_RangedWeapon::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	if (IsEndAbilityValid(Handle, ActorInfo))
+	{
+		if (ScopeLockCount > 0)
+		{
+			WaitingToExecute.Add(FPostLockDelegate::CreateUObject(this, &ThisClass::EndAbility, Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled));
+			return;
+		}
+
+		UAbilitySystemComponent* MyAbilityComponent = CurrentActorInfo->AbilitySystemComponent.Get();
+		check(MyAbilityComponent);
+
+		// When ability ends, consume target data and remove delegate
+		MyAbilityComponent->AbilityTargetDataSetDelegate(CurrentSpecHandle, CurrentActivationInfo.GetActivationPredictionKey()).Remove(OnTargetDataReadyCallbackDelegateHandle);
+		MyAbilityComponent->ConsumeClientReplicatedTargetData(CurrentSpecHandle, CurrentActivationInfo.GetActivationPredictionKey());
+
+		Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	}
 }
 
 UCommonRangedWeaponInstance* UBlotGameplayAbility_RangedWeapon::GetWeaponInstance() const
@@ -57,6 +89,10 @@ void UBlotGameplayAbility_RangedWeapon::StartRangedWeaponTargeting()
 	FGameplayAbilityTargetDataHandle TargetData;
 	TargetData.UniqueId = 0;
 
+	AController* Controller = CurrentActorInfo->PlayerController.Get();
+	check(Controller);
+	UCommonWeaponStateComponent* WeaponStateComponent = Controller->FindComponentByClass<UCommonWeaponStateComponent>();
+	
 	if (FoundHits.Num() > 0)
 	{
 		const int32 CartridgeID = FMath::Rand();
@@ -69,8 +105,15 @@ void UBlotGameplayAbility_RangedWeapon::StartRangedWeaponTargeting()
 		
 			TargetData.Add(NewTargetData);
 		}
-	}
 
+		// Send hit marker information if hit somepawn
+		if (WeaponStateComponent != nullptr&&FindFirstPawnHitResult(FoundHits)!=INDEX_NONE)
+		{
+			WeaponStateComponent->AddLastWeaponDamageScreenLocations(FoundHits);
+			WeaponStateComponent->UpdateDamageInstigatedTime();
+		}
+	}
+	
 	// Process the target data immediately
 	OnTargetDataReadyCallback(TargetData, FGameplayTag());
 }
@@ -171,36 +214,50 @@ void UBlotGameplayAbility_RangedWeapon::TraceBulletsInCartridge(const FRangedWea
 		TArray<FHitResult> AllImpacts;
 
 		//TODO: make spread for shoutgun
-		FHitResult Impact = WeaponTrace(InputData.StartTrace, InputData.EndAim, /*bIsSimulated=*/ false, /*out*/ AllImpacts);
-
-		const AActor* HitActor = Impact.GetActor();
-
-		if (HitActor)
-		{
-			#if ENABLE_DRAW_DEBUG
-						if (BlotConsoleVariables::DrawBulletHitDuration > 0.0f)
-						{
-							DrawDebugPoint(GetWorld(), Impact.ImpactPoint, BlotConsoleVariables::DrawBulletHitRadius, FColor::Red, false, BlotConsoleVariables::DrawBulletHitRadius);
-						}
-			#endif
-		}
+		WeaponTrace(InputData.StartTrace, InputData.EndAim, /*bIsSimulated=*/ false, /*out*/ AllImpacts);
 		
 		if (AllImpacts.Num() > 0)
 		{
+			const AActor* HitActor =AllImpacts.Last().GetActor();
+			if (HitActor)
+			{
+#if ENABLE_DRAW_DEBUG
+				if (BlotConsoleVariables::DrawBulletHitDuration > 0.0f)
+				{
+					DrawDebugPoint(GetWorld(), AllImpacts.Last().ImpactPoint, BlotConsoleVariables::DrawBulletHitRadius, FColor::Red, false, BlotConsoleVariables::DrawBulletHitRadius);
+				}
+#endif
+			}
+			
 			if (CanPenetrate)
 			{
 				OutHits.Append(AllImpacts);
+				return;
+			}
+			
+			int32 FirstValidIndex=FindFirstPawnHitResult(AllImpacts);
+			if (AllImpacts.IsValidIndex(FirstValidIndex))
+			{
+				OutHits.Add(AllImpacts[FirstValidIndex]);
+				return;
 			}
 			else
 			{
-				if (int32 FirstValidIndex=FindFirstPawnHitResult(AllImpacts))
-				{
-					if (AllImpacts.IsValidIndex(FirstValidIndex))
-					{
-						OutHits.Add(AllImpacts[FirstValidIndex]);	
-					}
-				}
+				//Not Hit any Pawn but hit something 
+				OutHits.Append(AllImpacts);
 			}
+		}
+
+		// Make sure there's always an entry in OutHits so the direction can be used for tracers, etc...
+		if (OutHits.Num() == 0)
+		{
+			FHitResult Hit;
+			// Locate the fake 'impact' at the end of the trace
+			Hit.Location = InputData.EndAim;
+			Hit.ImpactPoint = InputData.EndAim;
+			Hit.TraceStart = InputData.StartTrace;
+			Hit.TraceEnd = InputData.EndAim;
+			OutHits.Add(Hit);
 		}
 	}
 }
@@ -216,7 +273,7 @@ void UBlotGameplayAbility_RangedWeapon::AddAdditionalTraceIgnoreActors(FCollisio
 	}
 }
 
-FHitResult UBlotGameplayAbility_RangedWeapon::WeaponTrace(const FVector& StartTrace, const FVector& EndTrace, bool bIsSimulated, OUT TArray<FHitResult>& OutHitResults) const
+void UBlotGameplayAbility_RangedWeapon::WeaponTrace(const FVector& StartTrace, const FVector& EndTrace, bool bIsSimulated, OUT TArray<FHitResult>& OutHitResults) const
 {
 	TArray<FHitResult> HitResults;
 	
@@ -246,11 +303,7 @@ FHitResult UBlotGameplayAbility_RangedWeapon::WeaponTrace(const FVector& StartTr
 				OutHitResults.Add(CurHitResult);
 			}
 		}
-
-		Hit = OutHitResults.Last();
 	}
-
-	return Hit;
 }
 
 int32 UBlotGameplayAbility_RangedWeapon::FindFirstPawnHitResult(const TArray<FHitResult>& HitResults)

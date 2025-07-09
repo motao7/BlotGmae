@@ -62,6 +62,15 @@ void UBlotAbilitySystemComponent::TryActivateAbilitiesOnSpawn()
 	}
 }
 
+void UBlotAbilitySystemComponent::GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle, FGameplayAbilityActivationInfo ActivationInfo, FGameplayAbilityTargetDataHandle& OutTargetDataHandle)
+{
+	TSharedPtr<FAbilityReplicatedDataCache> ReplicatedData = AbilityTargetDataMap.Find(FGameplayAbilitySpecHandleAndPredictionKey(AbilityHandle, ActivationInfo.GetActivationPredictionKey()));
+	if (ReplicatedData.IsValid())
+	{
+		OutTargetDataHandle = ReplicatedData->TargetData;
+	}
+}
+
 void UBlotAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
 {
 	if (InputTag.IsValid())

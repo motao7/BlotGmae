@@ -30,6 +30,9 @@ UCLASS()
 class BLOTGAME_API UBlotGameplayAbility_RangedWeapon : public UBlotGameplayAbility_FromEquipment
 {
 	GENERATED_BODY()
+public:
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 protected:
 	struct FRangedWeaponFiringInput
@@ -74,7 +77,7 @@ protected:
 	void AddAdditionalTraceIgnoreActors(FCollisionQueryParams& TraceParams) const;
 
 	/**Trace no penetrate*/
-	FHitResult WeaponTrace(const FVector& StartTrace, const FVector& EndTrace, bool bIsSimulated, OUT TArray<FHitResult>& OutHitResults) const;
+	void WeaponTrace(const FVector& StartTrace, const FVector& EndTrace, bool bIsSimulated, OUT TArray<FHitResult>& OutHitResults) const;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnRangedWeaponTargetDataReady(const FGameplayAbilityTargetDataHandle& TargetData);
@@ -83,4 +86,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	bool CanPenetrate=false;
+
+private:
+	FDelegateHandle OnTargetDataReadyCallbackDelegateHandle;
 };
