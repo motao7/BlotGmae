@@ -3,23 +3,47 @@
 
 #include "Inventory/CommonInvnetoryManagerComponent.h"
 
+#include "CommonKit.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Inventory/CommonInventoryItemDefinition.h"
 #include "Inventory/CommonInventoryItemFragment.h"
 #include "Inventory/CommonInventoryItemInstance.h"
 #include "Net/UnrealNetwork.h"
+#include "NativeGameplayTags.h"
+
+UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_Common_Inventory_Message_StackChanged, "Common.Inventory.Message.StackChanged");
 
 ///////////////////////////////////////////////////
 
 void FCommonInventoryList::PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize)
 {
+	for (int32 Index : RemovedIndices)
+	{
+		FCommonInventoryEntry& Stack = Entries[Index];
+		BroadcastChangeMessage(Stack, /*OldCount=*/ Stack.StackCount, /*NewCount=*/ 0);
+		Stack.LastObservedCount = 0;
+	}
 }
 
 void FCommonInventoryList::PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize)
 {
+	for (int32 Index : AddedIndices)
+	{
+		FCommonInventoryEntry& Stack = Entries[Index];
+		BroadcastChangeMessage(Stack, /*OldCount=*/ 0, /*NewCount=*/ Stack.StackCount);
+		Stack.LastObservedCount = Stack.StackCount;
+	}
 }
 
 void FCommonInventoryList::PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize)
 {
+	for (int32 Index : ChangedIndices)
+	{
+		FCommonInventoryEntry& Stack = Entries[Index];
+		check(Stack.LastObservedCount != INDEX_NONE);
+		BroadcastChangeMessage(Stack, /*OldCount=*/ Stack.LastObservedCount, /*NewCount=*/ Stack.StackCount);
+		Stack.LastObservedCount = Stack.StackCount;
+	}
 }
 
 UCommonInventoryItemInstance* FCommonInventoryList::AddEntry(TSubclassOf<UCommonInventoryItemDefinition> ItemDef, int32 StackCount)
@@ -31,23 +55,29 @@ UCommonInventoryItemInstance* FCommonInventoryList::AddEntry(TSubclassOf<UCommon
 
 	AActor* OwningActor = OwnerComponent->GetOwner();
 	check(OwningActor->HasAuthority());
-	
-	FCommonInventoryEntry& NewEntry = Entries.AddDefaulted_GetRef();
-	NewEntry.Instance = NewObject<UCommonInventoryItemInstance>(OwnerComponent->GetOwner());
-	NewEntry.Instance->SetItemDef(ItemDef);
-	for (UCommonInventoryItemFragment* Fragment : GetDefault<UCommonInventoryItemDefinition>(ItemDef)->Fragments)
-	{
-		if (Fragment != nullptr)
-		{
-			Fragment->OnInstanceCreated(NewEntry.Instance);
-		}
-	}
-	NewEntry.StackCount = StackCount;
-	Result = NewEntry.Instance;
-	
-	MarkItemDirty(NewEntry);
 
-	return Result;
+	if (Entries.Num()<=Inventory::InventorySize)
+	{
+		FCommonInventoryEntry& NewEntry = Entries.AddDefaulted_GetRef();
+		NewEntry.Instance = NewObject<UCommonInventoryItemInstance>(OwnerComponent->GetOwner());
+		NewEntry.Instance->SetItemDef(ItemDef);
+		for (UCommonInventoryItemFragment* Fragment : GetDefault<UCommonInventoryItemDefinition>(ItemDef)->Fragments)
+		{
+			if (Fragment != nullptr)
+			{
+				Fragment->OnInstanceCreated(NewEntry.Instance);
+			}
+		}
+		NewEntry.StackCount = StackCount;
+		Result = NewEntry.Instance;
+	
+		MarkItemDirty(NewEntry);
+
+		return Result;
+	}
+	
+	UE_LOG(LogCommonKit,Error,TEXT("Inventory Add Item Over Inventory Size"));
+	return nullptr;
 }
 
 void FCommonInventoryList::AddEntry(UCommonInventoryItemInstance* Instance)
@@ -80,6 +110,18 @@ TArray<UCommonInventoryItemInstance*> FCommonInventoryList::GetAllItems() const
 		}
 	}
 	return Results;
+}
+
+void FCommonInventoryList::BroadcastChangeMessage(FCommonInventoryEntry& Entry, int32 OldCount, int32 NewCount)
+{
+	FCommonInventoryChangeMessage Message;
+	Message.InventoryManager = OwnerComponent;
+	Message.Instance = Entry.Instance;
+	Message.NewCount = NewCount;
+	Message.Delta = NewCount - OldCount;
+
+	UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(OwnerComponent->GetWorld());
+	MessageSystem.BroadcastMessage(TAG_Common_Inventory_Message_StackChanged, Message);
 }
 
 ///////////////////////////////////////////////////

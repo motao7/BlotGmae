@@ -10,6 +10,7 @@
 #include "Inventory/CommonInventoryItemInstance.h"
 #include "NativeGameplayTags.h"
 #include "Equipment/CommonEquipmentInstance.h"
+#include "GameFramework/Character.h"
 #include "Inventory/CommonInventoryItemDefinition.h"
 #include "Inventory/CommonInvnetoryManagerComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -45,7 +46,7 @@ void UCommonQuickBarComponent::AddItemToSlot(int32 SlotIndex, UCommonInventoryIt
 {
 	if (Slots.IsValidIndex(SlotIndex) && (Item != nullptr))
 	{
-		if (Slots[SlotIndex]==nullptr||Slots[SlotIndex]->IsDefaultItem())
+		if (Slots[SlotIndex]==nullptr)
 		{
 			Slots[SlotIndex] = Item;
 			//Only server excute AddItemToSlot,Call OnRep_Slots() is for the player in listen server
@@ -64,7 +65,7 @@ int32 UCommonQuickBarComponent::GetNextFreeItemSlot() const
 	int32 SlotIndex = 0;
 	for (const TObjectPtr<UCommonInventoryItemInstance>& ItemPtr : Slots)
 	{
-		if (ItemPtr==nullptr||ItemPtr->IsDefaultItem())
+		if (ItemPtr==nullptr)
 		{
 			return SlotIndex;
 		}

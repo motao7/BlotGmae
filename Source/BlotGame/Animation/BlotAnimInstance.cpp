@@ -35,7 +35,6 @@ void UBlotAnimInstance::NativeInitializeAnimation()
 	UAbilitySystemComponent* ASC = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(OwningActor);
 	if (!ASC)
 	{
-		UE_LOG(LogBlotAnim, Warning, TEXT("Failed to get AbilitySystemComponent from OwningActor: %s"), *OwningActor->GetName());
 		return;
 	}
 

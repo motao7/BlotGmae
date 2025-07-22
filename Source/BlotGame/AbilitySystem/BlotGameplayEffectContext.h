@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
+#include "Templates/SharedPointer.h"
 #include "BlotGameplayEffectContext.generated.h"
 
 /**
@@ -30,10 +31,21 @@ struct BLOTGAME_API FBlotGameplayEffectContext:public FGameplayEffectContext
 	/** Overridden to serialize new fields */
 	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override;
 
-public:
+	virtual UScriptStruct* GetScriptStruct() const override
+	{
+		return FBlotGameplayEffectContext::StaticStruct();
+	}
+	
+	void AddHitResults(const FHitResult& Hit) { HitResults.Add(MakeShared<FHitResult>(Hit)); }
+	const TArray<TSharedPtr<FHitResult>>& GetHitResults() const { return HitResults; }
+
+	void SetCartridgeID(int32 InCartridgeID){CartridgeID=InCartridgeID;}
+	
+protected:
 	UPROPERTY()
 	int32 CartridgeID = -1;
-
+	
+	TArray<TSharedPtr<FHitResult>> HitResults;
 };
 
 template<>

@@ -5,7 +5,7 @@
 
 #include "BlotGameState.h"
 #include "BlotLogChannels.h"
-#include "ExperienceDefination.h"
+#include "ExperienceDefinition.h"
 #include "ExperienceManagerComponent.h"
 #include "ExperienceWorldSetting.h"
 #include "Character/BlotPawnExtensionComponent.h"
@@ -59,11 +59,11 @@ void ABlotGameMode::LoadExperience() const
 	UExperienceManagerComponent* ExperienceComponent = GameState->FindComponentByClass<UExperienceManagerComponent>();
 	check(ExperienceComponent);
 	AExperienceWorldSetting* ExperienceWorldSetting=Cast<AExperienceWorldSetting>(GetWorldSettings());
-	TSoftClassPtr<UExperienceDefination> Experience=ExperienceWorldSetting->GetDefaultExperience();
+	TSoftClassPtr<UExperienceDefinition> Experience=ExperienceWorldSetting->GetDefaultExperience();
 	ExperienceComponent->StartLoadExperience(Experience);
 }
 
-void ABlotGameMode::OnExperienceLoaded(const UExperienceDefination* ExperienceDefination)
+void ABlotGameMode::OnExperienceLoaded(const UExperienceDefinition* ExperienceDefination)
 {
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{

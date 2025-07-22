@@ -19,9 +19,15 @@ public:
 	{
 		return MaxDamageRange;
 	}
+	
 	int32 GetBulletsPerCartridge() const
 	{
 		return BulletsPerCartridge;
+	}
+
+	float GetBulletSpread() const
+	{
+		return BulletSpread;
 	}
 	
 protected:
@@ -32,4 +38,8 @@ protected:
 	// The maximum distance at which this weapon can deal damage
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon Config", meta=(ForceUnits=cm))
 	float MaxDamageRange = 25000.0f;
+
+	//Pistol.... should be zero,shotgun should 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon Config", meta=(ClampMin="0.0", ClampMax="45.0", ForceUnits="cm"))
+	float BulletSpread=0.f;
 };

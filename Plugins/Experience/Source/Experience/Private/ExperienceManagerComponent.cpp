@@ -4,7 +4,7 @@
 #include "ExperienceManagerComponent.h"
 
 #include "ExperienceActionSet.h"
-#include "ExperienceDefination.h"
+#include "ExperienceDefinition.h"
 #include "GameFeaturesSubsystem.h"
 #include "GameFeaturesSubsystemSettings.h"
 #include "Engine/AssetManager.h"
@@ -24,7 +24,12 @@ void UExperienceManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimePro
 	DOREPLIFETIME(ThisClass, CurrentExperience);
 }
 
-void UExperienceManagerComponent::StartLoadExperience(const TSoftClassPtr<UExperienceDefination>& ExperienceDef)
+bool UExperienceManagerComponent::IsExperienceLoaded() const
+{
+	return bExperienceLoadedCompoleted;
+}
+
+void UExperienceManagerComponent::StartLoadExperience(const TSoftClassPtr<UExperienceDefinition>& ExperienceDef)
 {
 	// 获取主资产ID
 	FPrimaryAssetId ExperienceId = UAssetManager::Get().GetPrimaryAssetIdForPath(ExperienceDef.ToSoftObjectPath());
@@ -34,7 +39,7 @@ void UExperienceManagerComponent::StartLoadExperience(const TSoftClassPtr<UExper
 	FSoftObjectPath AssetPath = UAssetManager::Get().GetPrimaryAssetPath(ExperienceId);
     
 	// 尝试加载资产类
-	TSubclassOf<UExperienceDefination> AssetClass = Cast<UClass>(AssetPath.TryLoad());
+	TSubclassOf<UExperienceDefinition> AssetClass = Cast<UClass>(AssetPath.TryLoad());
 	if (!AssetClass)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to load asset class from path: %s"), *AssetPath.ToString());
@@ -42,7 +47,7 @@ void UExperienceManagerComponent::StartLoadExperience(const TSoftClassPtr<UExper
 	}
 
 	// 获取资产的默认实例（CDO）---这会加载类的基本信息，但不会加载类的成员变量,如果你有类似 TSoftObjectPtr 类型的成员变量，它们可能需要进一步加载
-	const UExperienceDefination* Experience = GetDefault<UExperienceDefination>(AssetClass);
+	const UExperienceDefinition* Experience = GetDefault<UExperienceDefinition>(AssetClass);
 	if (!Experience)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to get default experience definition from asset class."));
@@ -164,6 +169,9 @@ void UExperienceManagerComponent::OnExperienceFullLoadCompleted(const UE::GameFe
 	
 	OnExperienceLoadedDelegate.Broadcast(CurrentExperience);
 	OnExperienceLoadedDelegate.Clear();
+
+	OnExperienceLoadedDelegate_LowPriority.Broadcast(CurrentExperience);
+	OnExperienceLoadedDelegate_LowPriority.Clear();
 }
 
 void UExperienceManagerComponent::CallOrReigister_OnExperienceLoaded_HighPriority(FOnExperienceLoaded::FDelegate&& Delegate)
@@ -189,6 +197,19 @@ void UExperienceManagerComponent::CallOrReigister_OnExperienceLoaded(FOnExperien
 	{
 		//MoveTemp类似于Std::move:移动右值 or 将左值变为右值
 		OnExperienceLoadedDelegate.Add(MoveTemp(Delegate));
+	}
+}
+
+void UExperienceManagerComponent::CallOrRegister_OnExperienceLoaded_LowPriority(FOnExperienceLoaded::FDelegate&& Delegate)
+{
+	if(GetIsExperienceLoadedCompoleted())
+	{
+		Delegate.Execute(CurrentExperience);
+	}
+	else
+	{
+		//MoveTemp类似于Std::move:移动右值 or 将左值变为右值
+		OnExperienceLoadedDelegate_LowPriority.Add(MoveTemp(Delegate));
 	}
 }
 

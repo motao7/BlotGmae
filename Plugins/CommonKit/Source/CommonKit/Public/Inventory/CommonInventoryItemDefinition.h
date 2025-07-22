@@ -22,7 +22,5 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Display, Instanced)
 	TArray<TObjectPtr<UCommonInventoryItemFragment>> Fragments;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Display)
-	bool IsDefaultItem=false;
+	
 };

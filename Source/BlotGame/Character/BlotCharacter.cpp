@@ -34,7 +34,8 @@ ABlotCharacter::ABlotCharacter(const FObjectInitializer& ObjectInitializer)
 
 	PawnExtensionComponent=CreateDefaultSubobject<UBlotPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 	PawnExtensionComponent->OnAbilitySystemInitialized_RegisterAndCall(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnAbilitySystemInitialized));
-
+	PawnExtensionComponent->SetIsReplicated(true);
+	
 	CommonCameraComponent=CreateDefaultSubobject<UCommonCameraComponent>(TEXT("CommonCameraComponent"));
 
 	bUseControllerRotationPitch = false;
@@ -42,7 +43,8 @@ ABlotCharacter::ABlotCharacter(const FObjectInitializer& ObjectInitializer)
 	bUseControllerRotationRoll = false;
 
 	HealthComponent = CreateDefaultSubobject<UBlotHealthComponent>(TEXT("HealthComponent"));
-
+	HealthComponent->SetIsReplicated(true);
+	
 	UBlotCharacterMovementComponent* MoveComp = CastChecked<UBlotCharacterMovementComponent>(GetCharacterMovement());
 	MoveComp->GravityScale = 1.0f;
 	MoveComp->MaxAcceleration = 2400.0f;
@@ -122,6 +124,11 @@ void ABlotCharacter::OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerS
 	Super::OnPlayerStateChanged(NewPlayerState, OldPlayerState);
 
 	// ListenForTeamChange();
+}
+
+void ABlotCharacter::LinkDefaultAnimLayer()
+{
+	GetMesh()->LinkAnimClassLayers(DefaultAnimInstance);
 }
 
 void ABlotCharacter::ToggleCrouch()

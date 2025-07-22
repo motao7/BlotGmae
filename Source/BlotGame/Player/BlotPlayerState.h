@@ -12,7 +12,7 @@
 
 class UBlotCombatAttributeSet;
 class UBlotAbilitySystemComponent;
-class UExperienceDefination;
+class UExperienceDefinition;
 class UExperiencePawnData;
 
 /**
@@ -56,7 +56,7 @@ private:
 	UPROPERTY(VisibleAnywhere,Replicated)
 	TObjectPtr<const UExperiencePawnData> ExperiencePawnData;
 
-	void OnExperienceLoaded(const UExperienceDefination* ExperienceDefination);
+	void OnExperienceLoaded(const UExperienceDefinition* ExperienceDefination);
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UBlotAbilitySystemComponent> AbilitySystemComponent;

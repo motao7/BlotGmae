@@ -6,7 +6,7 @@
 #include "GameFramework/WorldSettings.h"
 #include "ExperienceWorldSetting.generated.h"
 
-class UExperienceDefination;
+class UExperienceDefinition;
 /**
  *		持有每一个Level对应的Expeirnece
  */
@@ -18,9 +18,9 @@ class EXPERIENCE_API AExperienceWorldSetting : public AWorldSettings
 public:
 	AExperienceWorldSetting(const FObjectInitializer& ObjectInitializer);
 	
-	TSoftClassPtr<UExperienceDefination>& GetDefaultExperience(){return DefaultExperience;}
+	TSoftClassPtr<UExperienceDefinition>& GetDefaultExperience(){return DefaultExperience;}
 	
 protected:
 	UPROPERTY(EditAnywhere,Category="Experience")
-	TSoftClassPtr<UExperienceDefination> DefaultExperience;
+	TSoftClassPtr<UExperienceDefinition> DefaultExperience;
 };

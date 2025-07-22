@@ -108,7 +108,7 @@ void ABlotPlayerState::OnRep_TeamId(FGenericTeamId OldMyTeamId)
 	ConditionalBroadcastTeamChanged(this, OldMyTeamId, MyTeamId);
 }
 
-void ABlotPlayerState::OnExperienceLoaded(const UExperienceDefination* ExperienceDefination)
+void ABlotPlayerState::OnExperienceLoaded(const UExperienceDefinition* ExperienceDefination)
 {
 	const UExperiencePawnData* PawnData=ExperienceDefination->DefaultPawnData;
 	check(PawnData);

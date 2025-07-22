@@ -12,7 +12,8 @@ void FBlotGameplayAbilityTargetData_SingleTargetHit::AddTargetDataToContext(FGam
 	// Add game-specific data
 	if (FBlotGameplayEffectContext* TypedContext = FBlotGameplayEffectContext::ExtractEffectContext(ContextHandle))
 	{
-		TypedContext->CartridgeID = CartridgeID;
+		TypedContext->SetCartridgeID(CartridgeID);
+		TypedContext->AddHitResults(HitResult);
 	}
 }
 

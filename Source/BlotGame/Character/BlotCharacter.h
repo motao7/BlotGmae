@@ -16,7 +16,7 @@ class UBlotPawnExtensionComponent;
 /**
  * 
  */
-UCLASS()
+UCLASS(Config=Game)
 class BLOTGAME_API ABlotCharacter : public AModularCharacter,public IAbilitySystemInterface
 {
 	GENERATED_BODY()
@@ -45,6 +45,9 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent,Category="Team|AsyncAction")
 	void ListenForTeamChange();
+
+	UFUNCTION(BlueprintCallable,Category="Blot|Character")
+	void LinkDefaultAnimLayer();
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Blot|Character", Meta = (AllowPrivateAccess = "true"))
@@ -55,5 +58,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Blot|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBlotHealthComponent> HealthComponent;
+	
+	UPROPERTY(BlueprintReadOnly,Category= "Blot|Character",Config, Meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UAnimInstance> DefaultAnimInstance;
+
 };
 

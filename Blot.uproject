@@ -15,7 +15,8 @@
 				"CoreUObject",
 				"Experience",
 				"GameplayAbilities",
-				"CommonGame"
+				"CommonGame",
+				"ModularGameplayActors"
 			]
 		},
 		{

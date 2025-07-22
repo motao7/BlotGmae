@@ -17,7 +17,7 @@ bool UBlotGameplayAbility_SlientWalk::CanActivateAbility(const FGameplayAbilityS
 	}
 
 	// 例如：判断是否是玩家决定死亡
-	ABlotCharacter* Character = Cast<ABlotCharacter>(GetBlotCharacter());
+	ABlotCharacter* Character = Cast<ABlotCharacter>(GetBlotCharacterFromActorInfo());
 	if (!Character || Character->IsPendingKillPending())
 	{
 		return false;

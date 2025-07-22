@@ -77,7 +77,7 @@ protected:
 	void AddAdditionalTraceIgnoreActors(FCollisionQueryParams& TraceParams) const;
 
 	/**Trace no penetrate*/
-	void WeaponTrace(const FVector& StartTrace, const FVector& EndTrace, bool bIsSimulated, OUT TArray<FHitResult>& OutHitResults) const;
+	void WeaponLineTraceMulti(const FVector& StartTrace, const FVector& EndTrace, bool bIsSimulated, OUT TArray<FHitResult>& OutHitResults) const;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnRangedWeaponTargetDataReady(const FGameplayAbilityTargetDataHandle& TargetData);

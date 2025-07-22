@@ -51,22 +51,22 @@ public:
 	virtual void BeginPlay() override;
 
 	/**Only Slot is Default or empty can add*/
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly,Category="QuickBar")
 	void AddItemToSlot(int32 SlotIndex, UCommonInventoryItemInstance* Item);
 	
-	UFUNCTION(Server, Reliable, BlueprintCallable)
+	UFUNCTION(Server, Reliable, BlueprintCallable,Category="QuickBar")
 	void SetActiveSlotIndex(int32 Index);
 
-	UFUNCTION(BlueprintCallable, BlueprintPure=false)
+	UFUNCTION(BlueprintCallable, BlueprintPure=false,Category="QuickBar")
 	int32 GetActiveSlotIndex() const { return ActiveSlotIndex; }
 
-	UFUNCTION(BlueprintCallable, BlueprintPure = false)
+	UFUNCTION(BlueprintCallable, BlueprintPure = false,Category="QuickBar")
 	UCommonInventoryItemInstance* GetActiveSlotItem() const;
 
-	UFUNCTION(BlueprintCallable, BlueprintPure=false)
+	UFUNCTION(BlueprintCallable, BlueprintPure=false,Category="QuickBar")
 	int32 GetNextFreeItemSlot() const;
 
-	UFUNCTION(BlueprintCallable, BlueprintPure=true)
+	UFUNCTION(BlueprintCallable, BlueprintPure=true,Category="QuickBar")
 	const UCommonEquipmentInstance* GetEquippedInstance() const;
 
 protected:
@@ -75,13 +75,13 @@ protected:
 
 	UFUNCTION()
 	void OnRep_Slots();
-	
+
 	UFUNCTION()
 	void OnRep_ActiveSlotIndex();
 	
 	UCommonEquipmentManagerComponent* FindEquipmentManager() const;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly,Category="QuickBar")
 	int32 NumSlots = 9;
 
 private:

@@ -9,7 +9,7 @@
 
 class ATeamPublicTeamInfo;
 class UTeamDisplayAsset;
-class UExperienceDefination;
+class UExperienceDefinition;
 /**
  * 
  */
@@ -23,7 +23,7 @@ public:
 	virtual void BeginPlay() override;
 
 protected:
-	void OnExperienceLoaded(const UExperienceDefination* ExperienceDefination);
+	void OnExperienceLoaded(const UExperienceDefinition* ExperienceDefination);
 
 #if WITH_SERVER_CODE
 	/** 根据组件中的TeamSetting，在服务器中创建TeamInfo，并将TeamInfo注册到TeamSubsystem中 */

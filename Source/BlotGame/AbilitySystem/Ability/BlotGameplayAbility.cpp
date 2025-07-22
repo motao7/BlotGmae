@@ -5,10 +5,63 @@
 #include "BlotAbilityCost.h"
 #include "BlotAbilitySystemComponent.h"
 #include "Character/BlotCharacter.h"
+#include "Character/BlotHeroComponent.h"
+#include "Character/BlotParryComponent.h"
+#include "Player/BlotPlayerController.h"
 
-ABlotCharacter* UBlotGameplayAbility::GetBlotCharacter() const
+ABlotCharacter* UBlotGameplayAbility::GetBlotCharacterFromActorInfo() const
 {
 	return (CurrentActorInfo?Cast<ABlotCharacter>(CurrentActorInfo->AvatarActor.Get()):nullptr);
+}
+
+UBlotAbilitySystemComponent* UBlotGameplayAbility::GetBlotAbilitySystemComponentFromActorInfo() const
+{
+	return (CurrentActorInfo ? Cast<UBlotAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent.Get()) : nullptr);
+}
+
+ABlotPlayerController* UBlotGameplayAbility::GetBlotPlayerControllerFromActorInfo() const
+{
+	return (CurrentActorInfo ? Cast<ABlotPlayerController>(CurrentActorInfo->PlayerController.Get()) : nullptr);
+}
+
+AController* UBlotGameplayAbility::GetControllerFromActorInfo() const
+{
+	if (CurrentActorInfo)
+	{
+		if (AController* PC = CurrentActorInfo->PlayerController.Get())
+		{
+			return PC;
+		}
+
+		// Look for a player controller or pawn in the owner chain.
+		AActor* TestActor = CurrentActorInfo->OwnerActor.Get();
+		while (TestActor)
+		{
+			if (AController* C = Cast<AController>(TestActor))
+			{
+				return C;
+			}
+
+			if (APawn* Pawn = Cast<APawn>(TestActor))
+			{
+				return Pawn->GetController();
+			}
+
+			TestActor = TestActor->GetOwner();
+		}
+	}
+
+	return nullptr;
+}
+
+UBlotHeroComponent* UBlotGameplayAbility::GetHeroComponentFromActorInfo() const
+{
+	return (CurrentActorInfo ? (CurrentActorInfo->AvatarActor.Get()->FindComponentByClass<UBlotHeroComponent>()) : nullptr);
+}
+
+UBlotParryComponent* UBlotGameplayAbility::GetParryComponentFromActorInfo() const
+{
+	return (CurrentActorInfo ? (CurrentActorInfo->AvatarActor.Get()->FindComponentByClass<UBlotParryComponent>()) : nullptr);
 }
 
 bool UBlotGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, FGameplayTagContainer* OptionalRelevantTags) const

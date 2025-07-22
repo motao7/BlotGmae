@@ -12,6 +12,31 @@ class UCommonInventoryItemInstance;
 class UCommonInventoryManageComponent;
 struct FCommonInventoryList;
 
+namespace Inventory
+{
+	constexpr int32 InventorySize = 36;
+}
+
+/** A message when an item is added to the inventory */
+USTRUCT(BlueprintType)
+struct FCommonInventoryChangeMessage
+{
+	GENERATED_BODY()
+	
+	//@TODO: Tag based names+owning actors for inventories instead of directly exposing the component?
+	UPROPERTY(BlueprintReadOnly, Category=Inventory)
+	TObjectPtr<UActorComponent> InventoryManager = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Category = Inventory)
+	TObjectPtr<UCommonInventoryItemInstance> Instance = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Category=Inventory)
+	int32 NewCount = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category=Inventory)
+	int32 Delta = 0;
+};
+
 /** A single entry in an inventory */
 USTRUCT(BlueprintType)
 struct FCommonInventoryEntry : public FFastArraySerializerItem
@@ -73,6 +98,8 @@ public:
 
 private:
 	friend UCommonInventoryManageComponent;
+
+	void BroadcastChangeMessage(FCommonInventoryEntry& Entry, int32 OldCount, int32 NewCount);
 	
 	// Replicated list of items
 	UPROPERTY()
@@ -104,7 +131,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Inventory)
 	UCommonInventoryItemInstance* AddItemByDefinition(TSubclassOf<UCommonInventoryItemDefinition> ItemDef, int32 StackCount = 1);
-
+	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Inventory)
 	void RemoveItemByInstance(UCommonInventoryItemInstance* ItemInstance);
 

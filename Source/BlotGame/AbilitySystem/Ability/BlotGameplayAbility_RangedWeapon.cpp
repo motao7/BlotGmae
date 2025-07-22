@@ -4,6 +4,7 @@
 #include "AbilitySystem/Ability/BlotGameplayAbility_RangedWeapon.h"
 
 #include "AbilitySystemComponent.h"
+#include "AIController.h"
 #include "BlotGameplayAbilityTargetData_SingleTargetHit.h"
 #include "BlotLogChannels.h"
 #include "Physics/BlotCollisionChannel.h"
@@ -19,7 +20,7 @@ namespace BlotConsoleVariables
 		TEXT("Should we do debug drawing for bullet traces (if above zero, sets how long (in seconds))"),
 		ECVF_Default);
 
-	static float DrawBulletHitDuration = 0.f;
+	static float DrawBulletHitDuration = 1.f;
 	static FAutoConsoleVariableRef CVarDrawBulletHits(
 		TEXT("Blot.Weapon.DrawBulletHitDuration"),
 		DrawBulletHitDuration,
@@ -88,29 +89,29 @@ void UBlotGameplayAbility_RangedWeapon::StartRangedWeaponTargeting()
 	
 	FGameplayAbilityTargetDataHandle TargetData;
 	TargetData.UniqueId = 0;
-
-	AController* Controller = CurrentActorInfo->PlayerController.Get();
-	check(Controller);
-	UCommonWeaponStateComponent* WeaponStateComponent = Controller->FindComponentByClass<UCommonWeaponStateComponent>();
 	
-	if (FoundHits.Num() > 0)
+	if (AController* Controller = GetControllerFromActorInfo())
 	{
-		const int32 CartridgeID = FMath::Rand();
-
-		for (const FHitResult& FoundHit : FoundHits)
+		UCommonWeaponStateComponent* WeaponStateComponent = Controller->FindComponentByClass<UCommonWeaponStateComponent>();
+		if (FoundHits.Num() > 0)
 		{
-			FBlotGameplayAbilityTargetData_SingleTargetHit* NewTargetData = new FBlotGameplayAbilityTargetData_SingleTargetHit();
-			NewTargetData->HitResult = FoundHit;
-			NewTargetData->CartridgeID = CartridgeID;
+			const int32 CartridgeID = FMath::Rand();
+
+			for (const FHitResult& FoundHit : FoundHits)
+			{
+				FBlotGameplayAbilityTargetData_SingleTargetHit* NewTargetData = new FBlotGameplayAbilityTargetData_SingleTargetHit();
+				NewTargetData->HitResult = FoundHit;
+				NewTargetData->CartridgeID = CartridgeID;
 		
-			TargetData.Add(NewTargetData);
-		}
+				TargetData.Add(NewTargetData);
+			}
 
-		// Send hit marker information if hit somepawn
-		if (WeaponStateComponent != nullptr&&FindFirstPawnHitResult(FoundHits)!=INDEX_NONE)
-		{
-			WeaponStateComponent->AddLastWeaponDamageScreenLocations(FoundHits);
-			WeaponStateComponent->UpdateDamageInstigatedTime();
+			// Send hit marker information if hit somepawn
+			if (WeaponStateComponent != nullptr&&FindFirstPawnHitResult(FoundHits)!=INDEX_NONE)
+			{
+				WeaponStateComponent->AddLastWeaponDamageScreenLocations(FoundHits);
+				WeaponStateComponent->UpdateDamageInstigatedTime();
+			}
 		}
 	}
 	
@@ -167,14 +168,6 @@ void UBlotGameplayAbility_RangedWeapon::PerformLocalTargeting(TArray<FHitResult>
 		InputData.AimDir = TargetTransform.GetUnitAxis(EAxis::X);
 		InputData.StartTrace = TargetTransform.GetTranslation();
 		InputData.EndAim = InputData.StartTrace + InputData.AimDir * WeaponData->GetMaxDamageRange();
-
-#if ENABLE_DRAW_DEBUG
-		if (BlotConsoleVariables::DrawBulletTracesDuration > 0.0f)
-		{
-			static float DebugThickness = 2.0f;
-			DrawDebugLine(GetWorld(), InputData.StartTrace, InputData.StartTrace + (InputData.AimDir * 100.0f), FColor::Yellow, false, BlotConsoleVariables::DrawBulletTracesDuration, 0, DebugThickness);
-		}
-#endif
 		
 		TraceBulletsInCartridge(InputData, /*out*/ OutHits);
 	}
@@ -190,10 +183,15 @@ FTransform UBlotGameplayAbility_RangedWeapon::GetTargetingTransform(APawn* Sourc
 
 	if ((Controller != nullptr) && Source == EBlotAbilityTargetingSource::CameraTowardsFocus)
 	{
-		APlayerController* PC = Cast<APlayerController>(Controller);
-		if (PC != nullptr)
+		if (APlayerController* PC = Cast<APlayerController>(Controller))
 		{
 			PC->GetPlayerViewPoint(/*out*/ CamLoc, /*out*/ CamRot);
+			return FTransform(CamRot, CamLoc);
+		}
+		else if (AAIController* AIController = Cast<AAIController>(Controller))
+		{
+			CamRot = Controller->GetControlRotation();
+			CamLoc = SourcePawn->GetActorLocation() + FVector(0, 0, SourcePawn->BaseEyeHeight);
 			return FTransform(CamRot, CamLoc);
 		}
 	}
@@ -206,15 +204,29 @@ void UBlotGameplayAbility_RangedWeapon::TraceBulletsInCartridge(const FRangedWea
 {
 	UCommonRangedWeaponInstance* WeaponData = InputData.WeaponData;
 	check(WeaponData);
-
+	
 	const int32 BulletsPerCartridge = WeaponData->GetBulletsPerCartridge();
+	const float BulletSpreadDegrees = WeaponData->GetBulletSpread(); 
+	const float BulletSpreadRadians = FMath::DegreesToRadians(BulletSpreadDegrees);
 
 	for (int32 BulletIndex = 0; BulletIndex < BulletsPerCartridge; ++BulletIndex)
 	{
 		TArray<FHitResult> AllImpacts;
 
-		//TODO: make spread for shoutgun
-		WeaponTrace(InputData.StartTrace, InputData.EndAim, /*bIsSimulated=*/ false, /*out*/ AllImpacts);
+		//Add spread
+		const FVector ShotDirection = (InputData.EndAim - InputData.StartTrace).GetSafeNormal();
+		const FVector SpreadDirection = FMath::VRandCone(ShotDirection, BulletSpreadRadians); 
+		const FVector TraceEnd = InputData.StartTrace + SpreadDirection * (InputData.EndAim - InputData.StartTrace).Size();
+		
+		WeaponLineTraceMulti(InputData.StartTrace, TraceEnd, /*bIsSimulated=*/ false, /*out*/ AllImpacts);
+
+#if ENABLE_DRAW_DEBUG
+		if (BlotConsoleVariables::DrawBulletTracesDuration > 0.0f)
+		{
+			static float DebugThickness = 2.0f;
+			DrawDebugLine(GetWorld(), InputData.StartTrace, TraceEnd, FColor::Yellow, false, BlotConsoleVariables::DrawBulletTracesDuration, 0, DebugThickness);
+		}
+#endif
 		
 		if (AllImpacts.Num() > 0)
 		{
@@ -232,32 +244,31 @@ void UBlotGameplayAbility_RangedWeapon::TraceBulletsInCartridge(const FRangedWea
 			if (CanPenetrate)
 			{
 				OutHits.Append(AllImpacts);
-				return;
+				continue;
 			}
 			
 			int32 FirstValidIndex=FindFirstPawnHitResult(AllImpacts);
 			if (AllImpacts.IsValidIndex(FirstValidIndex))
 			{
 				OutHits.Add(AllImpacts[FirstValidIndex]);
-				return;
+				continue;
 			}
 			else
 			{
-				//Not Hit any Pawn but hit something 
-				OutHits.Append(AllImpacts);
+				//If not hit pawn ,add Last taht is the first block point
+				OutHits.Add(AllImpacts.Last());
 			}
 		}
-
-		// Make sure there's always an entry in OutHits so the direction can be used for tracers, etc...
-		if (OutHits.Num() == 0)
+		else
 		{
+			// Make sure there's always an entry in OutHits so the direction can be used for tracers, etc...
 			FHitResult Hit;
 			// Locate the fake 'impact' at the end of the trace
-			Hit.Location = InputData.EndAim;
-			Hit.ImpactPoint = InputData.EndAim;
+			Hit.Location = TraceEnd;
+			Hit.ImpactPoint= TraceEnd;
 			Hit.TraceStart = InputData.StartTrace;
-			Hit.TraceEnd = InputData.EndAim;
-			OutHits.Add(Hit);
+			Hit.TraceEnd =TraceEnd;
+			OutHits.Add(Hit);	
 		}
 	}
 }
@@ -273,7 +284,7 @@ void UBlotGameplayAbility_RangedWeapon::AddAdditionalTraceIgnoreActors(FCollisio
 	}
 }
 
-void UBlotGameplayAbility_RangedWeapon::WeaponTrace(const FVector& StartTrace, const FVector& EndTrace, bool bIsSimulated, OUT TArray<FHitResult>& OutHitResults) const
+void UBlotGameplayAbility_RangedWeapon::WeaponLineTraceMulti(const FVector& StartTrace, const FVector& EndTrace, bool bIsSimulated, OUT TArray<FHitResult>& OutHitResults) const
 {
 	TArray<FHitResult> HitResults;
 	

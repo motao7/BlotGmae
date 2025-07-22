@@ -17,5 +17,20 @@ FBlotGameplayEffectContext* FBlotGameplayEffectContext::ExtractEffectContext(str
 
 bool FBlotGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess)
 {
-	return FGameplayEffectContext::NetSerialize(Ar, Map, bOutSuccess);
+	FGameplayEffectContext::NetSerialize(Ar, Map, bOutSuccess);
+
+	Ar<<CartridgeID;
+	
+	if (Ar.IsLoading())
+	{
+		for (auto Hit:HitResults)
+		{
+			if (!Hit.IsValid())
+			{
+				Hit = TSharedPtr<FHitResult>(new FHitResult());
+			}
+			Hit->NetSerialize(Ar, Map, bOutSuccess);
+		}
+	}
+	return true;
 }

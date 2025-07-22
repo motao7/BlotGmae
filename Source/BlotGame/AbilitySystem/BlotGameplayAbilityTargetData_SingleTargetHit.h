@@ -20,16 +20,16 @@ struct BLOTGAME_API FBlotGameplayAbilityTargetData_SingleTargetHit:public FGamep
 
 	virtual void AddTargetDataToContext(FGameplayEffectContextHandle& ContextHandle, bool bIncludeActorArray) const override;
 
-	/** ID to allow the identification of multiple bullets that were part of the same cartridge */
-	UPROPERTY()
-	int32 CartridgeID;
-
 	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override;
 
 	virtual UScriptStruct* GetScriptStruct() const override
 	{
 		return FBlotGameplayAbilityTargetData_SingleTargetHit::StaticStruct();
 	}
+	
+	/** ID to allow the identification of multiple bullets that were part of the same cartridge */
+	UPROPERTY()
+	int32 CartridgeID;
 };
 
 template<>

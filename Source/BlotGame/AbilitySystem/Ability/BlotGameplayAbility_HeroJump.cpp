@@ -16,7 +16,7 @@ bool UBlotGameplayAbility_HeroJump::CanActivateAbility(const FGameplayAbilitySpe
 		return false;
 	}
 
-	const ABlotCharacter* BlotCharacter = GetBlotCharacter();
+	const ABlotCharacter* BlotCharacter = GetBlotCharacterFromActorInfo();
 	if (!BlotCharacter || !BlotCharacter->CanJump())
 	{
 		return false;
@@ -32,7 +32,7 @@ bool UBlotGameplayAbility_HeroJump::CanActivateAbility(const FGameplayAbilitySpe
 
 void UBlotGameplayAbility_HeroJump::CharacterJumpStart()
 {
-	if (ABlotCharacter* LyraCharacter = GetBlotCharacter())
+	if (ABlotCharacter* LyraCharacter = GetBlotCharacterFromActorInfo())
 	{
 		if (LyraCharacter->IsLocallyControlled() && !LyraCharacter->bPressedJump)
 		{
@@ -44,7 +44,7 @@ void UBlotGameplayAbility_HeroJump::CharacterJumpStart()
 
 void UBlotGameplayAbility_HeroJump::CharacterJumpStop()
 {
-	if (ABlotCharacter* LyraCharacter = GetBlotCharacter())
+	if (ABlotCharacter* LyraCharacter = GetBlotCharacterFromActorInfo())
 	{
 		if (LyraCharacter->IsLocallyControlled() && LyraCharacter->bPressedJump)
 		{

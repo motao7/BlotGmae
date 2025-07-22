@@ -26,7 +26,7 @@ void UTeamCreateComponent::BeginPlay()
 	ExperienceManagerComponent->CallOrReigister_OnExperienceLoaded_HighPriority(FOnExperienceLoaded::FDelegate::CreateUObject(this,&ThisClass::OnExperienceLoaded));
 }
 
-void UTeamCreateComponent::OnExperienceLoaded(const UExperienceDefination* ExperienceDefination)
+void UTeamCreateComponent::OnExperienceLoaded(const UExperienceDefinition* ExperienceDefination)
 {
 #if WITH_SERVER_CODE
 	if(HasAuthority())

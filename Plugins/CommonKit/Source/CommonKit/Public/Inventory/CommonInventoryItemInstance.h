@@ -26,19 +26,21 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Inventory)
 	void AddStatTagStack(FGameplayTag Tag, int32 StackCount);
+	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category= Inventory)
 	void RemoveStatTagStack(FGameplayTag Tag, int32 StackCount);
+	
 	UFUNCTION(BlueprintCallable, Category=Inventory)
 	int32 GetStatTagStackCount(FGameplayTag Tag) const;
+	
 	UFUNCTION(BlueprintCallable, Category=Inventory)
 	bool HasStatTag(FGameplayTag Tag) const;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(DeterminesOutputType=FragmentClass), Category=Inventory)
+	const UCommonInventoryItemFragment* FindFragmentByClass(TSubclassOf<UCommonInventoryItemFragment> FragmentClass) const;
+
 	TSubclassOf<UCommonInventoryItemDefinition> GetItemDef() const{return ItemDef;}
 	void SetItemDef(TSubclassOf<UCommonInventoryItemDefinition> InDef){ItemDef = InDef;}
-	bool IsDefaultItem();
-	
-	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(DeterminesOutputType=FragmentClass))
-	const UCommonInventoryItemFragment* FindFragmentByClass(TSubclassOf<UCommonInventoryItemFragment> FragmentClass) const;
 
 	template <typename ResultClass>
 	const ResultClass* FindFragmentByClass() const

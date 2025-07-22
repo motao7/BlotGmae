@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFeatureAction.h"
 #include "Engine/DataAsset.h"
-#include "ExperienceDefination.generated.h"
+#include "ExperienceDefinition.generated.h"
 
 class UExperiencePawnData;
 class UExperienceActionSet;
@@ -13,7 +13,7 @@ class UExperienceActionSet;
  *		包含基本的Experience需要加载的东西---指针为TObjectPtr，到要加载ExperienceDefination的阶段就全部加载进来
  */
 UCLASS(BlueprintType,Const)
-class EXPERIENCE_API UExperienceDefination : public UPrimaryDataAsset
+class EXPERIENCE_API UExperienceDefinition : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 

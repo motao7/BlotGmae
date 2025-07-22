@@ -8,7 +8,7 @@
 #include "BlotGameMode.generated.h"
 
 class UVoxelGeneraionComponent;
-class UExperienceDefination;
+class UExperienceDefinition;
 class UExperienceManagerComponent;
 class UExperiencePawnData;
 
@@ -25,8 +25,10 @@ public:
 	
 	UFUNCTION(Blueprintable,Category="BlotGameModeFuntion")
 	AGameStateBase* GetGameState();
+	
 	UFUNCTION(Blueprintable,Category="BlotGameModeFuntion")
 	bool IsExperienceLoaded() const;
+	
 	UFUNCTION(Blueprintable,Category="BlotGameModeFuntion")
 	const UExperiencePawnData* GetPawnDataFromPlayerStateOrExperience(const AController* Controller) const;
 	
@@ -42,7 +44,7 @@ public:
 	void LoadExperience() const;
 
 	/* 调用RestartPlayer函数去生成Pawm , RestartPlayer->pawnDefaultPawnAtTransform */
-	void OnExperienceLoaded(const UExperienceDefination* ExperienceDefination);
+	void OnExperienceLoaded(const UExperienceDefinition* ExperienceDefination);
 
 protected:
 

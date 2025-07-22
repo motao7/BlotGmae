@@ -19,9 +19,8 @@ void UBlotCombatAttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeP
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	//COND_OwnerOnly mean that o只复制给这个 Actor 的网络拥有者（NetOwner）对应的客户端
-	//This set's owner is PlayerState,while PlayerState's NetOwner is PlayerController
-	//REPNOTIFY_Always mean no matter if the value of MaxWalk Speed change,always call OnRep_MaxWalkSpeed
+	DOREPLIFETIME_CONDITION_NOTIFY(UBlotCombatAttributeSet,BaseDamage , COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBlotCombatAttributeSet, BaseHeal, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION(UBlotCombatAttributeSet, MaxWalkSpeed, COND_OwnerOnly);
 }
 

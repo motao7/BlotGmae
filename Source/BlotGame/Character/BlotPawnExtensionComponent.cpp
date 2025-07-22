@@ -118,6 +118,7 @@ void UBlotPawnExtensionComponent::HandleOnSetupPlayerInputComponent()
 
 void UBlotPawnExtensionComponent::SetupPlayerInputComponent()
 {
+	CheckDefaultInitialization();
 }
 
 void UBlotPawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall(FSimpleMulticastDelegate::FDelegate Delegate)
