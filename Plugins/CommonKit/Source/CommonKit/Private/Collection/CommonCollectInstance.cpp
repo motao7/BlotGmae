@@ -3,6 +3,10 @@
 
 #include "Collection/CommonCollectInstance.h"
 
+#include "Inventory/CommonInventoryItemInstance.h"
 
 
-
+UCommonInventoryItemInstance* UCommonCollectInstance::GetAssociateInventoryInstance()
+{
+	return Cast<UCommonInventoryItemInstance>(GetInstigator()); 
+}

@@ -11,6 +11,11 @@ void UCIF_SetStats::OnInstanceCreated(UCommonInventoryItemInstance* Instance) co
 	{
 		Instance->AddStatTagStack(KVP.Key, KVP.Value);
 	}
+
+	for (auto&  Tag: InitialTypeStats)
+	{
+		Instance->AddStatTagStack(Tag,-1);
+	}
 }
 
 int32 UCIF_SetStats::GetItemStatByTag(FGameplayTag Tag) const

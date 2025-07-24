@@ -3,26 +3,55 @@
 
 #include "Interaction/DroppedItem.h"
 
+#include "CommonKitStatics.h"
+#include "InteractionStatics.h"
+#include "Character/BlotCharacter.h"
+#include "Components/BoxComponent.h"
 
-// Sets default values
 ADroppedItem::ADroppedItem()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	RootComponent = MeshComponent;
+	
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>("BoxComponent");
+	BoxComponent->SetupAttachment(RootComponent);
+	BoxComponent->SetBoundsScale(10.f);
 }
 
-// Called when the game starts or when spawned
+FPickupInventory ADroppedItem::GetPickupInventory() const
+{
+	return StaticPickupInventory;
+}
+
 void ADroppedItem::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	StartLocation=GetActorLocation();
+
+	if (HasAuthority())
+	{
+		BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ADroppedItem::OnPickupOverlap);	
+	}
 }
 
-// Called every frame
 void ADroppedItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	RunningTime += DeltaTime;
+	float Offset = FMath::Sin(RunningTime * FloatingFrequency) * FloatingAmplitude;
+	SetActorLocation( StartLocation+ FVector(0, 0, Offset));
+	AddActorLocalRotation(FRotator(0, RotationSpeed * DeltaTime, 0));
 }
 
+void ADroppedItem::OnPickupOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (ABlotCharacter* BlotCharacter=Cast<ABlotCharacter>(OtherActor))
+	{
+		UInteractionStatics::AddPickupToInventory(UCommonKitStatics::GetInventoryManager(BlotCharacter),this);
+		Destroy();
+	}
+}

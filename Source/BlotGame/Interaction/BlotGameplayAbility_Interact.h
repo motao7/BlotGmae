@@ -7,8 +7,9 @@
 #include "BlotGameplayAbility_Interact.generated.h"
 
 struct FInteractionOption;
+
 /**
- * 
+ *		Interact InteractableActor and Hilight WorldColleableActor
  */
 UCLASS()
 class BLOTGAME_API UBlotGameplayAbility_Interact : public UBlotGameplayAbility
@@ -20,20 +21,19 @@ public:
 	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	UFUNCTION(BlueprintCallable)
-	void UpdateInteractions(const TArray<FInteractionOption>& InteractiveOptions);
-
+	UFUNCTION()
+	void OnHitTargetChanged(AActor* NewTarget, AActor* OldTarget);
+	void OnInteractableTargetChanged(AActor* NewTarget, AActor* OldTarget);
+	
 	UFUNCTION(BlueprintCallable)
 	void TriggerInteraction();
 
 protected:
-	UPROPERTY(EditDefaultsOnly)
-	float InteractionScanRate = 0.1f;
-
-	UPROPERTY(EditDefaultsOnly)
-	float InteractionScanRange = 500;
-
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadOnly,Category="Interaction")
 	TArray<FInteractionOption> CurrentOptions;
 
+	UPROPERTY(BlueprintReadOnly,Category="Interaction")
+	AActor* CurrentTarget=nullptr;
+
+	TMap<FObjectKey, FGameplayAbilitySpecHandle> InteractionAbilityCache;
 };

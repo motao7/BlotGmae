@@ -7,6 +7,8 @@
 #include "ModularPlayerController.h"
 #include "BlotPlayerController.generated.h"
 
+class ABlotCharacter;
+class ABlotWorldCollectable;
 /**
  * 
  */
@@ -17,10 +19,22 @@ class BLOTGAME_API ABlotPlayerController : public ACommonPlayerController
 
 public:
 	ABlotPlayerController(const FObjectInitializer& ObjectInitializer);
+
+	ABlotCharacter* GetBlotCharacter() const;
 	
-	//~ PlayerControoler 
+	//~ PlayerController 
+	virtual void BeginPlay() override;
 	virtual void AddCheats(bool bForce) override;
 	virtual void PostProcessInput(float DeltaTime, bool bGamePaused) override;
-	//~ PlayerControoler End
+	//~ PlayerController End
+
+protected:
+	void TraceForCollectable();
+
+	//~ PlayerController
+	FTimerHandle HighlightTraceTimerHandle;
+
+	UPROPERTY()
+	ABlotWorldCollectable* HighlightedTarget = nullptr;
 	
 };

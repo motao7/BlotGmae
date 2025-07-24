@@ -31,7 +31,7 @@ ABlotCharacter::ABlotCharacter(const FObjectInitializer& ObjectInitializer)
 	check(MeshComp);
 	MeshComp->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));  // Rotate mesh to be X forward since it is exported as Y forward.
 	MeshComp->SetCollisionProfileName(NAME_BlotCharacterCollisionProfile_Mesh);
-
+	
 	PawnExtensionComponent=CreateDefaultSubobject<UBlotPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 	PawnExtensionComponent->OnAbilitySystemInitialized_RegisterAndCall(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnAbilitySystemInitialized));
 	PawnExtensionComponent->SetIsReplicated(true);

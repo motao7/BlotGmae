@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Weapon/CommonWeaponInstance.h"
 #include "CommonCollectInstance.generated.h"
+
+class UCommonInventoryItemInstance;
 
 UENUM(BlueprintType)
 enum class ECollectType : uint8
@@ -32,13 +35,8 @@ class COMMONKIT_API UCommonCollectInstance : public UCommonWeaponInstance
 	GENERATED_BODY()
 
 public:
-	bool CanCollect(ECollectType Type) const{return EffectiveTypes.Contains(Type);}
-
+	UFUNCTION(BlueprintCallable,Category="CollectInstance")
+	UCommonInventoryItemInstance* GetAssociateInventoryInstance();
+	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float CollectSpeed = 1.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<ECollectType> EffectiveTypes;
-
 };

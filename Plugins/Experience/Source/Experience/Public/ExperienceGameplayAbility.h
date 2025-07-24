@@ -31,7 +31,8 @@ public:
 
 	//~UGameplayAbility interface
 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
-	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;\
+	virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+	virtual void OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 	//~End of UGameplayAbility interface
 
 	void TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) const;
@@ -42,7 +43,10 @@ public:
 	EExperienceAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
 	
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Lyra|Ability Activation")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability Activation")
 	EExperienceAbilityActivationPolicy ActivationPolicy;
 
+	/** Tags to Apply to Owner when this ability is gived */
+	UPROPERTY(EditDefaultsOnly, Category = Tags, meta=(Categories="AbilityTagCategory"))
+	FGameplayTagContainer GivenOwnedTags;
 };

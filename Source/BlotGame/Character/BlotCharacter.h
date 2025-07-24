@@ -27,7 +27,7 @@ public:
 	ABlotPlayerController* GetBlotPlayerController() const;
 	ABlotPlayerState* GetBlotPlayerState() const;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	
+
 	void ToggleCrouch();
 	
 protected:
@@ -48,7 +48,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable,Category="Blot|Character")
 	void LinkDefaultAnimLayer();
-	
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Blot|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBlotPawnExtensionComponent> PawnExtensionComponent;

@@ -10,6 +10,8 @@
 #include "BlotWorldCollectable.generated.h"
 
 
+class ADroppedItem;
+class UCommonCollectInstance;
 enum class ECollectType : uint8;
 
 /**
@@ -21,22 +23,51 @@ class BLOTGAME_API ABlotWorldCollectable : public AActor
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
-	void ApplyMining(float Damage, AActor* Instigator);
-	
+	ABlotWorldCollectable(const FObjectInitializer& ObjectInitializer);
+
+	UFUNCTION(BlueprintCallable,BlueprintCosmetic,Category="WorldCollectable")
+	void SetHighlight(bool bEnable);
+
+	UFUNCTION(BlueprintCallable,BlueprintCosmetic,Category="WorldCollectable")
+	void StartDamage(UCommonCollectInstance* CollectInstance);
+
+	/**Back to Initialize State*/
+	UFUNCTION(BlueprintCallable,BlueprintCosmetic,Category="WorldCollectable")
+	void EndDamage();
+
 protected:
-	void UpdateMaterialBasedOnDurability();
+	void TickDamage();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="Collection")
-	float MaxDurability = 100.0f;
+	UFUNCTION(BlueprintAuthorityOnly)
+	void OnOutOfDurablity();
 
-	UPROPERTY(BlueprintReadWrite,Category="Collection")
-	float CurrentDurability;
+	UFUNCTION(BlueprintImplementableEvent,Category="WorldCollectable")
+	void K2_OnOutOfDurablity();
+	
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* MeshComponent;
+	
+	UPROPERTY(EditAnywhere,Category="WorldCollectable")
+	int32 MaxDurability=100;
 
-	UPROPERTY(EditAnywhere,Category="Collection")
-	TSubclassOf<AActor> DropItemClass;
+	UPROPERTY(BlueprintReadOnly,Category="WorldCollectable")
+	int32 Durability=100;
+	
+	UPROPERTY(EditAnywhere,Category="WorldCollectable")
+	float HandDamageRate=1.f;
 
-	UPROPERTY(EditAnywhere,Category="Collection")
-	ECollectType CollectType;
+	UPROPERTY(EditAnywhere,Category="WorldCollectable")
+	TSubclassOf<ADroppedItem> DropItemClass;
+
+	UPROPERTY(EditAnywhere,Category="WorldCollectable")
+	FGameplayTag CollectType;
+
+	UPROPERTY(EditAnywhere,Category="WorldCollectable")
+	UMaterialInterface* OverlyMaterial;
+	
+	UPROPERTY(Transient)
+	UMaterialInstanceDynamic* CollectOverlayDynamicMaterial;
+	
+	FTimerHandle DamageTimerHandle;
 	
 };

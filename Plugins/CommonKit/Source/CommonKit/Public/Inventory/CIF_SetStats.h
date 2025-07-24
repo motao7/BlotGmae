@@ -21,8 +21,10 @@ public:
 	int32 GetItemStatByTag(FGameplayTag Tag) const;	
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category=Equipment)
+	UPROPERTY(EditDefaultsOnly, Category=Stats)
 	TMap<FGameplayTag, int32> InitialItemStats;
 
-	
+	/**Type Stats StackCount is -1*/
+	UPROPERTY(EditDefaultsOnly, Category=Stats)
+	TArray<FGameplayTag> InitialTypeStats;
 };

@@ -6,6 +6,8 @@
 #include "AbilitySystem/BlotAbilitySystemComponent.h"
 #include "BlotCheatManager.h"
 #include "BlotPlayerState.h"
+#include "Character/BlotCharacter.h"
+#include "Interaction/BlotWorldCollectable.h"
 
 
 ABlotPlayerController::ABlotPlayerController(const FObjectInitializer& ObjectInitializer)
@@ -14,6 +16,16 @@ ABlotPlayerController::ABlotPlayerController(const FObjectInitializer& ObjectIni
 #if USING_CHEAT_MANAGER
 	CheatClass = UBlotCheatManager::StaticClass();
 #endif // #if USING_CHEAT_MANAGER
+}
+
+ABlotCharacter* ABlotPlayerController::GetBlotCharacter() const
+{
+	return Cast<ABlotCharacter>(GetCharacter());
+}
+
+void ABlotPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void ABlotPlayerController::AddCheats(bool bForce)

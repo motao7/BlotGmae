@@ -22,7 +22,5 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Blot|Ability")
 	UCommonInventoryItemInstance* GetAssociatedItem() const;
-
-	
 	
 };

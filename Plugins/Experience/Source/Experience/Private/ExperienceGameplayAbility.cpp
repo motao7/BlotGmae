@@ -21,7 +21,22 @@ void UExperienceGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* 
 {
 	Super::OnGiveAbility(ActorInfo, Spec);
 
+	if (UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get())
+	{
+		ASC->AddLooseGameplayTags(GivenOwnedTags);
+	}
+	
 	TryActivateAbilityOnSpawn(ActorInfo,Spec);
+}
+
+void UExperienceGameplayAbility::OnRemoveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
+{
+	Super::OnRemoveAbility(ActorInfo, Spec);
+
+	if (UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get())
+	{
+		ASC->RemoveLooseGameplayTags(GivenOwnedTags);
+	}
 }
 
 void UExperienceGameplayAbility::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
