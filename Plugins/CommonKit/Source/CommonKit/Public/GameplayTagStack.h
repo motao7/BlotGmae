@@ -72,6 +72,9 @@ public:
 		return TagToCountMap.Contains(Tag);
 	}
 
+	/**Check if there are tags of the same type and the same quantity*/
+	bool IsEqual(const FGameplayTagStackContainer& Other) const;
+	
 	//~FFastArraySerializer contract
 	void PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize);
 	void PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize);
@@ -82,7 +85,7 @@ public:
 	{
 		return FFastArraySerializer::FastArrayDeltaSerialize<FGameplayTagStack, FGameplayTagStackContainer>(Stacks, DeltaParms, *this);
 	}
-
+	
 private:
 	// Replicated list of gameplay tag stacks
 	UPROPERTY()

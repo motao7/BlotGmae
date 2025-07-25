@@ -7,7 +7,7 @@
 #include "Weapon/CommonWeaponInstance.h"
 
 
-void UCommonWeaponUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void UCommonEquipmentUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
@@ -15,13 +15,13 @@ void UCommonWeaponUserWidget::NativeTick(const FGeometry& MyGeometry, float InDe
 	{
 		if (UCommonEquipmentManagerComponent* EquipmentManager = Pawn->FindComponentByClass<UCommonEquipmentManagerComponent>())
 		{
-			if (UCommonWeaponInstance* NewInstance = EquipmentManager->GetFirstInstanceOfType<UCommonWeaponInstance>())
+			if (UCommonEquipmentInstance* NewInstance = EquipmentManager->GetFirstInstanceOfType<UCommonEquipmentInstance>())
 			{
 				if (NewInstance != CurrentInstance && NewInstance->GetInstigator() != nullptr)
 				{
-					UCommonWeaponInstance* OldWeapon = CurrentInstance;
+					UCommonEquipmentInstance* OldEquipment = CurrentInstance;
 					CurrentInstance = NewInstance;
-					OnWeaponChanged(OldWeapon, CurrentInstance);
+					OnEquipmentChanged(OldEquipment, CurrentInstance);
 				}
 			}
 		}

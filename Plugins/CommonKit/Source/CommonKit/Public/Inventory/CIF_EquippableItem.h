@@ -17,6 +17,6 @@ class COMMONKIT_API UCIF_EquippableItem : public UCommonInventoryItemFragment
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, Category=Lyra)
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<UCommonEquipmentDefinition> EquipmentDefinition;
 };

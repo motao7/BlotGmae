@@ -39,6 +39,11 @@ void UCommonEquipmentInstance::SpawnEquipmentActors(const TArray<FCommonEquipmen
 void UCommonEquipmentInstance::OnEquipped()
 {
 	K2_OnEquipped();
+
+	if (ACharacter* Character=Cast<ACharacter>(GetOuterPawn()))
+	{
+		Character->GetMesh()->LinkAnimClassLayers(AnimLayer);
+	}
 }
 
 void UCommonEquipmentInstance::OnUnequipped()

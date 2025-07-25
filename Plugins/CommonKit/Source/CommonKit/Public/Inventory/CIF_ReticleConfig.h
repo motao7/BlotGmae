@@ -19,5 +19,4 @@ class COMMONKIT_API UCIF_ReticleConfig : public UCommonInventoryItemFragment
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Reticle)
 	TArray<TSubclassOf<UCommonUserWidget>> ReticleWidgets;
-	
 };

@@ -8,10 +8,10 @@
 #include "CommonWeaponUserWidget.generated.h"
 
 /**
- *		Can check if WeaponChanged in tick
+ *		Can check if Equipment Change in tick
  */
 UCLASS()
-class COMMONKIT_API UCommonWeaponUserWidget : public UCommonUserWidget
+class COMMONKIT_API UCommonEquipmentUserWidget : public UCommonUserWidget
 {
 	GENERATED_BODY()
 
@@ -19,10 +19,10 @@ public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnWeaponChanged(UCommonWeaponInstance* OldWeapon, UCommonWeaponInstance* NewWeapon);
+	void OnEquipmentChanged(UCommonEquipmentInstance* OldWeapon, UCommonEquipmentInstance* NewWeapon);
 
 private:
 	UPROPERTY(Transient)
-	TObjectPtr<UCommonWeaponInstance> CurrentInstance;
+	TObjectPtr<UCommonEquipmentInstance> CurrentInstance;
 	
 };

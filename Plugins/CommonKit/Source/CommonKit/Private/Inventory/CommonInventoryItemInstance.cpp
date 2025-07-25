@@ -5,10 +5,23 @@
 
 #include "CommonKit.h"
 #include "Equipment/CommonEquipmentInstance.h"
+#include "NativeGameplayTags.h"
 #include "Inventory/CommonInventoryItemDefinition.h"
 #include "Inventory/CommonInventoryItemFragment.h"
 #include "Net/UnrealNetwork.h"
 
+UE_DEFINE_GAMEPLAY_TAG_STATIC(Blot_Inventory_NonStackable,"Blot.Inventory.NonStackable")
+
+UCommonInventoryItemInstance::UCommonInventoryItemInstance(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+	, EntryOwnerRef(nullptr)
+{
+}
+
+void UCommonInventoryItemInstance::InitializeWithEntry(FCommonInventoryEntry* InEntry)
+{
+	EntryOwnerRef=InEntry;
+}
 
 void UCommonInventoryItemInstance::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -46,3 +59,31 @@ const UCommonInventoryItemFragment* UCommonInventoryItemInstance::FindFragmentBy
 
 	return nullptr;
 }
+
+int32 UCommonInventoryItemInstance::GetInventoryCount() const
+{
+	if (EntryOwnerRef&&EntryOwnerRef->Instance==this)
+	{
+		return EntryOwnerRef->StackCount;
+	}
+
+	UE_LOG(LogCommonKit, Error, TEXT("EntryOwnerRef is wrong!!!"));
+	return INDEX_NONE;
+}
+
+bool UCommonInventoryItemInstance::IsStackableWith(TSubclassOf<UCommonInventoryItemDefinition> OtherItemDef) const
+{
+	if (OtherItemDef == nullptr||StatTags.ContainsTag(Blot_Inventory_NonStackable))
+	{
+		return false;
+	}
+
+	// ItemDef must be consistent
+	if (ItemDef != OtherItemDef)
+	{
+		return false;
+	}
+	
+	return true;
+}
+

@@ -50,3 +50,4 @@ UCommonEquipmentManagerComponent* UCommonKitStatics::GetEquipmentManager(APawn* 
 	}
 	return nullptr;
 }
+

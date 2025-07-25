@@ -15,13 +15,5 @@ class COMMONKIT_API UCommonWeaponInstance : public UCommonEquipmentInstance
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Weapon)
-	TSubclassOf<UAnimInstance> AnimLayer;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Weapon)
-	UAnimMontage* EquipMontage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Weapon)
-	UAnimMontage* UnEquipMontage;
-	
 };

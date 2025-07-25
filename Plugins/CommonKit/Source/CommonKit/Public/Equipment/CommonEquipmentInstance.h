@@ -43,6 +43,16 @@ public:
 	void SpawnEquipmentActors(const TArray<FCommonEquipmentActorToSpawn>& ActorsToSpawn);
 
 	void DestroyEquipmentActors();
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Weapon)
+	TSubclassOf<UAnimInstance> AnimLayer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Weapon)
+	UAnimMontage* EquipMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Weapon)
+	UAnimMontage* UnEquipMontage;
 	
 private:
 	UPROPERTY(Replicated)

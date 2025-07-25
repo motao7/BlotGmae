@@ -31,7 +31,7 @@ protected:
 	
 	/** Player Interaction Max Distance */
 	UPROPERTY(EditDefaultsOnly)
-	float TraceDistance = 1000.f;
+	float TraceDistance = 350.f;
 
 	UPROPERTY()
 	AActor* CurrentTarget=nullptr;

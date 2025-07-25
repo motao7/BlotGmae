@@ -30,6 +30,4 @@ protected:
 	/** Which tag to spend some of */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Costs)
 	FGameplayTag Tag;
-
-	
 };

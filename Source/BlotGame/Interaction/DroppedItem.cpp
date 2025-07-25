@@ -5,19 +5,20 @@
 
 #include "CommonKitStatics.h"
 #include "InteractionStatics.h"
+#include "MovieSceneTracksComponentTypes.h"
 #include "Character/BlotCharacter.h"
 #include "Components/BoxComponent.h"
 
 ADroppedItem::ADroppedItem()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	RootComponent = MeshComponent;
 	
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>("BoxComponent");
-	BoxComponent->SetupAttachment(RootComponent);
+	RootComponent = BoxComponent;
 	BoxComponent->SetBoundsScale(10.f);
+	
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	MeshComponent->SetupAttachment(BoxComponent);
 }
 
 FPickupInventory ADroppedItem::GetPickupInventory() const

@@ -12,11 +12,6 @@ class UCommonInventoryItemInstance;
 class UCommonInventoryManageComponent;
 struct FCommonInventoryList;
 
-namespace Inventory
-{
-	constexpr int32 InventorySize = 36;
-}
-
 /** A message when an item is added to the inventory */
 USTRUCT(BlueprintType)
 struct FCommonInventoryChangeMessage
@@ -35,6 +30,9 @@ struct FCommonInventoryChangeMessage
 
 	UPROPERTY(BlueprintReadOnly, Category=Inventory)
 	int32 Delta = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category=Inventory)
+	int32 Index = 0;
 };
 
 /** A single entry in an inventory */
@@ -49,6 +47,7 @@ public:
 private:
 	friend FCommonInventoryList;
 	friend UCommonInventoryManageComponent;
+	friend UCommonInventoryItemInstance;
 
 	UPROPERTY()
 	TObjectPtr<UCommonInventoryItemInstance> Instance = nullptr;
@@ -70,14 +69,12 @@ struct FCommonInventoryList : public FFastArraySerializer
 public:
 	FCommonInventoryList()
 		: OwnerComponent(nullptr)
+		, ListMaxSize(-1)
 	{
 	}
 
-	FCommonInventoryList(UActorComponent* InOwnerComponent)
-		: OwnerComponent(InOwnerComponent)
-	{
-	}
-	
+	FCommonInventoryList(UActorComponent* InOwnerComponent,int32 MaxSize);
+
 	//~FFastArraySerializer contract
 	void PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize);
 	void PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize);
@@ -89,17 +86,19 @@ public:
 	{
 		return FFastArraySerializer::FastArrayDeltaSerialize<FCommonInventoryEntry, FCommonInventoryList>(Entries, DeltaParms, *this);
 	}
-
+	
+	/**Only friend UCommonInventoryManageComponent can modity Entries*/
+protected:
 	/**Actully Create a Instance,this Instance only is data that not exist in the game world*/
 	UCommonInventoryItemInstance* AddEntry(TSubclassOf<UCommonInventoryItemDefinition> ItemDef, int32 StackCount);
 	void AddEntry(UCommonInventoryItemInstance* Instance);
-	void RemoveEntry(UCommonInventoryItemInstance* Instance);
+	UCommonInventoryItemInstance* ClearEntryAtIndex(int32 Index);
 	TArray<UCommonInventoryItemInstance*> GetAllItems() const;
 
 private:
 	friend UCommonInventoryManageComponent;
 
-	void BroadcastChangeMessage(FCommonInventoryEntry& Entry, int32 OldCount, int32 NewCount);
+	void BroadcastChangeMessage(FCommonInventoryEntry& Entry,int32 Index,int32 OldCount, int32 NewCount);
 	
 	// Replicated list of items
 	UPROPERTY()
@@ -107,6 +106,10 @@ private:
 
 	UPROPERTY(NotReplicated)
 	TObjectPtr<UActorComponent> OwnerComponent;
+
+	UPROPERTY(NotReplicated)
+	int32 ListMaxSize;
+
 };
 template<>
 struct TStructOpsTypeTraits<FCommonInventoryList> : public TStructOpsTypeTraitsBase2<FCommonInventoryList>
@@ -119,8 +122,10 @@ struct TStructOpsTypeTraits<FCommonInventoryList> : public TStructOpsTypeTraitsB
 /**
  *		Maintain InventoryList.
  *		Manage InventoryItemInstance support Add/Remove Item.....
+ *		Actors that storage information can owned this.
+ *		This only for fixed size
  */
-UCLASS(BlueprintType,Config=Game)
+UCLASS(Blueprintable,BlueprintType,Abstract,Config=Game)
 class COMMONKIT_API UCommonInventoryManageComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -128,20 +133,25 @@ class COMMONKIT_API UCommonInventoryManageComponent : public UActorComponent
 public:
 	UCommonInventoryManageComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void BeginPlay() override;
 	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Inventory)
 	UCommonInventoryItemInstance* AddItemByDefinition(TSubclassOf<UCommonInventoryItemDefinition> ItemDef, int32 StackCount = 1);
 	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Inventory)
-	void RemoveItemByInstance(UCommonInventoryItemInstance* ItemInstance);
+	void RemoveItemAtIndex(int32 Index);
 
 	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure=false)
 	TArray<UCommonInventoryItemInstance*> GetAllItems() const;
-
+	
 	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure)
 	UCommonInventoryItemInstance* FindFirstItemStackByDefinition(TSubclassOf<UCommonInventoryItemDefinition> ItemDef) const;
 
 private:
+	/**Limit the size of InventoryList,facilitate the operation of the list view*/
+	UPROPERTY(EditDefaultsOnly, Category=Inventory)
+	int32 InventorySize;
+	
 	UPROPERTY(Replicated)
 	FCommonInventoryList InventoryList;
 };
