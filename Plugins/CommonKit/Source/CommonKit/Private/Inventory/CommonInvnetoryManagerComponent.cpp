@@ -50,7 +50,7 @@ void FCommonInventoryList::PostReplicatedChange(const TArrayView<int32> ChangedI
 	{
 		FCommonInventoryEntry& Stack = Entries[Index];
 		check(Stack.LastObservedCount != INDEX_NONE);
-		BroadcastChangeMessage(Stack, /*OldCount=*/ Stack.LastObservedCount,Index, /*NewCount=*/ Stack.StackCount);
+		BroadcastChangeMessage(Stack,Index,/*OldCount=*/ Stack.LastObservedCount, /*NewCount=*/ Stack.StackCount);
 		Stack.LastObservedCount = Stack.StackCount;
 	}
 }
@@ -72,7 +72,7 @@ UCommonInventoryItemInstance* FCommonInventoryList::AddEntry(TSubclassOf<UCommon
 			if (Entry.Instance->IsStackableWith(ItemDef))
 			{
 				Entry.StackCount += StackCount;
-
+				
 				MarkItemDirty(Entry);
 				BroadcastChangeMessage(Entry,Index,/*OldCount=*/ Entry.LastObservedCount, /*NewCount=*/ Entry.StackCount);
 				return Entry.Instance;
@@ -144,6 +144,18 @@ TArray<UCommonInventoryItemInstance*> FCommonInventoryList::GetAllItems() const
 	return Results;
 }
 
+bool FCommonInventoryList::HasItem(UCommonInventoryItemInstance* ItemInstance) const
+{
+	for (const FCommonInventoryEntry& Entry : Entries)
+	{
+		if (Entry.Instance == ItemInstance)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void FCommonInventoryList::BroadcastChangeMessage(FCommonInventoryEntry& Entry,int32 Index,int32 OldCount, int32 NewCount)
 {
 	FCommonInventoryChangeMessage Message;
@@ -197,6 +209,7 @@ void UCommonInventoryManageComponent::BeginPlay()
 				}
 			}
 		}
+		InventoryIntilizeCompleteEvent.Broadcast();
 	}
 }
 
@@ -226,6 +239,21 @@ TArray<UCommonInventoryItemInstance*> UCommonInventoryManageComponent::GetAllIte
 	return InventoryList.GetAllItems();
 }
 
+UCommonInventoryItemInstance* UCommonInventoryManageComponent::GetItem(int32 Index) const
+{
+	if (GetAllItems().IsValidIndex(Index))
+	{
+		GetAllItems()[Index];
+	}
+	UE_LOG(LogCommonKit, Error, TEXT("Index is not Valid In InventoryList"));
+	return nullptr;
+}
+
+bool UCommonInventoryManageComponent::HasItem(UCommonInventoryItemInstance* Instance) const
+{
+	return InventoryList.HasItem(Instance);
+}
+
 UCommonInventoryItemInstance* UCommonInventoryManageComponent::FindFirstItemStackByDefinition(TSubclassOf<UCommonInventoryItemDefinition> ItemDef) const
 {
 	for (const FCommonInventoryEntry& Entry : InventoryList.Entries)
@@ -242,4 +270,9 @@ UCommonInventoryItemInstance* UCommonInventoryManageComponent::FindFirstItemStac
 	}
 
 	return nullptr;
+}
+
+AController* UCommonInventoryManageComponent::GetOwnerAsController() const
+{
+	return Cast<AController>(GetOwner());
 }

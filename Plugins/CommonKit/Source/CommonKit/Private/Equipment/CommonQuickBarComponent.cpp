@@ -3,6 +3,7 @@
 
 #include "Equipment/CommonQuickBarComponent.h"
 
+#include "CommonKitStatics.h"
 #include "Equipment/CommonEquipmentDefinition.h"
 #include "Equipment/CommonEquipmentManagerComponent.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
@@ -35,9 +36,9 @@ void UCommonQuickBarComponent::GetLifetimeReplicatedProps(TArray<class FLifetime
 
 void UCommonQuickBarComponent::BeginPlay()
 {
-	if (Slots.Num() < NumSlots)
+	for (int32 i = 0; i < NumSlots; i++)
 	{
-		Slots.AddDefaulted(NumSlots - Slots.Num());
+		Slots.AddDefaulted();
 	}
 	Super::BeginPlay();
 }
@@ -55,6 +56,11 @@ void UCommonQuickBarComponent::AddItemToSlot(int32 SlotIndex, UCommonInventoryIt
 	}
 }
 
+bool UCommonQuickBarComponent::HasItemInSlots(UCommonInventoryItemInstance* Instance)
+{
+	return Slots.Contains(Instance);
+}
+
 UCommonInventoryItemInstance* UCommonQuickBarComponent::GetActiveSlotItem() const
 {
 	return Slots.IsValidIndex(ActiveSlotIndex) ? Slots[ActiveSlotIndex] : nullptr;
@@ -63,6 +69,7 @@ UCommonInventoryItemInstance* UCommonQuickBarComponent::GetActiveSlotItem() cons
 int32 UCommonQuickBarComponent::GetNextFreeItemSlot() const
 {
 	int32 SlotIndex = 0;
+
 	for (const TObjectPtr<UCommonInventoryItemInstance>& ItemPtr : Slots)
 	{
 		if (ItemPtr==nullptr)

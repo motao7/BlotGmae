@@ -31,4 +31,5 @@ public:
 	/**Add Pickupable Actor to Inventory*/
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, meta = (WorldContext = "Ability"))
 	static void AddPickupToInventory(UCommonInventoryManageComponent* InventoryComponent, TScriptInterface<IPickupable> Pickup);
+	
 };

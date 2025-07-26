@@ -63,7 +63,7 @@ public:
 	
 private:
 	friend FCommonInventoryEntry;
-
+	
 	FCommonInventoryEntry* EntryOwnerRef;
 	
 	UPROPERTY(Replicated)

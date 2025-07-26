@@ -10,6 +10,8 @@
 
 AActor* UCommonKitStatics::GetEquippedInstanceSpawnedActor(APawn* Pawn)
 {
+	if (Pawn==nullptr) return nullptr;
+	
 	if (UCommonEquipmentManagerComponent* EquipManagerComp=Pawn->FindComponentByClass<UCommonEquipmentManagerComponent>())
 	{
 		if (UCommonEquipmentInstance* EquipInstance=EquipManagerComp->GetFirstInstanceOfType(UCommonEquipmentInstance::StaticClass()))
@@ -26,6 +28,8 @@ AActor* UCommonKitStatics::GetEquippedInstanceSpawnedActor(APawn* Pawn)
 
 UCommonInventoryManageComponent* UCommonKitStatics::GetInventoryManager(APawn* Pawn)
 {
+	if (Pawn==nullptr) return nullptr;
+	
 	if (APlayerController* PC=Cast<APlayerController>(Pawn->GetController()))
 	{
 		return PC->GetComponentByClass<UCommonInventoryManageComponent>();
@@ -35,6 +39,8 @@ UCommonInventoryManageComponent* UCommonKitStatics::GetInventoryManager(APawn* P
 
 UCommonQuickBarComponent* UCommonKitStatics::GetQuickBarManager(APawn* Pawn)
 {
+	if (Pawn==nullptr) return nullptr;
+	
 	if (APlayerController* PC=Cast<APlayerController>(Pawn->GetController()))
 	{
 		return PC->GetComponentByClass<UCommonQuickBarComponent>();

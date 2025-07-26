@@ -3,9 +3,11 @@
 
 #include "Interaction/InteractionStatics.h"
 
+#include "CommonKitStatics.h"
 #include "IPickupable.h"
 #include "Interaction/InteractableTarget.h"
 #include "Engine/OverlapResult.h"
+#include "Equipment/CommonQuickBarComponent.h"
 #include "Inventory/CommonInvnetoryManagerComponent.h"
 
 

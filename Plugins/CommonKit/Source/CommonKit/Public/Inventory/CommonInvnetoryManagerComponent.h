@@ -94,6 +94,7 @@ protected:
 	void AddEntry(UCommonInventoryItemInstance* Instance);
 	UCommonInventoryItemInstance* ClearEntryAtIndex(int32 Index);
 	TArray<UCommonInventoryItemInstance*> GetAllItems() const;
+	bool HasItem(UCommonInventoryItemInstance* ItemInstance) const;
 
 private:
 	friend UCommonInventoryManageComponent;
@@ -117,7 +118,7 @@ struct TStructOpsTypeTraits<FCommonInventoryList> : public TStructOpsTypeTraitsB
 	enum { WithNetDeltaSerializer = true };
 };
 
-
+DECLARE_MULTICAST_DELEGATE(FInventoryIntilizeCompleteEvent)
 
 /**
  *		Maintain InventoryList.
@@ -136,17 +137,27 @@ public:
 	virtual void BeginPlay() override;
 	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Inventory)
-	UCommonInventoryItemInstance* AddItemByDefinition(TSubclassOf<UCommonInventoryItemDefinition> ItemDef, int32 StackCount = 1);
+	virtual UCommonInventoryItemInstance* AddItemByDefinition(TSubclassOf<UCommonInventoryItemDefinition> ItemDef, int32 StackCount = 1);
 	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Inventory)
 	void RemoveItemAtIndex(int32 Index);
 
 	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure=false)
 	TArray<UCommonInventoryItemInstance*> GetAllItems() const;
+
+	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure=false)
+	UCommonInventoryItemInstance* GetItem(int32 Index) const;
+
+	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure=false)
+	bool HasItem(UCommonInventoryItemInstance* Instance) const;
 	
 	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure)
 	UCommonInventoryItemInstance* FindFirstItemStackByDefinition(TSubclassOf<UCommonInventoryItemDefinition> ItemDef) const;
 
+	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure)
+	AController* GetOwnerAsController() const;
+
+	FInventoryIntilizeCompleteEvent InventoryIntilizeCompleteEvent;
 private:
 	/**Limit the size of InventoryList,facilitate the operation of the list view*/
 	UPROPERTY(EditDefaultsOnly, Category=Inventory)

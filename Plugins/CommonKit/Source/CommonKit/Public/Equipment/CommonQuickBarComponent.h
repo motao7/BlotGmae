@@ -57,6 +57,9 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable,Category="QuickBar")
 	void SetActiveSlotIndex(int32 Index);
 
+	UFUNCTION( BlueprintCallable,Category="QuickBar")
+	bool HasItemInSlots(UCommonInventoryItemInstance* Instance);
+
 	UFUNCTION(BlueprintCallable, BlueprintPure=false,Category="QuickBar")
 	int32 GetActiveSlotIndex() const { return ActiveSlotIndex; }
 
