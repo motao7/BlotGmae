@@ -91,10 +91,14 @@ public:
 protected:
 	/**Actully Create a Instance,this Instance only is data that not exist in the game world*/
 	UCommonInventoryItemInstance* AddEntry(TSubclassOf<UCommonInventoryItemDefinition> ItemDef, int32 StackCount);
-	void AddEntry(UCommonInventoryItemInstance* Instance);
-	UCommonInventoryItemInstance* ClearEntryAtIndex(int32 Index);
+
+	/**Return remain StackCount*/
+	UCommonInventoryItemInstance* ClearEntry(int32 Index);
+	int32 RemoveEntry(int32 Index, int32 DecreaseCount);
+	
 	TArray<UCommonInventoryItemInstance*> GetAllItems() const;
-	bool HasItem(UCommonInventoryItemInstance* ItemInstance) const;
+	FCommonInventoryEntry& GetEntry(int32 Index);
+	int32 GetIndexForItemInstance(UCommonInventoryItemInstance* Instance) const;
 
 private:
 	friend UCommonInventoryManageComponent;
@@ -140,7 +144,11 @@ public:
 	virtual UCommonInventoryItemInstance* AddItemByDefinition(TSubclassOf<UCommonInventoryItemDefinition> ItemDef, int32 StackCount = 1);
 	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Inventory)
-	void RemoveItemAtIndex(int32 Index);
+	void RemoveItem(int32 Index);
+
+	/**Return remain StackCount*/
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category=Inventory)
+	int32 DecreaseItem(int32 Index,int32 DecreaseCount);
 
 	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure=false)
 	TArray<UCommonInventoryItemInstance*> GetAllItems() const;
@@ -149,7 +157,7 @@ public:
 	UCommonInventoryItemInstance* GetItem(int32 Index) const;
 
 	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure=false)
-	bool HasItem(UCommonInventoryItemInstance* Instance) const;
+	int32 GetIndexForItemInstance(UCommonInventoryItemInstance* Instance) const;
 	
 	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure)
 	UCommonInventoryItemInstance* FindFirstItemStackByDefinition(TSubclassOf<UCommonInventoryItemDefinition> ItemDef) const;

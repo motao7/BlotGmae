@@ -9,7 +9,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHitTargetChangedEvent, AActor*, NewTarget,AActor*,OldTarget);
 
 /**
- * 
+ *		Continuous! radiation detection
  */
 UCLASS()
 class BLOTGAME_API UAbilityTask_SigleTraceTarget : public UAbilityTask

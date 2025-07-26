@@ -11,7 +11,7 @@ UCommonInventoryItemInstance* UCommonBackPackManageComponent::AddItemByDefinitio
 {
 	UCommonInventoryItemInstance* Result=Super::AddItemByDefinition(ItemDef, StackCount);
 
-	if (UCommonQuickBarComponent* QuickBar=UCommonKitStatics::GetQuickBarManager(GetOwnerAsController()->GetPawn()))
+	if (UCommonQuickBarComponent* QuickBar=UCommonKitStatics::GetQuickBarManagerFromController(GetOwnerAsController()))
 	{
 		if (!QuickBar->HasItemInSlots(Result))
 		{

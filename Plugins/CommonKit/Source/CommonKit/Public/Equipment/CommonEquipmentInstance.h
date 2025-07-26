@@ -45,13 +45,13 @@ public:
 	void DestroyEquipmentActors();
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Weapon)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=EquipAnim)
 	TSubclassOf<UAnimInstance> AnimLayer;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Weapon)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=EquipAnim)
 	UAnimMontage* EquipMontage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Weapon)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=EquipAnim)
 	UAnimMontage* UnEquipMontage;
 	
 private:

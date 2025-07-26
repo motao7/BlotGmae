@@ -27,7 +27,7 @@ struct FCommonEquipmentActorToSpawn
 };
 
 /**
- * 
+ *		Contains general configuration information related to equipment operations
  */
 UCLASS(Blueprintable, Const, Abstract, BlueprintType)
 class COMMONKIT_API UCommonEquipmentDefinition : public UObject

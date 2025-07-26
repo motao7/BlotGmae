@@ -110,12 +110,7 @@ UCommonInventoryItemInstance* FCommonInventoryList::AddEntry(TSubclassOf<UCommon
 	return nullptr;
 }
 
-void FCommonInventoryList::AddEntry(UCommonInventoryItemInstance* Instance)
-{
-	unimplemented();
-}
-
-UCommonInventoryItemInstance* FCommonInventoryList::ClearEntryAtIndex(int32 Index)
+UCommonInventoryItemInstance* FCommonInventoryList::ClearEntry(int32 Index)
 {
 	UCommonInventoryItemInstance* Result=nullptr;
 	if (Entries.IsValidIndex(Index))
@@ -128,6 +123,32 @@ UCommonInventoryItemInstance* FCommonInventoryList::ClearEntryAtIndex(int32 Inde
 		BroadcastChangeMessage(Entry,Index,/*OldCount=*/ Entry.LastObservedCount, /*NewCount=*/ Entry.StackCount);
 	}
 	return Result;
+}
+
+int32 FCommonInventoryList::RemoveEntry(int32 Index, int32 DecreaseCount)
+{
+	check(OwnerComponent);
+	AActor* OwningActor = OwnerComponent->GetOwner();
+	check(OwningActor->HasAuthority());
+	check(Entries.IsValidIndex(Index));
+
+	FCommonInventoryEntry& Entry = Entries[Index];
+	int32 OldCount = Entry.StackCount;
+    
+	// 如果减少的数量大于等于当前堆叠数，则清除整个条目
+	if (DecreaseCount >= Entry.StackCount)
+	{
+		UCommonInventoryItemInstance* Result = ClearEntry(Index);
+		// 注意：调用者需要处理RemoveReplicatedSubObject
+	}
+	else
+	{
+		// 否则减少指定数量
+		Entry.StackCount -= DecreaseCount;
+		MarkItemDirty(Entry);
+		BroadcastChangeMessage(Entry, Index, OldCount, Entry.StackCount);
+	}
+	return Entry.StackCount;
 }
 
 TArray<UCommonInventoryItemInstance*> FCommonInventoryList::GetAllItems() const
@@ -144,16 +165,23 @@ TArray<UCommonInventoryItemInstance*> FCommonInventoryList::GetAllItems() const
 	return Results;
 }
 
-bool FCommonInventoryList::HasItem(UCommonInventoryItemInstance* ItemInstance) const
+FCommonInventoryEntry& FCommonInventoryList::GetEntry(int32 Index)
 {
-	for (const FCommonInventoryEntry& Entry : Entries)
+	check(Entries.IsValidIndex(Index));
+	return Entries[Index];
+}
+
+int32 FCommonInventoryList::GetIndexForItemInstance(UCommonInventoryItemInstance* Instance) const
+{
+	for (int32 Index = 0; Index < Entries.Num(); ++Index)
 	{
-		if (Entry.Instance == ItemInstance)
+		if (Entries[Index].Instance == Instance)
 		{
-			return true;
+			return Index;
 		}
 	}
-	return false;
+	UE_LOG(LogCommonKit, Warning, TEXT("Inventory GetIndexForItemInstance Failed"))
+	return INDEX_NONE; 
 }
 
 void FCommonInventoryList::BroadcastChangeMessage(FCommonInventoryEntry& Entry,int32 Index,int32 OldCount, int32 NewCount)
@@ -224,14 +252,35 @@ UCommonInventoryItemInstance* UCommonInventoryManageComponent::AddItemByDefiniti
 	return Result;
 }
 
-void UCommonInventoryManageComponent::RemoveItemAtIndex(int32 Index)
+void UCommonInventoryManageComponent::RemoveItem(int32 Index)
 {
-	UCommonInventoryItemInstance* ItemInstance=InventoryList.ClearEntryAtIndex(Index);
+	UCommonInventoryItemInstance* ItemInstance=InventoryList.ClearEntry(Index);
 
 	if (ItemInstance && IsUsingRegisteredSubObjectList())
 	{
 		RemoveReplicatedSubObject(ItemInstance);
 	}
+}
+
+int32 UCommonInventoryManageComponent::DecreaseItem(int32 Index, int32 DecreaseCount)
+{
+	if (Index >= 0 && Index < InventoryList.Entries.Num() && DecreaseCount > 0)
+	{
+		FCommonInventoryEntry& Entry = InventoryList.GetEntry(Index);
+		if (Entry.Instance != nullptr && Entry.Instance->GetItemDef() != nullptr)
+		{
+			// 如果物品被完全移除，也需要从复制子对象列表中移除
+			if (InventoryList.RemoveEntry(Index, DecreaseCount)== 0)
+			{
+				if (IsUsingRegisteredSubObjectList())
+				{
+					RemoveReplicatedSubObject(Entry.Instance);
+				}
+			}
+		}
+		return Entry.StackCount;
+	}
+	return INDEX_NONE;
 }
 
 TArray<UCommonInventoryItemInstance*> UCommonInventoryManageComponent::GetAllItems() const
@@ -249,9 +298,9 @@ UCommonInventoryItemInstance* UCommonInventoryManageComponent::GetItem(int32 Ind
 	return nullptr;
 }
 
-bool UCommonInventoryManageComponent::HasItem(UCommonInventoryItemInstance* Instance) const
+int32 UCommonInventoryManageComponent::GetIndexForItemInstance(UCommonInventoryItemInstance* Instance) const
 {
-	return InventoryList.HasItem(Instance);
+	return InventoryList.GetIndexForItemInstance(Instance);
 }
 
 UCommonInventoryItemInstance* UCommonInventoryManageComponent::FindFirstItemStackByDefinition(TSubclassOf<UCommonInventoryItemDefinition> ItemDef) const

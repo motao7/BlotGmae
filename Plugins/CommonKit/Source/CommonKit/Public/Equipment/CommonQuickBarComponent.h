@@ -50,10 +50,15 @@ public:
 	
 	virtual void BeginPlay() override;
 
+//huangzitao179@gmail.com
+
 	/**Only Slot is Default or empty can add*/
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly,Category="QuickBar")
 	void AddItemToSlot(int32 SlotIndex, UCommonInventoryItemInstance* Item);
-	
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	UCommonInventoryItemInstance* RemoveItemFromSlot(int32 SlotIndex);
+
 	UFUNCTION(Server, Reliable, BlueprintCallable,Category="QuickBar")
 	void SetActiveSlotIndex(int32 Index);
 

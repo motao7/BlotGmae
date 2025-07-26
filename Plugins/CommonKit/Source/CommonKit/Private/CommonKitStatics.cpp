@@ -37,7 +37,7 @@ UCommonInventoryManageComponent* UCommonKitStatics::GetInventoryManager(APawn* P
 	return nullptr;
 }
 
-UCommonQuickBarComponent* UCommonKitStatics::GetQuickBarManager(APawn* Pawn)
+UCommonQuickBarComponent* UCommonKitStatics::GetQuickBarManagerFromPawn(APawn* Pawn)
 {
 	if (Pawn==nullptr) return nullptr;
 	
@@ -46,6 +46,13 @@ UCommonQuickBarComponent* UCommonKitStatics::GetQuickBarManager(APawn* Pawn)
 		return PC->GetComponentByClass<UCommonQuickBarComponent>();
 	}
 	return nullptr;
+}
+
+UCommonQuickBarComponent* UCommonKitStatics::GetQuickBarManagerFromController(AController* Controller)
+{
+	if (Controller==nullptr) return nullptr;
+	
+	return Controller->GetComponentByClass<UCommonQuickBarComponent>();
 }
 
 UCommonEquipmentManagerComponent* UCommonKitStatics::GetEquipmentManager(APawn* Pawn)

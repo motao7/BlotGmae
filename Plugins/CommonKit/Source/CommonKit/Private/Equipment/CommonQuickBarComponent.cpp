@@ -56,6 +56,34 @@ void UCommonQuickBarComponent::AddItemToSlot(int32 SlotIndex, UCommonInventoryIt
 	}
 }
 
+UCommonInventoryItemInstance* UCommonQuickBarComponent::RemoveItemFromSlot(int32 SlotIndex)
+{
+	UCommonInventoryItemInstance* Result = nullptr;
+
+	if (ActiveSlotIndex == SlotIndex)
+	{
+		UnequipItemInSlot();
+
+		//This is for correct Update AnimLayer ,beacuse simulated listen ActiveSlotChanged
+		ActiveSlotIndex=-1;
+		
+		OnRep_ActiveSlotIndex();
+	}
+
+	if (Slots.IsValidIndex(SlotIndex))
+	{
+		Result = Slots[SlotIndex];
+
+		if (Result != nullptr)
+		{
+			Slots[SlotIndex] = nullptr;
+			OnRep_Slots();
+		}
+	}
+
+	return Result;
+}
+
 bool UCommonQuickBarComponent::HasItemInSlots(UCommonInventoryItemInstance* Instance)
 {
 	return Slots.Contains(Instance);

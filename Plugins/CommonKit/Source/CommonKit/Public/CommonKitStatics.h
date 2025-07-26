@@ -26,7 +26,10 @@ public:
 	static UCommonInventoryManageComponent* GetInventoryManager(APawn* Pawn);
 
 	UFUNCTION(BlueprintCallable, Category="KitStatics")
-	static UCommonQuickBarComponent* GetQuickBarManager(APawn* Pawn);
+	static UCommonQuickBarComponent* GetQuickBarManagerFromPawn(APawn* Pawn);
+
+	UFUNCTION(BlueprintCallable, Category="KitStatics")
+	static UCommonQuickBarComponent* GetQuickBarManagerFromController(AController* Controller);
 
 	UFUNCTION(BlueprintCallable, Category="KitStatics")
 	static UCommonEquipmentManagerComponent* GetEquipmentManager(APawn* Pawn);
