@@ -37,7 +37,7 @@ public class Voxel : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore",
+				"SlateCore", "CADKernel",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

@@ -17,7 +17,7 @@ struct FPickupInstance
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 ItemCount;
+	int32 ItemCount=0;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UCommonInventoryItemInstance> Item = nullptr;

@@ -48,6 +48,13 @@ protected:
 
 	UFUNCTION(BlueprintCallable,Category="Blot|Character")
 	void LinkDefaultAnimLayer();
+	
+	UFUNCTION()
+	virtual void OnDeathStarted(AActor* OwningActor);
+	
+	UFUNCTION()
+	virtual void OnDeathFinished(AActor* OwningActor);
+	void DisableMovementAndCollision();
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Blot|Character", Meta = (AllowPrivateAccess = "true"))

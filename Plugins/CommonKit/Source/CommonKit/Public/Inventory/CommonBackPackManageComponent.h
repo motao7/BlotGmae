@@ -16,5 +16,6 @@ class COMMONKIT_API UCommonBackPackManageComponent : public UCommonInventoryMana
 	
 public:
 	virtual UCommonInventoryItemInstance* AddItemByDefinition(TSubclassOf<UCommonInventoryItemDefinition> ItemDef, int32 StackCount = 1) override;
-	
+
+	virtual void ExchangeItems(int32 Index1, int32 Index2) override;
 };
