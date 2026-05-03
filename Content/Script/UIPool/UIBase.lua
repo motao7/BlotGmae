@@ -1,0 +1,2 @@
+--子类继承UIBase，UnLua.Class(UIBase)获取高速缓存，
+--然后根据子类名称查找对应Config，根据Config完成Config一些基本函数的注册???
