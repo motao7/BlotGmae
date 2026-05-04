@@ -43,7 +43,8 @@ ABlotCharacter::ABlotCharacter(const FObjectInitializer& ObjectInitializer)
 	bUseControllerRotationRoll = false;
 
 	HealthComponent = CreateDefaultSubobject<UBlotHealthComponent>(TEXT("HealthComponent"));
-	HealthComponent->SetIsReplicated(true);
+	HealthComponent->OnDeathStarted.AddDynamic(this, &ThisClass::OnDeathStarted);
+	HealthComponent->OnDeathFinished.AddDynamic(this,&ThisClass::OnDeathFinished);
 	
 	UBlotCharacterMovementComponent* MoveComp = CastChecked<UBlotCharacterMovementComponent>(GetCharacterMovement());
 	MoveComp->GravityScale = 1.0f;
@@ -59,7 +60,7 @@ ABlotCharacter::ABlotCharacter(const FObjectInitializer& ObjectInitializer)
 	MoveComp->GetNavAgentPropertiesRef().bCanCrouch = true;
 	MoveComp->bCanWalkOffLedgesWhenCrouching = true;
 	MoveComp->SetCrouchedHalfHeight(65.0f);
-
+	
 	BaseEyeHeight = 80.0f;
 	CrouchedEyeHeight = 50.0f;
 }
@@ -129,6 +130,32 @@ void ABlotCharacter::OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerS
 void ABlotCharacter::LinkDefaultAnimLayer()
 {
 	GetMesh()->LinkAnimClassLayers(DefaultAnimInstance);
+}
+
+void ABlotCharacter::OnDeathStarted(AActor* OwningActor)
+{
+	DisableMovementAndCollision();
+}
+
+void ABlotCharacter::OnDeathFinished(AActor* OwningActor)
+{
+}
+
+void ABlotCharacter::DisableMovementAndCollision()
+{
+	if (Controller)
+	{
+		Controller->SetIgnoreMoveInput(true);
+	}
+
+	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	check(CapsuleComp);
+	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+
+	UBlotCharacterMovementComponent* BlotMoveComp = CastChecked<UBlotCharacterMovementComponent>(GetCharacterMovement());
+	BlotMoveComp->StopMovementImmediately();
+	BlotMoveComp->DisableMovement();
 }
 
 void ABlotCharacter::ToggleCrouch()

@@ -77,6 +77,15 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure=true,Category="QuickBar")
 	const UCommonEquipmentInstance* GetEquippedInstance() const;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure=true,Category="QuickBar")
+	FORCEINLINE int32 GetNumSlots() const { return NumSlots; }
+
+	UFUNCTION(BlueprintCallable, BlueprintPure=false)
+	TArray<UCommonInventoryItemInstance*> GetSlots() const
+	{
+		return Slots;
+	}
+
 protected:
 	void UnequipItemInSlot();
 	void EquipItemInSlot();

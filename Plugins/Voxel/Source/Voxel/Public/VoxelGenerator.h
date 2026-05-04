@@ -6,51 +6,72 @@
 #include "GameFramework/Actor.h"
 #include "VoxelGenerator.generated.h"
 
-class UHierarchicalInstancedStaticMeshComponent;
-
-UCLASS()
-class VOXEL_API AVoxelGenerator : public AActor
+USTRUCT()
+struct FChunkKey
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
+    int32 X, Y, Z;
+    bool operator==(FChunkKey const& Other) const { return X==Other.X && Y==Other.Y && Z==Other.Z; }
+};
+FORCEINLINE uint32 GetTypeHash(const FChunkKey& K)
+{
+    return HashCombine(HashCombine(::GetTypeHash(K.X), ::GetTypeHash(K.Y)), ::GetTypeHash(K.Z));
+}
 
+USTRUCT()
+struct FCollectableSpawnInfo
+{
+    GENERATED_BODY()
+    FVector Location;
+    FRotator Rotation;
+    TSubclassOf<AActor> CollectableClass;
+    int32 InstanceID; // optional id for pooling
+};
+
+UCLASS(Blueprintable)
+class VOXEL_API AWorldGenerator : public AActor
+{
+    GENERATED_BODY()
 public:
-	AVoxelGenerator();
+    AWorldGenerator();
 
 protected:
-	virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
+    void GenerateVoxelWorldAsync();
+	void SpawnWorldCollectActors(const TArray<FTransform>& InstanceTransforms);
 
-	// 异步生成地形数据
-	void GenerateVoxelWorldAsync();
+    // 体素大小
+	UPROPERTY(EditAnywhere, Category="Voxel")
+	int32 SizeX = 32;
 
-	// 添加体素实例
-	void ApplyVoxelInstances(const TArray<FTransform>& InstanceTransforms);
+	UPROPERTY(EditAnywhere, Category="Voxel")
+	int32 SizeY = 32;
 
-public:
-	UPROPERTY(EditAnywhere, Category = "Voxel")
-	int32 SizeX = 64;
-
-	UPROPERTY(EditAnywhere, Category = "Voxel")
-	int32 SizeY = 64;
-
-	UPROPERTY(EditAnywhere, Category = "Voxel")
+	UPROPERTY(EditAnywhere, Category="Voxel")
 	int32 SizeZ = 32;
 
-	UPROPERTY(EditAnywhere, Category = "Voxel")
+	// 噪声缩放和阈值
+	UPROPERTY(EditAnywhere, Category="Voxel")
 	float NoiseScale = 0.05f;
 
-	UPROPERTY(EditAnywhere, Category = "Voxel")
+	UPROPERTY(EditAnywhere, Category="Voxel")
 	float NoiseThreshold = 0.3f;
 
-	UPROPERTY(EditAnywhere, Category = "Voxel")
-	float CubeSpace = 50.f;
+	// 方块间距，世界坐标单位，比如100代表1米
+	UPROPERTY(EditAnywhere, Category="Voxel")
+	float CubeSpace = 100.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Voxel")
-	float CubeScaleFactor = 2.0f;
+	// 方块缩放比例
+	UPROPERTY(EditAnywhere, Category="Voxel")
+	float CubeScaleFactor = 1.0f;
 
-private:
-	UPROPERTY(VisibleAnywhere, Category = "Voxel")
-	UHierarchicalInstancedStaticMeshComponent* HISM;
+	// 用于Spawn的WorldCollect蓝图类
+	UPROPERTY(EditAnywhere, Category="Voxel")
+	TSubclassOf<AActor> WorldCollectClass;
 
-	// 维护一个映射：方块坐标→HISM实例索引
-	TMap<FIntVector, int32> VoxelInstanceMap;
+	UPROPERTY(EditAnywhere, Category="Voxel")
+	float SpawnRadius=5000.0f;
+
+	UPROPERTY(EditAnywhere, Category="Voxel")
+	float NonSpawnRadius=500.0f;
 };

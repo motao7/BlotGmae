@@ -46,6 +46,7 @@ void FCommonInventoryList::PostReplicatedAdd(const TArrayView<int32> AddedIndice
 
 void FCommonInventoryList::PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize)
 {
+	//TODO:普通怪物AI(毛毛虫，碰到基于伤害)
 	for (int32 Index : ChangedIndices)
 	{
 		FCommonInventoryEntry& Stack = Entries[Index];

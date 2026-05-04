@@ -165,6 +165,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure)
 	AController* GetOwnerAsController() const;
 
+	UFUNCTION(BlueprintCallable, Category=Inventory, BlueprintPure=false)
+	virtual void ExchangeItems(int32 Index1, int32 Index2);
+
 	FInventoryIntilizeCompleteEvent InventoryIntilizeCompleteEvent;
 private:
 	/**Limit the size of InventoryList,facilitate the operation of the list view*/

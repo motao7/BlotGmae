@@ -10,7 +10,16 @@ class UBlotHealthAttributeSet;
 class UBlotAbilitySystemComponent;
 struct FGameplayEffectSpec;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBlotHealth_DeathEvent, AActor*, OwningActor);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FBlotHealth_AttributeChanged, UBlotHealthComponent*, HealthComponent, float, OldValue, float, NewValue, AActor*, Instigator);
+
+UENUM(BlueprintType)
+enum class EBlotDeathState : uint8
+{
+	NotDead = 0,
+	DeathStarted,
+	DeathFinished
+};
 
 /**
  *		Handle all thing related health.
@@ -56,10 +65,30 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FBlotHealth_AttributeChanged OnMaxHealthChanged;
 
+	// Delegate fired when the death sequence has started.
+	UPROPERTY(BlueprintAssignable)
+	FBlotHealth_DeathEvent OnDeathStarted;
+
+	// Delegate fired when the death sequence has finished.
+	UPROPERTY(BlueprintAssignable)
+	FBlotHealth_DeathEvent OnDeathFinished;
+
+	UFUNCTION(BlueprintCallable, Category = "Blot|Health")
+	EBlotDeathState GetDeathState() const;
+	
+	void StartDeath();
+	
+	void FinishDeath();
+
 protected:
 	virtual void HandleHealthChanged(AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
 	virtual void HandleMaxHealthChanged(AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
-	
+	virtual void HandleOutOfHealth(AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
+
+	//Mainly used for Simulated Proxy
+	UFUNCTION()
+	virtual void OnRep_DeathState(EBlotDeathState OldDeathState);
+
 	// Ability system used by this component.
 	UPROPERTY()
 	TObjectPtr<UBlotAbilitySystemComponent> AbilitySystemComponent;
@@ -68,4 +97,6 @@ protected:
 	UPROPERTY()
 	TObjectPtr<const UBlotHealthAttributeSet> HealthSet;
 
+	UPROPERTY(ReplicatedUsing = OnRep_DeathState)
+	EBlotDeathState DeathState;
 };

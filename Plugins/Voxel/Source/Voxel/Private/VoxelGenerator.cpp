@@ -3,23 +3,24 @@
 #include "VoxelGenerator.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Async/Async.h"
+#include "Kismet/GameplayStatics.h"
 
-AVoxelGenerator::AVoxelGenerator()
+AWorldGenerator::AWorldGenerator()
 {
-	PrimaryActorTick.bCanEverTick = false;
-
-	HISM = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(TEXT("VoxelHISM"));
-	SetRootComponent(HISM);
-	HISM->SetMobility(EComponentMobility::Static);
+    PrimaryActorTick.bCanEverTick = false;
+    PrimaryActorTick.bStartWithTickEnabled = false;
 }
 
-void AVoxelGenerator::BeginPlay()
+void AWorldGenerator::BeginPlay()
 {
 	Super::BeginPlay();
-	GenerateVoxelWorldAsync();
+	if (HasAuthority())
+	{
+		GenerateVoxelWorldAsync();
+	}
 }
 
-void AVoxelGenerator::GenerateVoxelWorldAsync()
+void AWorldGenerator::GenerateVoxelWorldAsync()
 {
 	const int32 XMax = SizeX;
 	const int32 YMax = SizeY;
@@ -29,54 +30,69 @@ void AVoxelGenerator::GenerateVoxelWorldAsync()
 	const float Space = CubeSpace;
 	const float ScaleFactor = CubeScaleFactor;
 
-	// 多线程任务
-	Async(EAsyncExecution::ThreadPool, [this, XMax, YMax, ZMax, Scale, Threshold, Space, ScaleFactor]()
+	// 获取玩家位置
+	FVector PlayerLocation = FVector::ZeroVector;
+	if (AActor* PlayerActor = UGameplayStatics::GetPlayerPawn(GetWorld(), 0))
 	{
-		TArray<FTransform> Transforms;
-		FCriticalSection Mutex;
+		PlayerLocation = PlayerActor->GetActorLocation();
+	}
 
-		ParallelFor(XMax, [=, &Transforms, &Mutex](int32 X)
-		{
-			TArray<FTransform> LocalTransforms; // 每个线程独立本地数组
-			for (int32 Y = 0; Y < YMax; ++Y)
-			{
-				for (int32 Z = 0; Z < ZMax; ++Z)
-				{
-					const FVector NoisePos = FVector(X * Scale, Y * Scale, Z * Scale);
-					const float NoiseValue = FMath::PerlinNoise3D(NoisePos);
+	const float SpawnRadiusSq = SpawnRadius * SpawnRadius;      // 总生成半径平方
+	const float NoSpawnRadiusSq = NonSpawnRadius * NonSpawnRadius; // 玩家出生点保护区半径平方
 
-					if (NoiseValue > Threshold)
-					{
-						const FVector Location = FVector(X * Space, Y * Space, Z * Space);
-						FTransform Transform;
-						Transform.SetLocation(Location);
-						Transform.SetScale3D(FVector(ScaleFactor));
-						LocalTransforms.Add(Transform);
-					}
-				}
-			}
-
-			// 合并当前线程的结果进共享数组
-			FScopeLock Lock(&Mutex);
-			Transforms.Append(LocalTransforms);
-		});
-
-		AsyncTask(ENamedThreads::GameThread, [this,Transforms]()
-		{
-			ApplyVoxelInstances(Transforms);
-		});
-	});
-}
-
-void AVoxelGenerator::ApplyVoxelInstances(const TArray<FTransform>& InstanceTransforms)
-{
-	if (!HISM->GetStaticMesh())
+	UWorld* World = GetWorld();
+	if (!World || !WorldCollectClass)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("VoxelMesh is not set."));
+		UE_LOG(LogTemp, Warning, TEXT("World or WorldCollectClass not valid!"));
 		return;
 	}
 
-	//TODO:裁决天中的Instance的位置
-	HISM->AddInstances(InstanceTransforms, false,true,false);
-	HISM->MarkRenderStateDirty();         // 最后再更新一次
+	for (int32 Y = 0; Y < YMax; ++Y)
+	{
+		for (int32 Z = 0; Z < ZMax; ++Z)
+		{
+			for (int32 X = 0; X < XMax; ++X)
+			{
+				FVector Location = FVector(X * Space, Y * Space, Z * Space);
+
+				// 距离玩家太远不生成
+				if (FVector::DistSquared(Location, PlayerLocation) > SpawnRadiusSq)
+				{
+					continue;
+				}
+
+				// 玩家出生点附近保护区不生成方块
+				if (FVector::DistSquared(Location, PlayerLocation) < NoSpawnRadiusSq)
+				{
+					continue;
+				}
+
+				FVector NoisePos = FVector(X * Scale, Y * Scale, Z * Scale);
+				float NoiseValue = FMath::PerlinNoise3D(NoisePos);
+
+				// 矿洞是噪声值低于阈值的区域，阈值以上生成方块（石头）
+				if (NoiseValue > Threshold)
+				{
+					FTransform Transform;
+					Transform.SetLocation(Location);
+					Transform.SetScale3D(FVector(ScaleFactor));
+
+					World->SpawnActor<AActor>(WorldCollectClass, Transform);
+				}
+			}
+		}
+	}
+}
+void AWorldGenerator::SpawnWorldCollectActors(const TArray<FTransform>& InstanceTransforms)
+{
+    UWorld* World = GetWorld();
+    if (!World || !WorldCollectClass)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("World or WorldCollectClass is not valid."));
+        return;
+    }
+
+    for (const FTransform& Transform : InstanceTransforms)
+    {	
+    }
 }
