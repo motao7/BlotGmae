@@ -22,7 +22,7 @@ void UCommonGameLODManagerComponent::TickComponent(float DeltaTime, ELevelTick T
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// 进客户端AutonomousProxy 运行
+	// 仅客户端AutonomousProxy 运行
 	if (GetNetMode() == NM_Client && GetOwnerRole() != ROLE_AutonomousProxy) return;
 
 	//限帧
@@ -34,6 +34,7 @@ void UCommonGameLODManagerComponent::TickComponent(float DeltaTime, ELevelTick T
 
 	SCOPE_CYCLE_COUNTER(STAT_CommonGameLOD_ProcessLod)
 
+	const FVector PlayerLoc = PlayerActor->GetActorLocation();
 	//遍历每种区域类型，查网格，算距离
 	for (const auto& Pair : UCommonGameLODComponent::RegionConfigMap)
 	{
@@ -46,7 +47,7 @@ void UCommonGameLODManagerComponent::TickComponent(float DeltaTime, ELevelTick T
 			AActor* TargetActor = LodComp->GetOwner();
 			if (!IsValid(TargetActor)) continue;
 
-			const float Distance = FVector::Dist(PlayerActor->GetActorLocation(),TargetActor->GetActorLocation());
+			const float Distance = FVector::Dist(PlayerLoc,TargetActor->GetActorLocation());
 			LodComp->ProcessDistance(Distance);
 		}
 	}

@@ -20,13 +20,13 @@ class UCommonGameLODManagerComponent : public UActorComponent
 public:
 	UCommonGameLODManagerComponent();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category="GameLOD")
 	float UpdateInterval = 1.0f;
 
 	UPROPERTY()
 	TObjectPtr<AActor> PlayerActor = nullptr;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,Category="GameLOD")
 	bool bEnableDebug = false;
 
 protected:

@@ -41,18 +41,18 @@ public:
 	UCommonGameLODComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	/** LOD 最大作用距离 (cm) */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category="GameLOD")
 	float MaxLodDistance = 100.f;
 
 	/** 每级 LOD 占 MaxLodDistance 的比例，从近到远累加
 	 *  例: [0.3, 0.3, 0.4] → 近30%为LOD0, 中30%为LOD1, 远40%为LOD2 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category="GameLOD")
 	TArray<float> LodRate;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,Category="GameLOD")
 	bool bEnableLog = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,Category="GameLOD")
 	bool bEnableDebug = false;
 
 	// ─── 运行时状态 ───
@@ -88,7 +88,7 @@ private:
 	//  2D 空间网格（静态，所有实例共享）
 	// ═══════════════════════════════════════
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,Category="GameLOD")
 	EGameLODRegionType RegionType = EGameLODRegionType::NoneRegion;
 
 	static bool GetRegionComponents(

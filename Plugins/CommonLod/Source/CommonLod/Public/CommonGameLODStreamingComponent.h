@@ -52,7 +52,7 @@ struct FGameLODSkeletalMeshData
 /**
  * 
  */
-UCLASS()
+UCLASS(ClassGroup = Performance, meta = (BlueprintSpawnableComponent))
 class COMMONLOD_API UCommonGameLODStreamingComponent : public UCommonGameLODComponent
 {
 	GENERATED_BODY()

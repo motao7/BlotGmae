@@ -91,6 +91,7 @@ void UCommonGameLODComponent::ProcessDistance(float Distance)
 			return;
 		}
 	}
+	
 	SetActiveLod(0);
 }
 
